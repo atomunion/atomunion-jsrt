@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="atomunion-jsrt" basedir="." default="">
+
+	<property name="project.name" value="${project.artifactId}" />
+	<property name="js.prefix.debug" value="jsrt.debug" />
+	<property name="js.prefix" value="jsrt" />
+	<property name="js.name.debug" value="${js.prefix.debug}.${project.version}.js" />
+	<property name="js.name" value="${js.prefix}.${project.version}.js" />
+
+	<property name="app.dir" location="${basedir}" />
+	<property name="current.dir" location="${ant.file}" />
+
+	<property name="src.dir" location="${app.dir}/src/main/js" />
+	<property name="test.src.dir" location="${app.dir}/src/test/js" />
+
+	<property name="compile.dir" location="${app.dir}/target/js" />
+	<property name="test.compile.dir" location="${app.dir}/target/js-test" />
+
+	<target name="concat-js">
+		<echo
+			message="===================================================================">
+		</echo>
+		<echo message="target : concat-js">
+		</echo>
+		<echo
+			message="===================================================================">
+		</echo>
+
+		<delete dir="${compile.dir}">
+		</delete>
+		<mkdir dir="${compile.dir}" />
+
+		<concat destfile="${compile.dir}/${js.name.debug}" encoding="utf-8"
+			append="false">
+			<filelist dir="${src.dir}/">
+				<file name="js/lang/Object.js" />
+				<file name="js/lang/String.js" />
+				<file name="js/lang/Array.js" />
+				<file name="js/lang/Class.js" />
+				<file name="js/lang/ClassLoader.js" />
+				<file name="js/net/URLClassLoader.js" />
+
+				<file name="js/lang/reflect/Constructor.js" />
+				<file name="js/lang/reflect/Field.js" />
+				<file name="js/lang/reflect/Method.js" />
+				<file name="js/lang/reflect/Modifier.js" />
+				<file name="js/lang/reflect/InvocationTargetException.js" />
+
+				<file name="js/lang/Exception.js" />
+				<file name="js/lang/IllegalAccessException.js" />
+				<file name="js/lang/IllegalArgumentException.js" />
+				<file name="js/lang/IllegalStateException.js" />
+				<file name="js/lang/IndexOutOfBoundsException.js" />
+				<file name="js/lang/NoSuchFieldException.js" />
+				<file name="js/lang/NoSuchMethodException.js" />
+				<file name="js/lang/NullPointerException.js" />
+				<file name="js/lang/UnsupportedOperationException.js" />
+				<file name="js/lang/ClassNotFoundException.js" />
+
+				<file name="js/lang/StringBuffer.js" />
+				<file name="js/lang/System.js" />
+			</filelist>
+		</concat>
+	</target>
+
+	<target name="concat-test">
+		<echo
+			message="===================================================================">
+		</echo>
+		<echo message="target : concat-test">
+		</echo>
+		<echo
+			message="===================================================================">
+		</echo>
+		<delete dir="${test.compile.dir}">
+		</delete>
+		<mkdir dir="${test.compile.dir}" />
+		<concat destfile="${test.compile.dir}/test.${js.name.debug}"
+			encoding="utf-8" append="false">
+			<fileset dir="${test.src.dir}/">
+				<include name="Test*.js" />
+			</fileset>
+		</concat>
+	</target>
+
+	<target name="yui" depends="concat-js,concat-test">
+
+		<echo
+			message="===================================================================">
+		</echo>
+		<echo message="target : yui ; 合并 压缩 js">
+		</echo>
+		<echo
+			message="===================================================================">
+		</echo>
+
+		<apply executable="java" dest="${compile.dir}/">
+			<fileset dir="${compile.dir}/" includes="**/${js.prefix.debug}.*.js" />
+			<arg line="-jar" />
+			<arg path="${yuicompressor.path}" />
+			<arg line="--charset utf-8" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="${js.prefix.debug}.*.js" to="${js.prefix}.*.js" />
+		</apply>
+		<apply executable="java" dest="${test.compile.dir}/">
+			<fileset dir="${test.compile.dir}/" includes="**/test.${js.prefix.debug}.*.js" />
+			<arg line="-jar" />
+			<arg path="${yuicompressor.path}" />
+			<arg line="--charset utf-8" />
+			<arg value="-o" />
+			<targetfile />
+			<mapper type="glob" from="test.${js.prefix.debug}.*.js" to="test.${js.prefix}.*.js" />
+		</apply>
+		
+		<delete dir="${app.dir}/src/test/html/js">
+		</delete>
+		<mkdir dir="${app.dir}/src/test/html/js" />
+		
+		<copy todir="${app.dir}/src/test/html/js">
+			<fileset dir="${compile.dir}" />
+		</copy>
+		<copy todir="${app.dir}/src/test/html/js">
+			<fileset dir="${compile.dir}" />
+		</copy>
+		<copy todir="${app.dir}/src/test/html/js">
+			<fileset dir="${test.src.dir}/js" />
+		</copy>
+	</target>
+
+</project>
