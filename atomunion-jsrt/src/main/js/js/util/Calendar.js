@@ -7,5 +7,5 @@
  */
 
 Class.forName({
-			name : "abstract class js.util.Calendar extends Object"
-		});
+	name : "abstract class js.util.Calendar extends Object"
+});

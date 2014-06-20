@@ -9,12 +9,12 @@
 $import("js.util.Set");
 
 Class.forName({
-			name : "class js.util.EntrySet extends js.util.Set",
-			"private _element" : null,
-			EntrySet : function(element) {
-				this._element = element;
-			},
-			iterator : function() {
-				return new js.util.HashIterator(this._element);
-			}
-		});
+	name : "class js.util.EntrySet extends js.util.Set",
+	"private _element" : null,
+	EntrySet : function(element) {
+		this._element = element;
+	},
+	iterator : function() {
+		return new js.util.HashIterator(this._element);
+	}
+});

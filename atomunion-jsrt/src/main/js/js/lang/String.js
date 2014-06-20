@@ -7,10 +7,10 @@
  */
 
 Object.extend(String.prototype, {
-			trim : function() {
-				var re = /^\s+|\s+$/g;
-				return function() {
-					return this.replace(re, "");
-				};
-			}()
-		});
+	trim : function() {
+		var re = /^\s+|\s+$/g;
+		return function() {
+			return this.replace(re, "");
+		};
+	}()
+});

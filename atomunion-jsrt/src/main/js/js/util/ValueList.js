@@ -10,13 +10,13 @@ $import("js.util.List");
 $import("js.util.ValueIterator");
 
 Class.forName({
-			name : "class js.util.ValueList extends js.util.List",
+	name : "class js.util.ValueList extends js.util.List",
 
-			"private _element" : null,
-			ValueList : function(element) {
-				this._element = element;
-			},
-			iterator : function() {
-				return new js.util.ValueIterator(this._element);
-			}
-		});
+	"private _element" : null,
+	ValueList : function(element) {
+		this._element = element;
+	},
+	iterator : function() {
+		return new js.util.ValueIterator(this._element);
+	}
+});

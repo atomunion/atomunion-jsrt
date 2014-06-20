@@ -5,10 +5,11 @@
  * 
  * Date: Feb 12, 2014
  */
- 
- Class.forName({
-	name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
-	"private name" : "UnsupportedOperationException",// 错误名
-	"private number" : 10
+
+Class
+		.forName({
+			name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
+			"private name" : "UnsupportedOperationException",// 错误名
+			"private number" : 10
 		// 错误号
-});
+		});

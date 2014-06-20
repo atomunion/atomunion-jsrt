@@ -10,5 +10,5 @@ Class.forName({
 	name : "class js.lang.IndexOutOfBoundsException extends js.lang.Exception",
 	"private name" : "IndexOutOfBoundsException",// 错误名
 	"private number" : 11
-		// 错误号
-	});
+// 错误号
+});

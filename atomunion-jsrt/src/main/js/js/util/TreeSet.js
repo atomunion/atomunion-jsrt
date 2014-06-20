@@ -9,6 +9,6 @@
 $import("js.util.Set");
 
 Class.forName({
-			name : "class js.util.TreeSet extends js.util.Set"
+	name : "class js.util.TreeSet extends js.util.Set"
 
-		});
+});

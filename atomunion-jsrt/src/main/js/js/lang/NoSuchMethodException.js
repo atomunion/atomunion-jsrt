@@ -7,7 +7,7 @@
  */
 
 Class.forName({
-			name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
-			"private name" : "NoSuchMethodException",
-			"private number" : 9
-		});
+	name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
+	"private name" : "NoSuchMethodException",
+	"private number" : 9
+});

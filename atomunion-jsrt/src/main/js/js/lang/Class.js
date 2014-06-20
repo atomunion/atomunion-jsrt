@@ -29,20 +29,20 @@ Class = function(c, classloader) {
 			// 调用父类构造器
 			var f = sc.getFields();
 			Object.each(f, function(i, v, o) {
-						if (!fields[i]) {
-							var value = v.getValue();
-							this[i] = value ? value.clone() : value;
-						}
-					}, this);
+				if (!fields[i]) {
+					var value = v.getValue();
+					this[i] = value ? value.clone() : value;
+				}
+			}, this);
 			sc.getInitial().apply(this, arguments);
 			sc = sc.getSuperClass();
 		}
 
 		// 3初始化自身定义属性
 		Object.each(fields, function(i, v, o) {
-					var value = v.getValue();
-					this[i] = value ? value.clone() : value;
-				}, this);
+			var value = v.getValue();
+			this[i] = value ? value.clone() : value;
+		}, this);
 
 		// 4用户构造器
 		(initial = initial || empty).apply(this, arguments);
@@ -199,8 +199,7 @@ Class = function(c, classloader) {
 		};
 	};
 	var proxy = function(f, b, t, a) {
-		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a))
-				? f
+		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f
 				: function() {
 					// 判断权限private,default,protected,public
 					// 判断是否可以被重写final
@@ -209,8 +208,8 @@ Class = function(c, classloader) {
 
 					var result = null;
 					try {
-						result = (!Object.isEmpty(f) && Object.isFunction(f))
-								? f.apply(this, arguments)
+						result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f
+								.apply(this, arguments)
 								: f;
 					} catch (e) {
 						if (Object.isEmpty(t)) {
@@ -243,16 +242,16 @@ Class = function(c, classloader) {
 					var getName = "get" + name;
 					if (!methods[getName]) {
 						self.addMethod(new attribute(getName, function() {
-									return this[m.getName()];
-								}, self, modifier, []));
+							return this[m.getName()];
+						}, self, modifier, []));
 					}
 				}
 				if (m.getAnnotations().contains("@Setter")) {
 					var setName = "set" + name;
 					if (!methods[setName]) {
 						self.addMethod(new attribute(setName, function(value) {
-									this[m.getName()] = value;
-								}, self, modifier, []));
+							this[m.getName()] = value;
+						}, self, modifier, []));
 					}
 				}
 			}
@@ -271,29 +270,28 @@ Class = function(c, classloader) {
 
 		if (fullName != "Object") {
 			name = fetch(fullName, function(name, value) {
-						value[name] = constructor;
-						value[name].$class = this;
-						packages = value;
-						return name;
-					}, this);
+				value[name] = constructor;
+				value[name].$class = this;
+				packages = value;
+				return name;
+			}, this);
 
 			if (superinterfacesDef) {
 				var len = superinterfacesDef.length;
 				for (var i = 0; i < len; i++) {
 					superinterfaces[i] = fetch(superinterfacesDef[i], function(
-									name, value) {
-								return value[name];
-							}).$class;
+							name, value) {
+						return value[name];
+					}).$class;
 				}
 			}
 			superclass = (fetch(superclassDef, function(name, value) {
-						return value[name];
-					}) || Object).$class;
+				return value[name];
+			}) || Object).$class;
 
 			// TODO 判断父类是否final
 
-			instanceclass.prototype = ((superclass)
-					? superclass.instance
+			instanceclass.prototype = ((superclass) ? superclass.instance
 					: Object).prototype;
 			constructor.prototype = new instanceclass;
 			constructor.prototype.constructor = constructor;
@@ -309,17 +307,16 @@ Class = function(c, classloader) {
 		}
 
 		Object.each(c, function(i, v, o) {
-					if (i != "name") {
-						var m = convert(i);
-						m = new attribute(m.name, v, this, m.modifiers,
-								m.annotations);
-						if (Object.isFunction(v)) {
-							this.addMethod(m);
-						} else {
-							this.addField(m);
-						}
-					}
-				}, this);
+			if (i != "name") {
+				var m = convert(i);
+				m = new attribute(m.name, v, this, m.modifiers, m.annotations);
+				if (Object.isFunction(v)) {
+					this.addMethod(m);
+				} else {
+					this.addField(m);
+				}
+			}
+		}, this);
 		this.instance = constructor;
 		return this;
 	};
@@ -412,8 +409,8 @@ Class = function(c, classloader) {
 							&& window.js.lang.reflect.Method
 							&& window.js.lang.reflect.Method.loaded) {
 						m = new window.js.lang.reflect.Method(m.getName(), m
-										.getValue(), this, m.getModifiers(), m
-										.getAnnotations());
+								.getValue(), this, m.getModifiers(), m
+								.getAnnotations());
 					}
 
 					if ((m.getModifiers() & 8) != 0) {
@@ -436,8 +433,8 @@ Class = function(c, classloader) {
 						&& window.js.lang.reflect.Field
 						&& window.js.lang.reflect.Field.loaded) {
 					m = new window.js.lang.reflect.Field(m.getName(), m
-									.getValue(), this, m.getModifiers(), m
-									.getAnnotations());
+							.getValue(), this, m.getModifiers(), m
+							.getAnnotations());
 				}
 
 				if ((m.getModifiers() & 8) != 0) {
@@ -465,54 +462,52 @@ Class.forName = function(c, loader) {
 	return new Class(c, loader);
 };
 Object.$class = Class.forName({
-			name : "class Object",
-			/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
-			"private _version" : "0.1.1.0001",
-			getClass : function() {
-				return this.$class;
-			},
-			/** 指示某个其他对象是否与此对象“相等”。 */
-			equals : function(obj) {
-				return obj == this;
-			},
-			getVersion : function() {
-				return this._version;
-			},
-			hashCode : function() {
-				return this._hashCode;
-			},
-			clone : function() {
-				var b = null;
-				if (this instanceof Number || this instanceof String
-						|| this instanceof Boolean) {
-					return this.valueOf();
-				} else if (this instanceof Function || this instanceof RegExp
-						|| this instanceof Error || this instanceof EvalError
-						|| this instanceof RangeError
-						|| this instanceof ReferenceError
-						|| this instanceof SyntaxError
-						|| this instanceof TypeError
-						|| this instanceof URIError) {
-					return this;
-				} else if (this instanceof Date) {
-					b = new Date();
-					b.setTime(this.getTime());
-					return b;
-				} else if (this.$class) {
-					b = this.$class.newInstance();
-				} else {
-					b = this instanceof Array ? [] : {};
-				}
-				for (var a in this) {
-					if (a == "_hashCode") {
-						b[a] = new Date().getTime().toString(16);
-						continue;
-					}
-					if (this.hasOwnProperty(a)) {
-						b[a] = this[a] ? this[a].clone() : this[a];
-					}
-				}
-				return b;
+	name : "class Object",
+	/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
+	"private _version" : "0.1.1.0001",
+	getClass : function() {
+		return this.$class;
+	},
+	/** 指示某个其他对象是否与此对象“相等”。 */
+	equals : function(obj) {
+		return obj == this;
+	},
+	getVersion : function() {
+		return this._version;
+	},
+	hashCode : function() {
+		return this._hashCode;
+	},
+	clone : function() {
+		var b = null;
+		if (this instanceof Number || this instanceof String
+				|| this instanceof Boolean) {
+			return this.valueOf();
+		} else if (this instanceof Function || this instanceof RegExp
+				|| this instanceof Error || this instanceof EvalError
+				|| this instanceof RangeError || this instanceof ReferenceError
+				|| this instanceof SyntaxError || this instanceof TypeError
+				|| this instanceof URIError) {
+			return this;
+		} else if (this instanceof Date) {
+			b = new Date();
+			b.setTime(this.getTime());
+			return b;
+		} else if (this.$class) {
+			b = this.$class.newInstance();
+		} else {
+			b = this instanceof Array ? [] : {};
+		}
+		for ( var a in this) {
+			if (a == "_hashCode") {
+				b[a] = new Date().getTime().toString(16);
+				continue;
 			}
+			if (this.hasOwnProperty(a)) {
+				b[a] = this[a] ? this[a].clone() : this[a];
+			}
+		}
+		return b;
+	}
 
-		});
+});

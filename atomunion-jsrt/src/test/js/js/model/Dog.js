@@ -4,7 +4,7 @@
  */
 
 
-$import("js.model.Dog");
+$import("js.model.Animal");
 var dogClass = Class.forName({
 			name : "class js.model.Dog extends js.model.Animal",
 			"@Getter @Setter private color" : "black",

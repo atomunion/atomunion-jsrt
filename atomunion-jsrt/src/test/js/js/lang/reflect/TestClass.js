@@ -66,7 +66,7 @@ Class.forName({
 	testAddMethod : function() {
 		this.addMethod(new js.lang.reflect.Method("testAddMethod", function() {
 					return "我是动态新增的方法";
-				}, this, 1, []))
+				}, this, 1, []));
 		js.lang.System.out.println(testReflectObject.testAddMethod());
 	},
 	testAddField : function() {

@@ -9,5 +9,5 @@
 $import("js.util.Calendar");
 
 Class.forName({
-			name : "abstract class js.util.GregorianCalendar extends js.util.Calendar"
-		});
+	name : "abstract class js.util.GregorianCalendar extends js.util.Calendar"
+});

@@ -9,6 +9,6 @@
 $import("js.util.Collection");
 
 Class.forName({
-			name : "class js.util.Set extends js.util.Collection"
+	name : "class js.util.Set extends js.util.Collection"
 
-		});
+});

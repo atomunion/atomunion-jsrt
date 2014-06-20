@@ -38,23 +38,23 @@ Class.forName({
 	injectTestObjects : function() {
 		var fields = this.$class.getFields();
 		Object.each(fields, function(i, v, o) {
-					if (v.getAnnotations()) {
-						if (v.getAnnotations().contains("@Test")) {
-							this.getTestObjects().push(i);
-						}
-						if (v.getAnnotations().contains("@Auto")) {
-							this.getAutoTestObjects().push(i);
-						}
-					}
-				}, this);
+			if (v.getAnnotations()) {
+				if (v.getAnnotations().contains("@Test")) {
+					this.getTestObjects().push(i);
+				}
+				if (v.getAnnotations().contains("@Auto")) {
+					this.getAutoTestObjects().push(i);
+				}
+			}
+		}, this);
 	},
 	injectTestMethods : function() {
 		var methods = this.$class.getMethods();
 		Object.each(methods, function(i, v, o) {
-					if (i.indexOf("test") == 0) {
-						this.getTestMethods().push(i);
-					}
-				}, this);
+			if (i.indexOf("test") == 0) {
+				this.getTestMethods().push(i);
+			}
+		}, this);
 
 		/*
 		 * for (var i in methods) { if (i.indexOf("test")==0) {
@@ -67,8 +67,8 @@ Class.forName({
 		if (methods[name] && methods[name].getValue()) {
 			method = methods[name].getValue();
 		} else {
-			throw new js.lang.NoSuchMethodException("Test Object is missed! Details[name:"
-					+ name + "]");
+			throw new js.lang.NoSuchMethodException(
+					"Test Object is missed! Details[name:" + name + "]");
 		}
 		return method;
 	},
@@ -77,8 +77,8 @@ Class.forName({
 		if (this[name]) {
 			field = this[name];
 		} else {
-			throw new js.lang.NoSuchFieldException("Test Object is missed! Details[name:"
-					+ name + "]");
+			throw new js.lang.NoSuchFieldException(
+					"Test Object is missed! Details[name:" + name + "]");
 		}
 		return field;
 	},
@@ -89,7 +89,7 @@ Class.forName({
 			for (; j < len; j++) {
 				this
 						.run(this.getAutoTestObjects()[i], this
-										.getTestMethods()[j]);
+								.getTestMethods()[j]);
 			}
 		}
 	},
@@ -107,7 +107,7 @@ Class.forName({
 				method.call(obj);
 			} catch (e) {
 				js.lang.System.out.error("%s", "error: " + e.getName()
-								+ "   message: " + e.getMessage());
+						+ "   message: " + e.getMessage());
 			}
 		} else {
 			js.lang.System.out

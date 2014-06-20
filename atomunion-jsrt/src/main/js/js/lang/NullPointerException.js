@@ -7,7 +7,7 @@
  */
 
 Class.forName({
-			name : "class js.lang.NullPointerException extends js.lang.Exception",
-			"private name" : "NullPointerException",
-			"private number" : 0
-		});
+	name : "class js.lang.NullPointerException extends js.lang.Exception",
+	"private name" : "NullPointerException",
+	"private number" : 0
+});

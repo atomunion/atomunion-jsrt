@@ -16,7 +16,7 @@ Object.extend = function(d, s, k, m) {
 	if (Object.prototype.toString.call(s) === "[object Object]") {
 		if (Object.prototype.toString.apply(d) !== "[object Array]"
 				|| d === Array.prototype) {
-			for (var i in s) {
+			for ( var i in s) {
 				if (s.hasOwnProperty(i)) {
 					if (k) {
 						if (!d[k]) {
@@ -39,7 +39,7 @@ Object.extend = function(d, s, k, m) {
 			}
 		} else {
 			for (var j = 0; j < d.length; j++) {
-				for (var i in s) {
+				for ( var i in s) {
 					if (s.hasOwnProperty(i)) {
 						if (k) {
 							if (!d[j]) {
@@ -68,85 +68,91 @@ Object.extend = function(d, s, k, m) {
 	return d;
 };
 
-Object.extend(Object, function() {
-	var doNoting = function(x) {
-		return x;
-	}, NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON
-			&& typeof JSON.stringify === "function"
-			&& JSON.stringify(0) === "0"
-			&& typeof JSON.stringify(doNoting) === "undefined";
-	return {
-		isEmpty : function(v) {
-			return v === null || v === undefined
-					|| ((Object.isArray(v) && !v.length))
-					|| (Object.isString(v) && v.trim() === "");
-		},
+Object
+		.extend(
+				Object,
+				function() {
+					var doNoting = function(x) {
+						return x;
+					}, NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON
+							&& typeof JSON.stringify === "function"
+							&& JSON.stringify(0) === "0"
+							&& typeof JSON.stringify(doNoting) === "undefined";
+					return {
+						isEmpty : function(v) {
+							return v === null || v === undefined
+									|| ((Object.isArray(v) && !v.length))
+									|| (Object.isString(v) && v.trim() === "");
+						},
 
-		isArray : function(v) {
-			return Object.prototype.toString.apply(v) === "[object Array]";
-		},
+						isArray : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Array]";
+						},
 
-		isDate : function(v) {
-			return Object.prototype.toString.apply(v) === "[object Date]";
-		},
+						isDate : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Date]";
+						},
 
-		isObject : function(v) {
-			return !!v
-					&& Object.prototype.toString.call(v) === "[object Object]";
-		},
+						isObject : function(v) {
+							return !!v
+									&& Object.prototype.toString.call(v) === "[object Object]";
+						},
 
-		isFunction : function(v) {
-			return Object.prototype.toString.apply(v) === "[object Function]";
-		},
+						isFunction : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Function]";
+						},
 
-		isNumber : function(v) {
-			return typeof v === "number" && isFinite(v);
-		},
+						isNumber : function(v) {
+							return typeof v === "number" && isFinite(v);
+						},
 
-		isString : function(v) {
-			return typeof v === "string";
-		},
+						isString : function(v) {
+							return typeof v === "string";
+						},
 
-		isBoolean : function(v) {
-			return typeof v === "boolean";
-		},
+						isBoolean : function(v) {
+							return typeof v === "boolean";
+						},
 
-		isDefined : function(v) {
-			return typeof v !== "undefined";
-		},
-		clone : function() {
-			return extend({}, this);
-		},
-		/*
-		 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
-		 * Object.isArray(d)) { for (var i = 0; i < d.length; i++) {
-		 * Object.each(s, function(j, v, o) { d[i].prototype[j] = v.value; }); } }
-		 * return d; },
-		 */
-		each : function(obj, fn, scope) {
-			return Object.enumerate(obj, fn, scope, false);
-		},
-		enumerate : function(obj, fn, scope, pt) {
-			if (Object.isEmpty(obj) || Object.isNumber(obj)
-					|| Object.isString(obj) || Object.isBoolean(obj)) {
-				return;
-			}
-			if (Object.isArray(obj)) {
-				if (fn.call(scope || obj[i], i, obj[i], obj) === false) {
-					return i;
-				}
-			} else {
-				for (var p in obj) {
-					if (pt || obj.hasOwnProperty(p)) {
-						if (fn.call(scope || obj[p], p, obj[p], obj) === false) {
-							return i;
-						}
-					}
-				}
-			}
-			return true;
-		},
-		toJSON : NATIVE_JSON_STRINGIFY_SUPPORT ? doNoting : doNoting,
-		toQueryString : doNoting
-	};
-}());
+						isDefined : function(v) {
+							return typeof v !== "undefined";
+						},
+						clone : function() {
+							return extend({}, this);
+						},
+						/*
+						 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
+						 * Object.isArray(d)) { for (var i = 0; i < d.length;
+						 * i++) { Object.each(s, function(j, v, o) {
+						 * d[i].prototype[j] = v.value; }); } } return d; },
+						 */
+						each : function(obj, fn, scope) {
+							return Object.enumerate(obj, fn, scope, false);
+						},
+						enumerate : function(obj, fn, scope, pt) {
+							if (Object.isEmpty(obj) || Object.isNumber(obj)
+									|| Object.isString(obj)
+									|| Object.isBoolean(obj)) {
+								return;
+							}
+							if (Object.isArray(obj)) {
+								if (fn.call(scope || obj[i], i, obj[i], obj) === false) {
+									return i;
+								}
+							} else {
+								for ( var p in obj) {
+									if (pt || obj.hasOwnProperty(p)) {
+										if (fn.call(scope || obj[p], p, obj[p],
+												obj) === false) {
+											return i;
+										}
+									}
+								}
+							}
+							return true;
+						},
+						toJSON : NATIVE_JSON_STRINGIFY_SUPPORT ? doNoting
+								: doNoting,
+						toQueryString : doNoting
+					};
+				}());

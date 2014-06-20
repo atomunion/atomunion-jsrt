@@ -47,17 +47,18 @@ $import("js.text.DateFormat");
  * 
  * Z 时区
  */
-Class.forName({
-	name : "abstract class js.text.SimpleDateFormat extends js.text.DateFormat",
-	'private _pattern' : null,
-	SimpleDateFormat : function(pattern) {
-		this._pattern = pattern;
-	},
+Class
+		.forName({
+			name : "abstract class js.text.SimpleDateFormat extends js.text.DateFormat",
+			'private _pattern' : null,
+			SimpleDateFormat : function(pattern) {
+				this._pattern = pattern;
+			},
 
-	/** 格式化一个对象以生成一个字符串。 */
-	'format' : function(obj) {
-	},
-	/** 从给定字符串的开始分析文本，以生成一个日期。 */
-	'parse' : function(source) {
-	}
-});
+			/** 格式化一个对象以生成一个字符串。 */
+			'format' : function(obj) {
+			},
+			/** 从给定字符串的开始分析文本，以生成一个日期。 */
+			'parse' : function(source) {
+			}
+		});

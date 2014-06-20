@@ -9,5 +9,5 @@
 $import("js.util.Map");
 
 Class.forName({
-			name : "class js.util.TreeMap extends js.util.Map"
-		});
+	name : "class js.util.TreeMap extends js.util.Map"
+});

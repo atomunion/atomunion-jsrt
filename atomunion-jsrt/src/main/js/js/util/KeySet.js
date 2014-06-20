@@ -10,12 +10,12 @@ $import("js.util.Set");
 $import("js.util.KeyIterator");
 
 Class.forName({
-			name : "class js.util.KeySet extends js.util.Set",
-			"private _element" : null,
-			KeySet : function(element) {
-				this._element = element;
-			},
-			iterator : function() {
-				return new js.util.KeyIterator(this._element);
-			}
-		});
+	name : "class js.util.KeySet extends js.util.Set",
+	"private _element" : null,
+	KeySet : function(element) {
+		this._element = element;
+	},
+	iterator : function() {
+		return new js.util.KeyIterator(this._element);
+	}
+});
