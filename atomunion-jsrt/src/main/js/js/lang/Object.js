@@ -117,9 +117,6 @@ Object
 						isDefined : function(v) {
 							return typeof v !== "undefined";
 						},
-						clone : function() {
-							return extend({}, this);
-						},
 						/*
 						 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
 						 * Object.isArray(d)) { for (var i = 0; i < d.length;
@@ -151,7 +148,7 @@ Object
 							}
 							return true;
 						},
-						toJSON : NATIVE_JSON_STRINGIFY_SUPPORT ? doNoting
+						toJson : NATIVE_JSON_STRINGIFY_SUPPORT ? doNoting
 								: doNoting,
 						toQueryString : doNoting
 					};

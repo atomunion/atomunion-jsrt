@@ -10,7 +10,6 @@ var dogClass = Class.forName({
 			"@Getter @Setter private color" : "black",
 			"@Getter @Setter private word" : "",
 			Dog : function(name, word) {
-				this.name = name;
 				this.word = word;
 			},
 			say : function() {

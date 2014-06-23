@@ -7,7 +7,7 @@
  */
 
 Class = function(c, classloader) {
-	var packages = null, fullName = null, name = null, superclass = null, type = null, superinterfaces = [], modifiers = null, annotations = null;
+	var obj = null, packages = null, fullName = null, name = null, superclass = null, type = null, superinterfaces = [], modifiers = null, annotations = null;
 	// 自身method和fields,不包含从父类继承来的
 
 	var fields = {}, methods = {}, statics = {};
@@ -17,13 +17,12 @@ Class = function(c, classloader) {
 	// statics : {}
 	// };
 	var empty = function() {
-	}, initial = null, init=null, constructor = function() {
+	}, initial = null, init = null, constructor = function() {
 		// 原始构造器
 		// 1设置class对象和hashCode值
 		this.$class = obj;
-		this._hashCode = new Date().getTime().toString(16);
 
-		// 2.1初始化继承父类属性
+		// 2.2初始化继承父类属性
 		var sc = obj.getSuperClass();
 		while (sc && sc != Object.$class) {
 			var f = sc.getFields();
@@ -33,11 +32,9 @@ Class = function(c, classloader) {
 					this[i] = value ? value.clone() : value;
 				}
 			}, this);
-			sc.getInitial().apply(this, arguments);
+			// sc.getInitial().apply(this, arguments);
 			sc = sc.getSuperClass();
 		}
-		//TODO 2.2调用父类构造器以及initial方法
-		
 
 		// 3初始化自身定义属性
 		Object.each(fields, function(i, v, o) {
@@ -45,7 +42,7 @@ Class = function(c, classloader) {
 			this[i] = value ? value.clone() : value;
 		}, this);
 
-		// 4用户构造器
+		// 4用户构造器,先调用父类构造器以及initial方法
 		(initial = initial || empty).apply(this, arguments);
 
 		// 5执行默认初始化方法
@@ -298,12 +295,12 @@ Class = function(c, classloader) {
 			constructor.prototype.constructor = constructor;
 
 			// toString()方法定义
-			if (superclass == Object.$class) {
-				constructor.prototype.toString = function() {
-					return this.getClass().getFullName() + " "
-							+ this.hashCode();
-				};
-			}
+			// if (superclass == Object.$class) {
+			// constructor.prototype.toString = function() {
+			// return this.getClass().getFullName() + " "
+			// + this.hashCode();
+			// };
+			// }
 		} else {
 			constructor = Object;
 		}
@@ -340,15 +337,12 @@ Class = function(c, classloader) {
 			return init;
 		},
 		getPackage : function() {
-			// TODO
 			return packages;
 		},
 		getDeclaredField : function(name) {
-			// TODO
 			return this.getField(name);
 		},
 		getDeclaredFields : function() {
-			// TODO
 			return this.getFields();
 		},
 		getField : function(name) {
@@ -362,11 +356,9 @@ Class = function(c, classloader) {
 			return fields;
 		},
 		getDeclaredMethod : function(name) {
-			// TODO
 			return this.getMethod(name);
 		},
 		getDeclaredMethods : function() {
-			// TODO
 			return this.getMethods();
 		},
 		getMethod : function(name) {
@@ -402,7 +394,10 @@ Class = function(c, classloader) {
 					doAnnotations(this, m);
 				}
 				if (m.getName() == name) {
-					initial = m.getValue();
+					// 将构造器代理，默认调用父类构造器
+					initial = proxy(m.getValue(),
+							(this.getSuperClass() || Object.$class)
+									.getInitial());
 				} else {
 					m.setValue(proxy(m.getValue()));
 					m.setDeclaringClass(this);
@@ -457,7 +452,7 @@ Class = function(c, classloader) {
 			return this;
 		}
 	};
-	var obj = new $class();
+	obj = new $class();
 	return obj;
 };
 Class.forName = function(c, loader) {
@@ -467,6 +462,9 @@ Object.$class = Class.forName({
 	name : "class Object",
 	/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
 	"private _version" : "0.1.1.0001",
+	Object : function() {
+		this._hashCode = new Date().getTime().toString(16);
+	},
 	getClass : function() {
 		return this.$class;
 	},
@@ -480,6 +478,10 @@ Object.$class = Class.forName({
 	hashCode : function() {
 		return this._hashCode;
 	},
+	toString : function() {
+		return this.getClass().getFullName() + " " + this.hashCode();
+	},
+
 	clone : function() {
 		var b = null;
 		if (this instanceof Number || this instanceof String
