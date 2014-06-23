@@ -1,7 +1,7 @@
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
- * Copyright 2008, 2014 atomunion, Inc. Released under the MIT license
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  * 
  * Date: Feb 10, 2014
  */
@@ -17,16 +17,15 @@ Class = function(c, classloader) {
 	// statics : {}
 	// };
 	var empty = function() {
-	}, initial = empty, init, constructor = function() {
+	}, initial = null, init=null, constructor = function() {
 		// 原始构造器
 		// 1设置class对象和hashCode值
 		this.$class = obj;
 		this._hashCode = new Date().getTime().toString(16);
 
-		// 2初始化继承父类属性
+		// 2.1初始化继承父类属性
 		var sc = obj.getSuperClass();
 		while (sc && sc != Object.$class) {
-			// 调用父类构造器
 			var f = sc.getFields();
 			Object.each(f, function(i, v, o) {
 				if (!fields[i]) {
@@ -37,6 +36,8 @@ Class = function(c, classloader) {
 			sc.getInitial().apply(this, arguments);
 			sc = sc.getSuperClass();
 		}
+		//TODO 2.2调用父类构造器以及initial方法
+		
 
 		// 3初始化自身定义属性
 		Object.each(fields, function(i, v, o) {
@@ -296,6 +297,7 @@ Class = function(c, classloader) {
 			constructor.prototype = new instanceclass;
 			constructor.prototype.constructor = constructor;
 
+			// toString()方法定义
 			if (superclass == Object.$class) {
 				constructor.prototype.toString = function() {
 					return this.getClass().getFullName() + " "
@@ -470,7 +472,7 @@ Object.$class = Class.forName({
 	},
 	/** 指示某个其他对象是否与此对象“相等”。 */
 	equals : function(obj) {
-		return obj == this;
+		return obj === this;
 	},
 	getVersion : function() {
 		return this._version;

@@ -1,7 +1,7 @@
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
- * Copyright 2008, 2014 atomunion, Inc. Released under the MIT license
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  * 
  * Date: Feb 19, 2014
  */

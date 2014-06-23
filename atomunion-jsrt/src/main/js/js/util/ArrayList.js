@@ -1,7 +1,7 @@
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
- * Copyright 2008, 2014 atomunion, Inc. Released under the MIT license
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  * 
  * Date: Feb 11, 2014
  */
@@ -32,7 +32,7 @@ Class.forName({
 		if (index != this.size()) {
 			this.rangeCheck(index);
 		}
-		this._table.splice(index, 0, element)
+		this._table.splice(index, 0, element);
 	},
 
 	/** 返回此列表 fromIndex（包括）和 toIndex（不包括）之间部分的视图。 */
