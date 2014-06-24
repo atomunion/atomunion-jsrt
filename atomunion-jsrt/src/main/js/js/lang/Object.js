@@ -79,6 +79,8 @@ Object
 							&& JSON.stringify(0) === "0"
 							&& typeof JSON.stringify(doNoting) === "undefined";
 					return {
+						
+						//TODO 增加isNull和isEmpty的区分
 						isEmpty : function(v) {
 							return v === null || v === undefined
 									|| ((Object.isArray(v) && !v.length))

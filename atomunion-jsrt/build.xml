@@ -2,13 +2,20 @@
 <project name="atomunion-jsrt" basedir="." default="">
 
 	<property name="project.name" value="${project.artifactId}" />
-	<property name="js.prefix.debug" value="jsrt.debug" />
 	<property name="js.prefix" value="jsrt" />
+	<property name="js.prefix.debug" value="${js.prefix}.debug" />
 	<property name="js.name.debug" value="${js.prefix.debug}.${project.version}.js" />
 	<property name="js.name" value="${js.prefix}.${project.version}.js" />
 
 	<property name="app.dir" location="${basedir}" />
 	<property name="current.dir" location="${ant.file}" />
+	<property name="web.dir" location="${basedir}/src/main/webapp" />
+	<property name="classpath.dir" location="${web.dir}/WEB-INF/classes" />
+	<property name="build.dir" location="build" />
+
+	<property name="web.master.dir" location="${web.dir}/WEB-INF/dev/js/libs/${js.prefix}/master" />
+	<property name="web.version.dir" location="${web.dir}/WEB-INF/dev/js/libs/${js.prefix}/${project.version}" />
+
 
 	<property name="src.dir" location="${app.dir}/src/main/js" />
 	<property name="test.src.dir" location="${app.dir}/src/test/js" />
@@ -17,21 +24,19 @@
 	<property name="test.compile.dir" location="${app.dir}/target/js-test" />
 
 	<target name="concat-js">
-		<echo
-			message="===================================================================">
+
+		<echo message="===================================================================">
 		</echo>
 		<echo message="target : concat-js">
 		</echo>
-		<echo
-			message="===================================================================">
+		<echo message="===================================================================">
 		</echo>
 
 		<delete dir="${compile.dir}">
 		</delete>
 		<mkdir dir="${compile.dir}" />
 
-		<concat destfile="${compile.dir}/${js.name.debug}" encoding="utf-8"
-			append="false">
+		<concat destfile="${compile.dir}/${js.name.debug}" encoding="utf-8" append="false">
 			<filelist dir="${src.dir}/">
 				<file name="js/lang/Object.js" />
 				<file name="js/lang/String.js" />
@@ -39,6 +44,9 @@
 				<file name="js/lang/Class.js" />
 				<file name="js/lang/ClassLoader.js" />
 				<file name="js/net/URLClassLoader.js" />
+				<file name="js/lang/Exception.js" />
+
+				<file name="js/test/TestUnit.js" />
 
 				<file name="js/lang/reflect/Constructor.js" />
 				<file name="js/lang/reflect/Field.js" />
@@ -46,7 +54,6 @@
 				<file name="js/lang/reflect/Modifier.js" />
 				<file name="js/lang/reflect/InvocationTargetException.js" />
 
-				<file name="js/lang/Exception.js" />
 				<file name="js/lang/IllegalAccessException.js" />
 				<file name="js/lang/IllegalArgumentException.js" />
 				<file name="js/lang/IllegalStateException.js" />
@@ -57,75 +64,161 @@
 				<file name="js/lang/UnsupportedOperationException.js" />
 				<file name="js/lang/ClassNotFoundException.js" />
 
+				<file name="js/io/Writer.js" />
+				<file name="js/io/PrintWriter.js" />
+				<file name="js/io/Console.js" />
+
 				<file name="js/lang/StringBuffer.js" />
 				<file name="js/lang/System.js" />
+
+				<file name="js/net/HTTP.js" />
+				<file name="js/net/Rest.js" />
+
+				<file name="js/text/Format.js" />
+				<file name="js/text/DateFormat.js" />
+				<file name="js/text/SimpleDateFormat.js" />
+
+				<file name="js/util/Iterator.js" />
+				<file name="js/util/LinkIterator.js" />
+				<file name="js/util/HashIterator.js" />
+				<file name="js/util/KeyIterator.js" />
+				<file name="js/util/ValueIterator.js" />
+
+				<file name="js/util/Collection.js" />
+				<file name="js/util/Set.js" />
+				<file name="js/util/KeySet.js" />
+
+				<file name="js/util/List.js" />
+				<file name="js/util/ValueList.js" />
+
+				<file name="js/util/Entry.js" />
+				<file name="js/util/EntrySet.js" />
+
+				<file name="js/util/Map.js" />
+				<file name="js/util/HashMap.js" />
+				<file name="js/util/TreeMap.js" />
+
+				<file name="js/util/ArrayList.js" />
+				<file name="js/util/Stack.js" />
+
+				<file name="js/util/HashSet.js" />
+				<file name="js/util/TreeSet.js" />
+
+				<file name="js/util/Calendar.js" />
+				<file name="js/util/GregorianCalendar.js" />
+
 			</filelist>
 		</concat>
 	</target>
 
 	<target name="concat-test">
-		<echo
-			message="===================================================================">
+		<echo message="===================================================================">
 		</echo>
 		<echo message="target : concat-test">
 		</echo>
-		<echo
-			message="===================================================================">
+		<echo message="===================================================================">
 		</echo>
 		<delete dir="${test.compile.dir}">
 		</delete>
 		<mkdir dir="${test.compile.dir}" />
-		<concat destfile="${test.compile.dir}/test.${js.name.debug}"
-			encoding="utf-8" append="false">
-			<fileset dir="${test.src.dir}/">
-				<include name="Test*.js" />
-			</fileset>
+		<concat destfile="${test.compile.dir}/test.${js.name.debug}" encoding="utf-8" append="false">
+			<filelist dir="${test.src.dir}/">
+				<file name="js/model/Animal.js" />
+				<file name="js/model/Dog.js" />
+				<file name="js/lang/TestObject.js" />
+				<file name="js/lang/reflect/TestClass.js" />
+				<file name="js/lang/reflect/TestField.js" />
+				<file name="js/lang/reflect/TestMethod.js" />
+				<file name="js/util/TestList.js" />
+				<file name="js/util/TestArrayList.js" />
+				<file name="js/util/TestHashSet.js" />
+				<file name="js/util/TestMap.js" />
+				<file name="js/util/TestHashMap.js" />
+			</filelist>
 		</concat>
 	</target>
 
 	<target name="yui" depends="concat-js,concat-test">
 
-		<echo
-			message="===================================================================">
+		<echo message="===================================================================">
 		</echo>
 		<echo message="target : yui ; 合并 压缩 js">
 		</echo>
-		<echo
-			message="===================================================================">
+		<echo message="===================================================================">
 		</echo>
 
 		<apply executable="java" dest="${compile.dir}/">
-			<fileset dir="${compile.dir}/" includes="**/${js.prefix.debug}.*.js" />
+			<fileset dir="${compile.dir}/" includes="**/${js.name.debug}" />
 			<arg line="-jar" />
 			<arg path="${yuicompressor.path}" />
 			<arg line="--charset utf-8" />
 			<arg value="-o" />
 			<targetfile />
-			<mapper type="glob" from="${js.prefix.debug}.*.js" to="${js.prefix}.*.js" />
+			<mapper type="glob" from="${js.name.debug}" to="${js.name}" />
 		</apply>
 		<apply executable="java" dest="${test.compile.dir}/">
-			<fileset dir="${test.compile.dir}/" includes="**/test.${js.prefix.debug}.*.js" />
+			<fileset dir="${test.compile.dir}/" includes="**/test.${js.name.debug}" />
 			<arg line="-jar" />
 			<arg path="${yuicompressor.path}" />
 			<arg line="--charset utf-8" />
 			<arg value="-o" />
 			<targetfile />
-			<mapper type="glob" from="test.${js.prefix.debug}.*.js" to="test.${js.prefix}.*.js" />
+			<mapper type="glob" from="test.${js.name.debug}" to="test.${js.name}" />
 		</apply>
-		
-		<delete dir="${app.dir}/src/test/html/js">
+
+
+		<echo message="===================================================================">
+		</echo>
+		<echo message="拷贝至开发目录">
+		</echo>
+		<echo message="===================================================================">
+		</echo>
+
+		<delete dir="${web.version.dir}">
 		</delete>
-		<mkdir dir="${app.dir}/src/test/html/js" />
-		
-		<copy todir="${app.dir}/src/test/html/js">
+		<mkdir dir="${web.version.dir}" />
+
+		<copy todir="${web.version.dir}">
 			<fileset dir="${compile.dir}" />
 		</copy>
-		<copy todir="${app.dir}/src/test/html/js">
+		<copy todir="${web.version.dir}/src">
+			<fileset dir="${src.dir}/" />
+		</copy>
+		<copy todir="${web.version.dir}/test">
+			<fileset dir="${test.compile.dir}" />
+		</copy>
+		<copy todir="${web.version.dir}/test/src">
+			<fileset dir="${test.src.dir}/" />
+		</copy>
+
+
+		<delete dir="${web.master.dir}">
+		</delete>
+		<mkdir dir="${web.master.dir}" />
+
+		<copy todir="${web.master.dir}">
 			<fileset dir="${compile.dir}" />
 		</copy>
-		<copy todir="${app.dir}/src/test/html/js">
-			<fileset dir="${test.src.dir}/js" />
+
+		<move file="${web.master.dir}/${js.name}" tofile="${web.master.dir}/${js.prefix}.master.js">
+		</move>
+		<move file="${web.master.dir}/${js.name.debug}" tofile="${web.master.dir}/${js.prefix.debug}.master.js">
+		</move>
+		<copy todir="${web.master.dir}/src">
+			<fileset dir="${src.dir}/" />
 		</copy>
+		<copy todir="${web.master.dir}/test">
+			<fileset dir="${test.compile.dir}" />
+		</copy>
+		<move file="${web.master.dir}/test/test.${js.name}" tofile="${web.master.dir}/test/test.${js.prefix}.master.js">
+		</move>
+		<move file="${web.master.dir}/test/test.${js.name.debug}" tofile="${web.master.dir}/test/test.${js.prefix.debug}.master.js">
+		</move>
+		<copy todir="${web.master.dir}/test/src">
+			<fileset dir="${test.src.dir}/" />
+		</copy>
+
+
 	</target>
 
 </project>
