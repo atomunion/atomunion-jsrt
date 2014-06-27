@@ -7,10 +7,10 @@
  */
 
 Class.forName({
-	name : "js.net.http.Rest extends Object",
+	name : "class js.net.http.Rest extends Object",
 	Rest : function() {
 	},
-	build : function() {
+	build : (function() {
 		var regx1 = /\/{2,}/g, regx2 = /\/$/g;
 		return function() {
 			if (arguments.length > 0) {
@@ -33,5 +33,5 @@ Class.forName({
 			}
 			return null;
 		};
-	}
+	})()
 });

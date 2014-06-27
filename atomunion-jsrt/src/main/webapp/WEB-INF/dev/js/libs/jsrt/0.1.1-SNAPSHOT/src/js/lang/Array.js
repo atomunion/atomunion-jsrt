@@ -6,7 +6,13 @@
  * Date: Feb 10, 2014
  */
 
-Object.extend(Array.prototype, {
+
+
+Class.forName({
+	name : "class Array",
+	alias:"js.lang.Array",
+	Array : function() {
+	},
 	clear : function() {
 		this.splice(0, this.length);
 	},

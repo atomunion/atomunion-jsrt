@@ -8,7 +8,7 @@
 
 Class.forName({
 	name : "class js.lang.IndexOutOfBoundsException extends js.lang.Exception",
-	"private name" : "IndexOutOfBoundsException",// 错误名
-	"private number" : 11
+	"private name" : "js.lang.IndexOutOfBoundsException",// 错误名
+	"private number" : 104
 // 错误号
 });

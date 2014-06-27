@@ -43,7 +43,7 @@ Class
 			put : function(key, value) {
 				var entry = key;
 				if (entry != null && entry != undefined
-						&& entry instanceof js.util.Entry.$class.instance) {
+						&& entry instanceof js.util.Entry) {
 					key = entry.getKey();
 					value = entry.getValue();
 				} else {

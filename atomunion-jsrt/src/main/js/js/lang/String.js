@@ -6,7 +6,11 @@
  * Date: Feb 10, 2014
  */
 
-Object.extend(String.prototype, {
+Class.forName({
+	name : "class String",
+	alias:"js.lang.String",
+	String : function() {
+	},
 	"public trim" : function() {
 		var re = /^\s+|\s+$/g;
 		return function() {
@@ -14,7 +18,9 @@ Object.extend(String.prototype, {
 		};
 	}(),
 	"public equals":function(s){
-		//TODO orverrite equals
-		return this === s;
+		return Object.isString(s) && this == s;
 	}
+	
+	
+	
 });

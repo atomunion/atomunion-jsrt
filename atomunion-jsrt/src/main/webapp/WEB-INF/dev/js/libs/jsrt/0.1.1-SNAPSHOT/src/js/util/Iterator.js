@@ -12,7 +12,7 @@ Class.forName({
 	"private _cursor" : 0,
 	"private _lastRet" : -1,
 	Iterator : function(element) {
-		this._element = element;
+		this._element = element || [];
 	},
 
 	hasNext : function() {

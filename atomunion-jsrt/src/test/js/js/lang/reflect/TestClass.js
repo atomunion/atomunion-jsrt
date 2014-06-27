@@ -1,11 +1,11 @@
 $import("js.model.Animal");
 $import("js.model.Dog");
-$import("js.test.TestUnit");
+$import("js.test.TestCase");
 
 var testReflectObject = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
-	name : "class test.lang.TestClass extends js.test.TestUnit",
+	name : "class test.lang.TestClass extends js.test.TestCase",
 	"@Test @Auto @Setter @Getter private dog" : testReflectObject.getClass(),
 	TestClass : function() {
 	},
@@ -65,13 +65,14 @@ Class.forName({
 	},
 	testAddMethod : function() {
 		this.addMethod(new js.lang.reflect.Method("testAddMethod", function() {
-					return "我是动态新增的方法";
-				}, this, 1, []));
+			return "我是动态新增的方法";
+		}, this, 1, []));
 		js.lang.System.out.println(testReflectObject.testAddMethod());
 	},
 	testAddField : function() {
-		js.lang.System.out.println(this.addField(new js.lang.reflect.Field(
-				"testAddField", "我是动态新增的属性", this, 1, ["@Getter", "@Setter"])));
+		js.lang.System.out.println(this
+				.addField(new js.lang.reflect.Field("testAddField",
+						"我是动态新增的属性", this, 1, [ "@Getter", "@Setter" ])));
 		js.lang.System.out.println(testReflectObject.getTestAddField());
 	},
 	testNewInstance : function() {
@@ -79,4 +80,5 @@ Class.forName({
 		js.lang.System.out.println(c.getColor());
 	}
 });
+
 new test.lang.TestClass();

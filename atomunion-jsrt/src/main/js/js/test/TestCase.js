@@ -7,11 +7,11 @@
  */
 
 Class.forName({
-	name : "class js.test.TestUnit extends Object",
+	name : "class js.test.TestCase extends Object",
 	"@Setter @Getter private _testObjects" : [],
 	"@Setter @Getter private _autoTestObjects" : [],
 	"@Setter @Getter private _testMethods" : [],
-	TestUnit : function() {
+	TestCase : function() {
 	},
 	init : function() {
 		this.reset();
@@ -97,22 +97,23 @@ Class.forName({
 		var obj = this.getTestObject(f);
 		var method = this.getTestMethod(m);
 
-		var name = m.charAt(4).toLowerCase() + m.substring(5);
+		var msg = [ "****TestCase { TestObject「", obj.toString(), "」,  Field「",
+				f.toString(), "」,  Method「", m.charAt(4).toLowerCase(),
+				m.substring(5), "」 }****" ];
 
-		var msg = "****test start [TestObject:" + obj + ",Field:" + f
-				+ ",method:" + name + "]****";
-		js.lang.System.out.group(msg);
+		js.lang.System.out.group(msg.join(""));
 
 		try {
 			method.call(obj);
 		} catch (e) {
-			js.lang.System.out.error("%s", "error: " + e.getName()
-					+ "   message: " + e.getMessage());
+			js.lang.System.out.error("%s", [ "Name<", e.getName(),
+					">;  Number<", e.getNumber(), ">;  Message<",
+					e.getMessage(), ">" ].join(""));
 		}
-//		if (!obj[name]) {
-//			js.lang.System.out.warn("%s",
-//					"this test unit case is not be promoted !");
-//		}
+		// if (!obj[name]) {
+		// js.lang.System.out.warn("%s",
+		// "this test unit case is not be promoted !");
+		// }
 		js.lang.System.out.groupEnd();
 	}
 });

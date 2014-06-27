@@ -38,15 +38,34 @@
 
 		<concat destfile="${compile.dir}/${js.name.debug}" encoding="utf-8" append="false">
 			<filelist dir="${src.dir}/">
-				<file name="js/lang/Object.js" />
-				<file name="js/lang/String.js" />
-				<file name="js/lang/Array.js" />
 				<file name="js/lang/Class.js" />
+				<file name="js/lang/Object.js" />
+				<file name="js/lang/Array.js" />
+				<file name="js/lang/Boolean.js" />
+				<file name="js/lang/Function.js" />
+				<file name="js/lang/Number.js" />
+				<file name="js/lang/RegExp.js" />
+				<file name="js/lang/String.js" />
+
 				<file name="js/lang/ClassLoader.js" />
 				<file name="js/net/URLClassLoader.js" />
+				
+				<file name="js/lang/Throwable.js" />
+				
+				<file name="js/lang/Error.js" />
+				<file name="js/lang/EvalError.js" />
+				<file name="js/lang/RangeError.js" />
+				<file name="js/lang/ReferenceError.js" />
+				<file name="js/lang/SyntaxError.js" />
+				<file name="js/lang/TypeError.js" />
+				<file name="js/lang/URIError.js" />
+				
 				<file name="js/lang/Exception.js" />
+				
+				<file name="js/test/AssertionError.js" />
 
-				<file name="js/test/TestUnit.js" />
+				<file name="js/test/TestCase.js" />
+				<file name="js/test/Assert.js" />
 
 				<file name="js/lang/reflect/Constructor.js" />
 				<file name="js/lang/reflect/Field.js" />
@@ -71,7 +90,7 @@
 				<file name="js/lang/StringBuffer.js" />
 				<file name="js/lang/System.js" />
 
-				<file name="js/net/HTTP.js" />
+				<file name="js/net/Http.js" />
 				<file name="js/net/Rest.js" />
 
 				<file name="js/text/Format.js" />
@@ -104,6 +123,7 @@
 				<file name="js/util/HashSet.js" />
 				<file name="js/util/TreeSet.js" />
 
+				<file name="js/util/Date.js" />
 				<file name="js/util/Calendar.js" />
 				<file name="js/util/GregorianCalendar.js" />
 

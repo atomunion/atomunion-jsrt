@@ -8,7 +8,7 @@
 
 Class.forName({
 	name : "class js.lang.IllegalStateException extends js.lang.Exception",
-	"private name" : "IllegalStateException",// 错误名
-	"private number" : 22
+	"private name" : "js.lang.IllegalStateException",// 错误名
+	"private number" : 103
 // 错误号
 });

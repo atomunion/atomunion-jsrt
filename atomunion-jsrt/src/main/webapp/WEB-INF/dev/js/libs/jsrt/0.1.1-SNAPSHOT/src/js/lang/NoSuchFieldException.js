@@ -8,6 +8,6 @@
 
 Class.forName({
 	name : "class js.lang.NoSuchFieldException extends js.lang.Exception",
-	"private name" : "NoSuchFieldException",
-	"private number" : 8
+	"private name" : "js.lang.NoSuchFieldException",
+	"private number" : 105
 });

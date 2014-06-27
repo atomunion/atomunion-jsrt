@@ -72,13 +72,12 @@ Object
 		.extend(
 				Object,
 				function() {
-					var doNoting = function(x) {
-						return x;
-					}, NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON
-							&& typeof JSON.stringify === "function"
-							&& JSON.stringify(0) === "0"
-							&& typeof JSON.stringify(doNoting) === "undefined";
 					return {
+						// TODO 增加isNull和isEmpty的区分
+						isNull : function(v) {
+							return v === null || v === undefined;
+						},
+
 						isEmpty : function(v) {
 							return v === null || v === undefined
 									|| ((Object.isArray(v) && !v.length))
@@ -117,6 +116,10 @@ Object
 						isDefined : function(v) {
 							return typeof v !== "undefined";
 						},
+
+						isInstanceof : function(sub, sup) {
+							return sub instanceof sup;
+						},
 						/*
 						 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
 						 * Object.isArray(d)) { for (var i = 0; i < d.length;
@@ -147,121 +150,12 @@ Object
 								}
 							}
 							return true;
-						},
-						toJson : NATIVE_JSON_STRINGIFY_SUPPORT ? doNoting
-								: doNoting,
-						toQueryString : doNoting
+						}
 					};
 				}());
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 10, 2014
- */
 
-Object.extend(String.prototype, {
-	"public trim" : function() {
-		var re = /^\s+|\s+$/g;
-		return function() {
-			return this.replace(re, "");
-		};
-	}(),
-	"public equals":function(s){
-		//TODO orverrite equals
-		return this === s;
-	}
-});
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 10, 2014
- */
+(function() {
 
-Object.extend(Array.prototype, {
-	clear : function() {
-		this.splice(0, this.length);
-	},
-	contains : function(elem) {
-		return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
-	},
-	indexOf : function(elem) {
-		for (var i = 0; i < this.length; i++) {
-			if (this[i] === elem) {
-				return i;
-			}
-		}
-		return -1;
-	},
-	append : function(array, start, end) {
-		if (!Object.isEmpty(array) && Object.isArray(array)) {
-			start = start || 0;
-			end = (end && end > start && end < array.length) ? end
-					: array.length;
-			var parameter = Array.prototype.slice.call(array, start, end);
-			Array.prototype.splice.call(parameter, 0, 0, this.length, 0);
-			Array.prototype.splice.apply(this, parameter);
-		}
-		return this;
-	}
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 10, 2014
- */
-
-Class = function(c, classloader) {
-	var obj = null, packages = null, fullName = null, name = null, superclass = null, type = null, superinterfaces = [], modifiers = null, annotations = null;
-	// 自身method和fields,不包含从父类继承来的
-
-	var fields = {}, methods = {}, statics = {};
-	// var reflect = {
-	// fields : {},
-	// methods : {},
-	// statics : {}
-	// };
-	var empty = function() {
-	}, initial = null, init = null, constructor = function() {
-		// 原始构造器
-		// 1设置class对象和hashCode值
-		this.$class = obj;
-
-		// 2.2初始化继承父类属性
-		var sc = obj.getSuperClass();
-		while (sc && sc != Object.$class) {
-			var f = sc.getFields();
-			Object.each(f, function(i, v, o) {
-				if (!fields[i]) {
-					var value = v.getValue();
-					this[i] = value ? value.clone() : value;
-				}
-			}, this);
-			// sc.getInitial().apply(this, arguments);
-			sc = sc.getSuperClass();
-		}
-
-		// 3初始化自身定义属性
-		Object.each(fields, function(i, v, o) {
-			var value = v.getValue();
-			this[i] = value ? value.clone() : value;
-		}, this);
-
-		// 4用户构造器,先调用父类构造器以及initial方法
-		(initial = initial || empty).apply(this, arguments);
-
-		// 5执行默认初始化方法
-		(init = init || this.init || empty).apply(this, arguments);
-
-		// 6防止用户构造器修改class对象
-		if (this.$class != obj)
-			this.$class = obj;
-	}, instanceclass = function() {
-	};
 	var fetch = function(name, callback, scope) {
 		if (Object.isEmpty(name)) {
 			return null;
@@ -329,12 +223,12 @@ Class = function(c, classloader) {
 		var index1 = m.indexOf("class ");
 		var index2 = m.indexOf("interface ");
 
-		var modify = null, type = null, name = null, extend = null, implement = null;
+		var modify = null, type = null, n = null, extend = null, implement = null;
 		if (index1 === -1 && index2 === -1) {
 			// method,field
 			var index = m.lastIndexOf(" ");
 			modify = (index === -1 ? "" : m.substring(0, index + 1));
-			name = m.substring(index + 1);
+			n = m.substring(index + 1);
 		} else {
 			var index = null;
 			if (index1 != -1) {
@@ -345,8 +239,9 @@ Class = function(c, classloader) {
 				type = "interface";
 			}
 			modify = m.substring(0, index);
-			var defs = m.substring(index + 1).split(" "), len = defs.length;
-			name = defs[1];
+			// FIXME var defs = m.substring(index + 1).split(" ")
+			var defs = m.substring(index).split(" "), len = defs.length;
+			n = defs[1];
 			if (len >= 4) {
 				if (defs[2] === "extends") {
 					extend = defs[3];
@@ -400,7 +295,7 @@ Class = function(c, classloader) {
 			annotations : m.match(regx) || [],
 			modifiers : modifiers,
 			type : type,
-			name : name,
+			name : n,
 			extend : extend,
 			implement : implement
 		};
@@ -432,7 +327,7 @@ Class = function(c, classloader) {
 					return result;
 				};
 	};
-	var doAnnotations = function(self, m) {
+	var doAnnotations = function(self, m, methods) {
 		if (Object.isFunction(m.getValue())) {
 			// 方法上的注解
 		} else {
@@ -464,55 +359,172 @@ Class = function(c, classloader) {
 			}
 		}
 	};
-	var $class = function() {
-		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy implements
+
+	var $class = function(c, classloader) {
+		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
+		// implements
 		// zzz,ttt
-		var modify = convert(c["name"]);
-		modifiers = modify.modifiers;
-		annotations = modify.annotations;
-		type = modify.type;
-		fullName = modify.name;
-		superclassDef = modify.extend;
-		superinterfacesDef = modify.implement, root = false;
+		var modify = convert(c["name"]), isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement,
 
-		if (fullName != "Object") {
-			name = fetch(fullName, function(name, value) {
-				value[name] = constructor;
-				value[name].$class = this;
-				packages = value;
-				return name;
-			}, this);
+		empty = function() {
+		}, obj = this;
 
-			if (superinterfacesDef) {
-				var len = superinterfacesDef.length;
+		// 自身method和fields,不包含从父类继承来的
+		this.fields = {};
+		this.methods = {};
+		this.statics = {};
+
+		this.modifiers = modify.modifiers;
+		this.annotations = modify.annotations;
+		this.type = modify.type;
+		this.fullName = modify.name;
+		this.alias = c["alias"];
+		this.packages = null;
+		this.name = null;
+		this.superClass = null;
+		this.superInterfaces = [];
+
+		this.classloader = classloader;
+		this.instanceclass = function() {
+		};
+
+		switch (this.fullName) {
+
+		case 'Object':
+			isRoot = true;
+			this.classConstructor = Object;
+			break;
+		case 'Function':
+			this.classConstructor = Function;
+			break;
+		case 'Array':
+			this.classConstructor = Array;
+			break;
+		case 'String':
+			this.classConstructor = String;
+			break;
+		case 'Boolean':
+			this.classConstructor = Boolean;
+			break;
+		case 'Number':
+			this.classConstructor = Number;
+			break;
+		case 'Date':
+			this.classConstructor = Date;
+			break;
+		case 'RegExp':
+			this.classConstructor = RegExp;
+			break;
+		case 'Error':
+			this.classConstructor = Error;
+			break;
+		case 'EvalError':
+			this.classConstructor = EvalError;
+			break;
+		case 'RangeError':
+			this.classConstructor = RangeError;
+			break;
+		case 'ReferenceError':
+			this.classConstructor = ReferenceError;
+			break;
+		case 'SyntaxError':
+			this.classConstructor = SyntaxError;
+			break;
+		case 'TypeError':
+			this.classConstructor = TypeError;
+			break;
+		case 'URIError':
+			this.classConstructor = URIError;
+			break;
+
+		default:
+			isKernel = false;
+
+			this.classConstructor = function() {
+				// 原始构造器
+				// 1设置class对象和hashCode值
+				this.$class = obj;
+
+				// 2.2初始化继承父类属性
+				var sc = obj.getSuperClass();
+				while (sc) {
+					var f = sc.getFields();
+					Object.each(f, function(i, v, o) {
+						if (!obj.getFields()[i]) {
+							var value = v.getValue();
+							this[i] = value ? value.clone() : value;
+						}
+					}, this);
+					// sc.getInitial().apply(this, arguments);
+					sc = sc.getSuperClass();
+				}
+
+				// 3初始化自身定义属性
+				Object.each(obj.getFields(), function(i, v, o) {
+					var value = v.getValue();
+					this[i] = value ? value.clone() : value;
+				}, this);
+
+				// 4用户构造器,先调用父类构造器以及initial方法
+				var initial = obj.getInitial();
+				initial && initial.apply(this, arguments);
+
+				// 5执行默认初始化方法
+				var init = obj.getInit();
+				(init = init || this.init || empty).apply(this, arguments);
+
+				// 6防止用户构造器修改class对象
+				if (this.$class != obj)
+					this.$class = obj;
+			};
+
+			break;
+		}
+
+		this.instance = this.classConstructor;
+
+		this.name = fetch(this.fullName, function(name, value) {
+			value[name] = this.classConstructor;
+			value[name].$class = this;
+			packages = value;
+			return name;
+		}, this);
+
+		// 默认无参构造函数
+		if (!c[this.name]) {
+			c[this.name] = empty;
+		}
+
+		if (!isRoot) {
+
+			if (superInterfacesDef) {
+				var len = superInterfacesDef.length;
 				for (var i = 0; i < len; i++) {
-					superinterfaces[i] = fetch(superinterfacesDef[i], function(
-							name, value) {
-						return value[name];
-					}).$class;
+					this.superInterfaces[i] = fetch(superInterfacesDef[i],
+							function(name, value) {
+								return value[name];
+							}).$class;
 				}
 			}
-			superclass = (fetch(superclassDef, function(name, value) {
+
+			this.superClass = (fetch(superClassDef, function(name, value) {
 				return value[name];
 			}) || Object).$class;
 
 			// TODO 判断父类是否final
+			if (!isKernel) {
 
-			instanceclass.prototype = ((superclass) ? superclass.instance
-					: Object).prototype;
-			constructor.prototype = new instanceclass;
-			constructor.prototype.constructor = constructor;
+				this.instanceclass.prototype = ((this.superClass) ? this.superClass.instance
+						: Object).prototype;
+				this.classConstructor.prototype = new this.instanceclass;
+				this.classConstructor.prototype.constructor = this.classConstructor;
 
-			// toString()方法定义
-			// if (superclass === Object.$class) {
-			// constructor.prototype.toString = function() {
-			// return this.getClass().getFullName() + " "
-			// + this.hashCode();
-			// };
-			// }
-		} else {
-			root = true;
-			constructor = Object;
+				if (this.superClass === Object.$class) {
+					// TODO 拷贝js.lang.Object中的toString方法
+					this.classConstructor.prototype.toString = Object.$class
+							.getMethod("toString").getValue();
+				}
+			}
 		}
 
 		Object.each(c, function(i, v, o) {
@@ -520,39 +532,43 @@ Class = function(c, classloader) {
 				var m = convert(i);
 				m = new attribute(m.name, v, this, m.modifiers, m.annotations);
 				if (Object.isFunction(v)) {
-					//确保Object的toString为原生
-					if (root && m.getName() === "toString") {
+					// 确保toString为原生
+					if (isKernel && m.getName() === "toString") {
+						this.methods[m.getName()] = m;
 						return true;
 					}
-					this.addMethod(m);
-
+					this.addMethod(m, isKernel);
 				} else {
 					this.addField(m);
 				}
 			}
 		}, this);
-		this.instance = constructor;
+
+		fetch(this.alias, function(name, value) {
+			value[name] = this.classConstructor;
+		}, this);
+
 		return this;
 	};
 	$class.prototype = {
 		getClassLoader : function() {
 
-			return classloader
+			return this.classloader
 					|| (window.js.lang.ClassLoader ? js.lang.ClassLoader
 							.getSystemClassLoader() : null);
 		},
 
 		getConstructor : function() {
-			return constructor;
+			return this.classConstructor;
 		},
 		getInitial : function() {
-			return initial;
+			return this.initial;
 		},
 		getInit : function() {
-			return init;
+			return this.init;
 		},
 		getPackage : function() {
-			return packages;
+			return this.packages;
 		},
 		getDeclaredField : function(name) {
 			return this.getField(name);
@@ -561,14 +577,14 @@ Class = function(c, classloader) {
 			return this.getFields();
 		},
 		getField : function(name) {
-			var v = fields[name];
+			var v = this.fields[name];
 			if (v) {
 				return v;
 			}
 			throw new js.lang.NoSuchFieldException();
 		},
 		getFields : function() {
-			return fields;
+			return this.fields;
 		},
 		getDeclaredMethod : function(name) {
 			return this.getMethod(name);
@@ -577,42 +593,47 @@ Class = function(c, classloader) {
 			return this.getMethods();
 		},
 		getMethod : function(name) {
-			var v = methods[name];
+			var v = this.methods[name];
 			if (v) {
 				return v;
 			}
 			throw new js.lang.NoSuchMethodException();
 		},
 		getMethods : function() {
-			return methods;
+			return this.methods;
 		},
 		getName : function() {
 			return name;
 		},
 		getFullName : function() {
-			return fullName;
+			return this.fullName;
 		},
 		getSuperClass : function() {
-			return superclass;
+			return this.superClass;
 		},
 		getModifiers : function() {
-			return modifiers;
+			return this.modifiers;
 		},
 		getAnnotations : function() {
-			return annotations;
+			return this.annotations;
 		},
 
 		// 构造器必须公有静态方法必须公有
 		addMethod : function(m) {
 			if (!Object.isEmpty(m) && Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m);
+					doAnnotations(this, m, this.methods);
 				}
-				if (m.getName() === name) {
-					// 将构造器代理，默认调用父类构造器
-					initial = proxy(m.getValue(),
-							(this.getSuperClass() || Object.$class)
-									.getInitial());
+				var n = m.getName();
+				if (n === this.name) {
+					if (this.name === "Object") {
+						this.initial = m.getValue();
+					} else {
+						// 将构造器代理，默认调用父类构造器
+						this.initial = proxy(m.getValue(), (this
+								.getSuperClass() || Object.$class).getInitial());
+					}
+
 				} else {
 					m.setValue(proxy(m.getValue()));
 					m.setDeclaringClass(this);
@@ -620,17 +641,20 @@ Class = function(c, classloader) {
 					if (window.js && window.js.lang && window.js.lang.reflect
 							&& window.js.lang.reflect.Method
 							&& window.js.lang.reflect.Method.loaded) {
-						m = new window.js.lang.reflect.Method(m.getName(), m
-								.getValue(), this, m.getModifiers(), m
-								.getAnnotations());
+						m = new window.js.lang.reflect.Method(n, m.getValue(),
+								this, m.getModifiers(), m.getAnnotations());
 					}
 
 					if ((m.getModifiers() & 8) != 0) {
-						constructor[m.getName()] = m.getValue();
-						statics[m.getName()] = m;
+						this.classConstructor[n] = m.getValue();
+						this.statics[n] = m;
 					} else {
-						constructor.prototype[m.getName()] = m.getValue();
-						methods[m.getName()] = m;
+						this.classConstructor.prototype[n] = m.getValue();
+						this.methods[n] = m;
+					}
+
+					if (n === "init") {
+						this.init = n;
 					}
 				}
 			}
@@ -638,7 +662,7 @@ Class = function(c, classloader) {
 		addField : function(m) {
 			if (!Object.isEmpty(m) && !Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m);
+					doAnnotations(this, m, this.methods);
 				}
 				m.setDeclaringClass(this);
 				if (window.js && window.js.lang && window.js.lang.reflect
@@ -650,38 +674,79 @@ Class = function(c, classloader) {
 				}
 
 				if ((m.getModifiers() & 8) != 0) {
-					constructor[m.getName()] = m.getValue();
-					statics[m.getName()] = m;
+					this.classConstructor[m.getName()] = m.getValue();
+					this.statics[m.getName()] = m;
 				} else {
-					fields[m.getName()] = m;
+					this.fields[m.getName()] = m;
 				}
 			}
 		},
 		getInstance : function() {
-			return constructor;
+			return this.instance;
+		},
+		isInstance : function(obj) {
+			return Object.isNull(obj) ? false : obj.getClass() === this;
 		},
 		newInstance : function() {
-			return new constructor();
+			return new this.classConstructor();
 		},
 		clone : function() {
 			return this;
+		},
+
+		isAssignableFrom : function() {
+			// TODO
+			return false;
+		},
+
+		isInterface : function() {
+			// TODO
+			return false;
+		},
+
+		isArray : function() {
+			// TODO
+			return false;
+		},
+		isPrimitive : function() {
+			// TODO
+			return false;
+		},
+		isAnnotation : function() {
+			// TODO
+			return false;
 		}
+
 	};
-	obj = new $class();
-	return obj;
-};
-Class.forName = function(c, loader) {
-	return new Class(c, loader);
-};
+
+	Class = function() {
+	};
+	Class.forName = function(cls, classloader) {
+		return new $class(cls, classloader);
+	};
+})();
+
+// TODO
+// Function,Array,String,Boolean,Number,Date,RegExp,Error,EvalError,RangeError,ReferenceError,SyntaxError,TypeError,URIError对象的$class属性
+
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 10, 2014
+ */
+
 Object.$class = Class.forName({
 	name : "class Object",
+	alias : "js.lang.Object",
 	/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
 	"private _version" : "0.1.1.0001",
 	Object : function() {
 		this._hashCode = new Date().getTime().toString(16);
 	},
 	getClass : function() {
-		return this.$class;
+		return this.$class || Object.$class;
 	},
 	/** 指示某个其他对象是否与此对象“相等”。 */
 	equals : function(obj) {
@@ -694,7 +759,8 @@ Object.$class = Class.forName({
 		return this._hashCode;
 	},
 	toString : function() {
-		return this.getClass().getFullName() + " " + this.hashCode();
+		// TODO String,Number,Boolean,Array等的toString()方法
+		return this.getClass().getFullName() + "<" + this.hashCode() + ">";
 	},
 
 	clone : function() {
@@ -727,9 +793,168 @@ Object.$class = Class.forName({
 			}
 		}
 		return b;
+	},
+	toJson : (function() {
+		var NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON
+				&& typeof JSON.stringify === "function"
+				&& JSON.stringify(0) === "0"
+				&& typeof JSON.stringify(function() {
+				}) === "undefined";
+		return function() {
+			if (NATIVE_JSON_STRINGIFY_SUPPORT) {
+				// TODO 只取public属性
+
+				return this;
+				// return JSON.stringify(this);
+			}
+			return this;
+		};
+	})(),
+	toQueryString : function() {
+		// TODO
+		return this;
+	}
+});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 10, 2014
+ */
+
+
+
+Class.forName({
+	name : "class Array",
+	alias:"js.lang.Array",
+	Array : function() {
+	},
+	clear : function() {
+		this.splice(0, this.length);
+	},
+	contains : function(elem) {
+		return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
+	},
+	indexOf : function(elem) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] === elem) {
+				return i;
+			}
+		}
+		return -1;
+	},
+	append : function(array, start, end) {
+		if (!Object.isEmpty(array) && Object.isArray(array)) {
+			start = start || 0;
+			end = (end && end > start && end < array.length) ? end
+					: array.length;
+			var parameter = Array.prototype.slice.call(array, start, end);
+			Array.prototype.splice.call(parameter, 0, 0, this.length, 0);
+			Array.prototype.splice.apply(this, parameter);
+		}
+		return this;
+	}
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+Class.forName({
+	name : "class Boolean",
+	alias:"js.lang.Boolean",
+	Boolean : function() {
+	},
+	"public equals" : function(s) {
+		return this == s;
+	}
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+Class.forName({
+	name : "class Function",
+	alias:"js.lang.Function",
+	Function : function() {
+	}
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+Class.forName({
+	name : "class Number",
+	
+	alias:"js.lang.Number",
+	Number : function() {
+	},
+	"public equals" : function(s) {
+		return this == s;
 	}
 
-});/*
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+
+Class.forName({
+	name : "class RegExp",
+	alias:"js.lang.RegExp",
+	RegExp : function() {
+	}
+});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 10, 2014
+ */
+
+Class.forName({
+	name : "class String",
+	alias:"js.lang.String",
+	String : function() {
+	},
+	"public trim" : function() {
+		var re = /^\s+|\s+$/g;
+		return function() {
+			return this.replace(re, "");
+		};
+	}(),
+	"public equals":function(s){
+		return this == s;
+	}
+	
+	
+	
+});
+/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
@@ -1045,29 +1270,30 @@ Class
 $import = function(name) {
 	// 1判断内存中是否存在 ， 2判断当前ClassLoader是否加载过。
 	js.lang.ClassLoader.getSystemClassLoader().loadClass(name);
-};/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
+};/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
  */
 
 Class.forName({
-	name : "class js.lang.Exception extends Object",
+	name : "class js.lang.Throwable extends Object",
 	"private message" : null,// 错误信息,多同description
-	"private name" : null,// 错误名
+	"private name" : "js.lang.Throwable",// 错误名
 	"private number" : null,// 错误号
 	"private description" : null,// 描述
 	"private fileName" : null,// 错误发生的文件( Only in FF )
 	"private stack" : null,// 错误发生时的调用堆栈 FF Only 属性
 	"private lineNumber" : null,
-	Exception : function(message, fileName, lineNumber, stack) {
+	Throwable : function(message, fileName, lineNumber, stack) {
 		this.message = message;
 		this.fileName = fileName;
 		this.stack = stack;
 		this.lineNumber = lineNumber;
-		this.name = "Exception";
 	},
 	getName : function() {
 		return this.name;
@@ -1091,14 +1317,222 @@ Class.forName({
 		return this.lineNumber;
 	}
 });
-Object.extend([ Error, EvalError, RangeError, ReferenceError, SyntaxError,
-		TypeError, URIError ], js.lang.Exception.$class.getMethods(),
-		'prototype', '_value');
-
-/**
- * ⅰ.静态方法 ⅱ.抽象类 ⅲ.类型（prototype，instanceof） ⅳ.继承 ⅴ.封装 ⅵ.class对象，反射
+/*Object.extend([ Error, EvalError, RangeError, ReferenceError, SyntaxError,
+TypeError, URIError ], js.lang.Throwable.$class.getMethods(),
+'prototype', '_value');*//*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
  */
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class Error",
+	alias:"js.lang.Error",
+	
+	"private name" : "js.lang.Error",// 错误名
+	"private number" : 1,
+	
+	Error : function(message, fileName, lineNumber, stack) {
+		this.message = message;
+		this.fileName = fileName;
+		this.stack = stack;
+		this.lineNumber = lineNumber;
+	}
+
+
+});
+
+Object.extend(Error, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+
+/*Object.extend([ Error, EvalError, RangeError, ReferenceError, SyntaxError,
+TypeError, URIError ], js.lang.Throwable.$class.getMethods(),
+'prototype', '_value');*//*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class EvalError",
+	alias:"js.lang.EvalError",
+	
+	"private name" : "js.lang.EvalError",// 错误名
+	"private number" : 2,
+	
+	EvalError : function() {
+	}
+});
+
+Object.extend(EvalError, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class RangeError",
+	alias:"js.lang.RangeError",
+	
+	"private name" : "js.lang.RangeError",// 错误名
+	"private number" : 3,
+	
+	RangeError : function() {
+	}
+});
+Object.extend(RangeError, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class ReferenceError",
+	alias:"js.lang.ReferenceError",
+	
+	"private name" : "js.lang.ReferenceError",// 错误名
+	"private number" : 4,
+	
+	ReferenceError : function() {
+	}
+});
+
+Object.extend(ReferenceError, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class SyntaxError",
+	alias:"js.lang.SyntaxError",
+	
+	"private name" : "js.lang.SyntaxError",// 错误名
+	"private number" : 5,
+	
+	SyntaxError : function() {
+	}
+});
+
+Object.extend(SyntaxError, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class TypeError",
+	alias:"js.lang.TypeError",
+	
+	"private name" : "js.lang.TypeError",// 错误名
+	"private number" : 6,
+	
+	TypeError : function() {
+	}
+});
+
+Object.extend(TypeError, js.lang.Throwable.$class.getMethods(),
+        'prototype', '_value');
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+$import("js.lang.Throwable");
+
+Class.forName({
+	name : "class URIError",
+	alias:"js.lang.URIError",
+	
+	"private name" : "js.lang.URIError",// 错误名
+	"private number" : 7,
+	
+	URIError : function() {
+	}
+});
+
+Object.extend(URIError, js.lang.Throwable.$class.getMethods(),
+                'prototype', '_value');
 /*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+$import("js.lang.Throwable");
+Class.forName({
+	name : "class js.lang.Exception extends js.lang.Throwable",
+
+	"private name" : "js.lang.Exception",// 错误名
+	"private number" : 0,// 错误号
+	
+	Exception : function(message, fileName, lineNumber, stack) {
+		this.message = message;
+		this.fileName = fileName;
+		this.stack = stack;
+		this.lineNumber = lineNumber;
+	}
+
+});
+
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+
+$import("js.lang.Error");
+Class.forName({
+	name : "class js.test.AssertionError extends js.lang.Error",
+	"private name" : "js.test.AssertionError",// 错误名
+	"private number" : -1
+	
+
+});/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
@@ -1107,11 +1541,11 @@ Object.extend([ Error, EvalError, RangeError, ReferenceError, SyntaxError,
  */
 
 Class.forName({
-	name : "class js.test.TestUnit extends Object",
+	name : "class js.test.TestCase extends Object",
 	"@Setter @Getter private _testObjects" : [],
 	"@Setter @Getter private _autoTestObjects" : [],
 	"@Setter @Getter private _testMethods" : [],
-	TestUnit : function() {
+	TestCase : function() {
 	},
 	init : function() {
 		this.reset();
@@ -1197,25 +1631,313 @@ Class.forName({
 		var obj = this.getTestObject(f);
 		var method = this.getTestMethod(m);
 
-		var name = m.charAt(4).toLowerCase() + m.substring(5);
+		var msg = [ "****TestCase { TestObject「", obj.toString(), "」,  Field「",
+				f.toString(), "」,  Method「", m.charAt(4).toLowerCase(),
+				m.substring(5), "」 }****" ];
 
-		var msg = "****test start [TestObject:" + obj + ",Field:" + f
-				+ ",method:" + name + "]****";
-		js.lang.System.out.group(msg);
+		js.lang.System.out.group(msg.join(""));
 
 		try {
 			method.call(obj);
 		} catch (e) {
-			js.lang.System.out.error("%s", "error: " + e.getName()
-					+ "   message: " + e.getMessage());
+			js.lang.System.out.error("%s", [ "Name<", e.getName(),
+					">;  Number<", e.getNumber(), ">;  Message<",
+					e.getMessage(), ">" ].join(""));
 		}
-//		if (!obj[name]) {
-//			js.lang.System.out.warn("%s",
-//					"this test unit case is not be promoted !");
-//		}
+		// if (!obj[name]) {
+		// js.lang.System.out.warn("%s",
+		// "this test unit case is not be promoted !");
+		// }
 		js.lang.System.out.groupEnd();
 	}
 });
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+$import("js.test.AssertionError");
+/**
+ * A set of assertion methods useful for writing tests. Only failed assertions
+ * are recorded. These methods can be used directly:
+ * <code>Assert.assertEquals(...)</code>, however, they read better if they
+ * are referenced through static import:<br/>
+ * 
+ * <pre>
+ * $import(&quot;js.test.Assert&quot;);
+ *    ...
+ *    js.test.Assert.assertEquals(...);
+ * </pre>
+ * 
+ * @see AssertionError
+ */
+Class
+		.forName({
+			name : "public class js.test.Assert",
+			/**
+			 * Protect constructor since it is a static only class
+			 */
+			"protected Assert" : function() {
+			},
+			/**
+			 * Fails a test with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @see AssertionError
+			 */
+			"static public void fail" : function(message) {
+				throw new js.test.AssertionError(message);
+			},
+			/**
+			 * Asserts that a condition is true. If it isn't it throws an
+			 * {@link AssertionError} with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param condition
+			 *            condition to be checked
+			 */
+			"static public void assertTrue" : function(message, condition) {
+				if (!condition) {
+					js.test.Assert.fail(message);
+				}
+			},
+
+			/**
+			 * Asserts that a condition is false. If it isn't it throws an
+			 * {@link AssertionError} with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param condition
+			 *            condition to be checked
+			 */
+			"static public void assertFalse" : function(message, condition) {
+				js.test.Assert.assertTrue(message, !condition);
+			},
+
+			/**
+			 * Asserts that two objects are equal. If they are not, an
+			 * {@link AssertionError} is thrown with the given message. If
+			 * <code>expected</code> and <code>actual</code> are
+			 * <code>null</code>, they are considered equal.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param expected
+			 *            expected value
+			 * @param actual
+			 *            actual value
+			 */
+			"static public void assertEquals" : function(message, expected,
+					actual) {
+				if (Object.isNull(expected) && Object.isNull(actual)) {
+					return;
+				}
+
+				if (!Object.isNull(expected) && expected.equals(actual)) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+				if (message != null && !message.equals("")) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected:<");
+				formatted.append(Object.isNull(expected) ? "null" : expected
+						.toString());
+				formatted.append("> but was:<");
+				formatted.append(Object.isNull(actual) ? "null" : actual
+						.toString());
+				formatted.append(">");
+
+				// TODO float类型判断
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects are <b>not</b> equals. If they are, an
+			 * {@link AssertionError} is thrown with the given message. If
+			 * <code>first</code> and <code>second</code> are
+			 * <code>null</code>, they are considered equal.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param first
+			 *            first value to check
+			 * @param second
+			 *            the value to check against <code>first</code>
+			 */
+			"static public void assertNotEquals" : function(message, expected,
+					actual) {
+
+				if (!Object.isNull(expected)) {
+
+					if (!expected.equals(actual)) {
+						return;
+					}
+				} else {
+					if (!Object.isNull(expected)) {
+						return;
+					}
+				}
+
+				// TODO float类型判断
+
+				var formatted = new js.lang.StringBuffer();
+				formatted.append("Values should be different. ");
+				if (message != null) {
+					formatted.append(message).append(". ");
+				}
+
+				formatted.append("Actual: ").append(actual);
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that an object isn't null. If it is an
+			 * {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param object
+			 *            Object to check or <code>null</code>
+			 */
+			"static public void assertNotNull" : function(message, object) {
+				js.test.Assert.assertTrue(message, !Object.isNull(object));
+			},
+
+			/**
+			 * Asserts that an object is null. If it is not, an
+			 * {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param object
+			 *            Object to check or <code>null</code>
+			 */
+			"static public void assertNull" : function(message, object) {
+				if (Object.isNull(object)) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected null, but was:<").append(actual)
+						.append(">");
+
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects refer to the same object. If they are
+			 * not, an {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param expected
+			 *            the expected object
+			 * @param actual
+			 *            the object to compare to <code>expected</code>
+			 */
+			"static public void assertSame" : function(message, expected,
+					actual) {
+				if (expected === actual) {
+					return;
+				}
+				var formatted = new js.lang.StringBuffer();
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected same:<").append(expected).append(
+						"> was not:<").append(actual).append(">");
+
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects do not refer to the same object. If they
+			 * do refer to the same object, an {@link AssertionError} is thrown
+			 * with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param unexpected
+			 *            the object you don't expect
+			 * @param actual
+			 *            the object to compare to <code>unexpected</code>
+			 */
+			"static public void assertNotSame" : function(message, unexpected,
+					actual) {
+				if (unexpected !== actual) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+				formatted.append("expected not same");
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that <code>actual</code> satisfies the condition
+			 * specified by <code>matcher</code>. If not, an
+			 * {@link AssertionError} is thrown with information about the
+			 * matcher and failing value. Example:
+			 * 
+			 * <pre>
+			 * assertThat(0, is(1)); // fails:
+			 * // failure message:
+			 * // expected: is &lt;1&gt;
+			 * // got value: &lt;0&gt;
+			 * assertThat(0, is(not(1))) // passes
+			 * </pre>
+			 * 
+			 * <code>org.hamcrest.Matcher</code> does not currently document
+			 * the meaning of its type parameter <code>T</code>. This method
+			 * assumes that a matcher typed as <code>Matcher&lt;T&gt;</code>
+			 * can be meaningfully applied only to values that could be assigned
+			 * to a variable of type <code>T</code>.
+			 * 
+			 * @param <T>
+			 *            the static type accepted by the matcher (this can flag
+			 *            obvious compile-time problems such as
+			 *            {@code assertThat(1, is("a"))}
+			 * @param actual
+			 *            the computed value being compared
+			 * @param matcher
+			 *            an expression, built of {@link Matcher}s, specifying
+			 *            allowed values
+			 * @see org.hamcrest.CoreMatchers
+			 * @see org.hamcrest.MatcherAssert
+			 */
+			"public static <T> void assertThat" : function(actual, matcher) {
+				// TODO 正则表达式
+			}
+		});
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
@@ -1404,8 +2126,8 @@ Class
 
 Class.forName({
 	name : "class js.lang.IllegalAccessException extends js.lang.Exception",
-	"private name" : "IllegalAccessException",// 错误名
-	"private number" : 21
+	"private name" : "js.lang.IllegalAccessException",// 错误名
+	"private number" : 101
 // 错误号
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1417,8 +2139,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.IllegalArgumentException extends js.lang.Exception",
-	"private name" : "IllegalArgumentException",// 错误名
-	"private number" : 20
+	"private name" : "js.lang.IllegalArgumentException",// 错误名
+	"private number" : 102
 // 错误号
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1430,8 +2152,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.IllegalStateException extends js.lang.Exception",
-	"private name" : "IllegalStateException",// 错误名
-	"private number" : 22
+	"private name" : "js.lang.IllegalStateException",// 错误名
+	"private number" : 103
 // 错误号
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1443,8 +2165,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.IndexOutOfBoundsException extends js.lang.Exception",
-	"private name" : "IndexOutOfBoundsException",// 错误名
-	"private number" : 11
+	"private name" : "js.lang.IndexOutOfBoundsException",// 错误名
+	"private number" : 104
 // 错误号
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1456,8 +2178,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.NoSuchFieldException extends js.lang.Exception",
-	"private name" : "NoSuchFieldException",
-	"private number" : 8
+	"private name" : "js.lang.NoSuchFieldException",
+	"private number" : 105
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
@@ -1468,8 +2190,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
-	"private name" : "NoSuchMethodException",
-	"private number" : 9
+	"private name" : "js.lang.NoSuchMethodException",
+	"private number" : 106
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
@@ -1480,8 +2202,8 @@ Class.forName({
 
 Class.forName({
 	name : "class js.lang.NullPointerException extends js.lang.Exception",
-	"private name" : "NullPointerException",
-	"private number" : 0
+	"private name" : "js.lang.NullPointerException",
+	"private number" : 107
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
@@ -1493,8 +2215,8 @@ Class.forName({
 Class
 		.forName({
 			name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
-			"private name" : "UnsupportedOperationException",// 错误名
-			"private number" : 10
+			"private name" : "js.lang.UnsupportedOperationException",// 错误名
+			"private number" : 108
 		// 错误号
 		});/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1506,8 +2228,8 @@ Class
 
 Class.forName({
 	name : "class js.lang.ClassNotFoundException extends js.lang.Exception",
-	"private name" : "ClassNotFoundException",// 错误名
-	"private number" : 7
+	"private name" : "js.lang.ClassNotFoundException",// 错误名
+	"private number" : 100
 // 错误号
 });/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -1945,11 +2667,11 @@ Class
  */
 
 Class.forName({
-	name : "js.net.http.HTTP extends Object",
+	name : "class js.net.http.Http extends Object",
 	"public static REQUEST" : {
 		TYPE : [ "GET", "HEAD", "PUT", "DELETE", "POST", "OPTIONS" ]
 	},
-	HTTP : function() {
+	Http : function() {
 	}
 });
 /*
@@ -1961,10 +2683,10 @@ Class.forName({
  */
 
 Class.forName({
-	name : "js.net.http.Rest extends Object",
+	name : "class js.net.http.Rest extends Object",
 	Rest : function() {
 	},
-	build : function() {
+	build : (function() {
 		var regx1 = /\/{2,}/g, regx2 = /\/$/g;
 		return function() {
 			if (arguments.length > 0) {
@@ -1987,7 +2709,7 @@ Class.forName({
 			}
 			return null;
 		};
-	}
+	})()
 });
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -2111,7 +2833,7 @@ Class.forName({
 	"private _cursor" : 0,
 	"private _lastRet" : -1,
 	Iterator : function(element) {
-		this._element = element;
+		this._element = element || [];
 	},
 
 	hasNext : function() {
@@ -2838,7 +3560,7 @@ Class
 			put : function(key, value) {
 				var entry = key;
 				if (entry != null && entry != undefined
-						&& entry instanceof js.util.Entry.$class.instance) {
+						&& entry instanceof js.util.Entry) {
 					key = entry.getKey();
 					value = entry.getValue();
 				} else {
@@ -3089,7 +3811,27 @@ $import("js.util.Set");
 Class.forName({
 	name : "class js.util.TreeSet extends js.util.Set"
 
-});/*
+});/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+
+Class.forName({
+	name : "class Date",
+	alias:"js.util.Date",
+	Date : function() {
+	},
+	"public equals" : function(s) {
+		return this === s;
+	}
+});
+/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license

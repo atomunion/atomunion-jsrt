@@ -9,7 +9,7 @@
 Class
 		.forName({
 			name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
-			"private name" : "UnsupportedOperationException",// 错误名
-			"private number" : 10
+			"private name" : "js.lang.UnsupportedOperationException",// 错误名
+			"private number" : 108
 		// 错误号
 		});

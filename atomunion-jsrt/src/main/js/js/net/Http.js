@@ -7,10 +7,10 @@
  */
 
 Class.forName({
-	name : "js.net.http.HTTP extends Object",
+	name : "class js.net.http.Http extends Object",
 	"public static REQUEST" : {
 		TYPE : [ "GET", "HEAD", "PUT", "DELETE", "POST", "OPTIONS" ]
 	},
-	HTTP : function() {
+	Http : function() {
 	}
 });

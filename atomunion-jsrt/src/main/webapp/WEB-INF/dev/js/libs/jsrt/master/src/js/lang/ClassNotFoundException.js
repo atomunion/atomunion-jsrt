@@ -8,7 +8,7 @@
 
 Class.forName({
 	name : "class js.lang.ClassNotFoundException extends js.lang.Exception",
-	"private name" : "ClassNotFoundException",// 错误名
-	"private number" : 7
+	"private name" : "js.lang.ClassNotFoundException",// 错误名
+	"private number" : 100
 // 错误号
 });

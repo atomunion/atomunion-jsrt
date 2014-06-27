@@ -6,53 +6,156 @@
  * Date: Feb 10, 2014
  */
 
-Class = function(c, classloader) {
-	var obj = null, packages = null, fullName = null, name = null, superclass = null, type = null, superinterfaces = [], modifiers = null, annotations = null;
-	// 自身method和fields,不包含从父类继承来的
+Object.extend = function(d, s, k, m) {
+	if (d === null || s === null || d === undefined || s === undefined
+			|| typeof d === "number" || typeof s === "number"
+			|| typeof d === "string" || typeof s === "string"
+			|| typeof d === "boolean" || typeof s === "boolean") {
+		return d;
+	}
+	if (Object.prototype.toString.call(s) === "[object Object]") {
+		if (Object.prototype.toString.apply(d) !== "[object Array]"
+				|| d === Array.prototype) {
+			for ( var i in s) {
+				if (s.hasOwnProperty(i)) {
+					if (k) {
+						if (!d[k]) {
+							d[k] = {};
+						}
+						if (m) {
+							d[k][i] = s[i][m];
+						} else {
+							d[k][i] = s[i];
+						}
+					} else {
+						if (m) {
+							d[i] = s[i] ? s[i][m] : null;
+						} else {
+							d[i] = s[i];
+						}
+					}
 
-	var fields = {}, methods = {}, statics = {};
-	// var reflect = {
-	// fields : {},
-	// methods : {},
-	// statics : {}
-	// };
-	var empty = function() {
-	}, initial = null, init = null, constructor = function() {
-		// 原始构造器
-		// 1设置class对象和hashCode值
-		this.$class = obj;
-
-		// 2.2初始化继承父类属性
-		var sc = obj.getSuperClass();
-		while (sc && sc != Object.$class) {
-			var f = sc.getFields();
-			Object.each(f, function(i, v, o) {
-				if (!fields[i]) {
-					var value = v.getValue();
-					this[i] = value ? value.clone() : value;
 				}
-			}, this);
-			// sc.getInitial().apply(this, arguments);
-			sc = sc.getSuperClass();
+			}
+		} else {
+			for (var j = 0; j < d.length; j++) {
+				for ( var i in s) {
+					if (s.hasOwnProperty(i)) {
+						if (k) {
+							if (!d[j]) {
+								d[j] = {};
+							}
+							if (!d[j][k]) {
+								d[j][k] = {};
+							}
+							if (m) {
+								d[j][k][i] = s[i][m];
+							} else {
+								d[j][k][i] = s[i];
+							}
+						} else {
+							if (m) {
+								d[j][i] = s[i] ? s[i][m] : null;
+							} else {
+								d[j][i] = s[i];
+							}
+						}
+					}
+				}
+			}
 		}
+	}
+	return d;
+};
 
-		// 3初始化自身定义属性
-		Object.each(fields, function(i, v, o) {
-			var value = v.getValue();
-			this[i] = value ? value.clone() : value;
-		}, this);
+Object
+		.extend(
+				Object,
+				function() {
+					return {
+						// TODO 增加isNull和isEmpty的区分
+						isNull : function(v) {
+							return v === null || v === undefined;
+						},
 
-		// 4用户构造器,先调用父类构造器以及initial方法
-		(initial = initial || empty).apply(this, arguments);
+						isEmpty : function(v) {
+							return v === null || v === undefined
+									|| ((Object.isArray(v) && !v.length))
+									|| (Object.isString(v) && v.trim() === "");
+						},
 
-		// 5执行默认初始化方法
-		(init = init || this.init || empty).apply(this, arguments);
+						isArray : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Array]";
+						},
 
-		// 6防止用户构造器修改class对象
-		if (this.$class != obj)
-			this.$class = obj;
-	}, instanceclass = function() {
-	};
+						isDate : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Date]";
+						},
+
+						isObject : function(v) {
+							return !!v
+									&& Object.prototype.toString.call(v) === "[object Object]";
+						},
+
+						isFunction : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Function]";
+						},
+
+						isNumber : function(v) {
+							return typeof v === "number" && isFinite(v);
+						},
+
+						isString : function(v) {
+							return typeof v === "string";
+						},
+
+						isBoolean : function(v) {
+							return typeof v === "boolean";
+						},
+
+						isDefined : function(v) {
+							return typeof v !== "undefined";
+						},
+
+						isInstanceof : function(sub, sup) {
+							return sub instanceof sup;
+						},
+						/*
+						 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
+						 * Object.isArray(d)) { for (var i = 0; i < d.length;
+						 * i++) { Object.each(s, function(j, v, o) {
+						 * d[i].prototype[j] = v.value; }); } } return d; },
+						 */
+						each : function(obj, fn, scope) {
+							return Object.enumerate(obj, fn, scope, false);
+						},
+						enumerate : function(obj, fn, scope, pt) {
+							if (Object.isEmpty(obj) || Object.isNumber(obj)
+									|| Object.isString(obj)
+									|| Object.isBoolean(obj)) {
+								return;
+							}
+							if (Object.isArray(obj)) {
+								if (fn.call(scope || obj[i], i, obj[i], obj) === false) {
+									return i;
+								}
+							} else {
+								for ( var p in obj) {
+									if (pt || obj.hasOwnProperty(p)) {
+										if (fn.call(scope || obj[p], p, obj[p],
+												obj) === false) {
+											return i;
+										}
+									}
+								}
+							}
+							return true;
+						}
+					};
+				}());
+
+(function() {
+
 	var fetch = function(name, callback, scope) {
 		if (Object.isEmpty(name)) {
 			return null;
@@ -120,12 +223,12 @@ Class = function(c, classloader) {
 		var index1 = m.indexOf("class ");
 		var index2 = m.indexOf("interface ");
 
-		var modify = null, type = null, name = null, extend = null, implement = null;
+		var modify = null, type = null, n = null, extend = null, implement = null;
 		if (index1 === -1 && index2 === -1) {
 			// method,field
 			var index = m.lastIndexOf(" ");
 			modify = (index === -1 ? "" : m.substring(0, index + 1));
-			name = m.substring(index + 1);
+			n = m.substring(index + 1);
 		} else {
 			var index = null;
 			if (index1 != -1) {
@@ -136,8 +239,9 @@ Class = function(c, classloader) {
 				type = "interface";
 			}
 			modify = m.substring(0, index);
-			var defs = m.substring(index + 1).split(" "), len = defs.length;
-			name = defs[1];
+			// FIXME var defs = m.substring(index + 1).split(" ")
+			var defs = m.substring(index).split(" "), len = defs.length;
+			n = defs[1];
 			if (len >= 4) {
 				if (defs[2] === "extends") {
 					extend = defs[3];
@@ -191,7 +295,7 @@ Class = function(c, classloader) {
 			annotations : m.match(regx) || [],
 			modifiers : modifiers,
 			type : type,
-			name : name,
+			name : n,
 			extend : extend,
 			implement : implement
 		};
@@ -223,7 +327,7 @@ Class = function(c, classloader) {
 					return result;
 				};
 	};
-	var doAnnotations = function(self, m) {
+	var doAnnotations = function(self, m, methods) {
 		if (Object.isFunction(m.getValue())) {
 			// 方法上的注解
 		} else {
@@ -255,55 +359,172 @@ Class = function(c, classloader) {
 			}
 		}
 	};
-	var $class = function() {
-		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy implements
+
+	var $class = function(c, classloader) {
+		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
+		// implements
 		// zzz,ttt
-		var modify = convert(c["name"]);
-		modifiers = modify.modifiers;
-		annotations = modify.annotations;
-		type = modify.type;
-		fullName = modify.name;
-		superclassDef = modify.extend;
-		superinterfacesDef = modify.implement, root = false;
+		var modify = convert(c["name"]), isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement,
 
-		if (fullName != "Object") {
-			name = fetch(fullName, function(name, value) {
-				value[name] = constructor;
-				value[name].$class = this;
-				packages = value;
-				return name;
-			}, this);
+		empty = function() {
+		}, obj = this;
 
-			if (superinterfacesDef) {
-				var len = superinterfacesDef.length;
+		// 自身method和fields,不包含从父类继承来的
+		this.fields = {};
+		this.methods = {};
+		this.statics = {};
+
+		this.modifiers = modify.modifiers;
+		this.annotations = modify.annotations;
+		this.type = modify.type;
+		this.fullName = modify.name;
+		this.alias = c["alias"];
+		this.packages = null;
+		this.name = null;
+		this.superClass = null;
+		this.superInterfaces = [];
+
+		this.classloader = classloader;
+		this.instanceclass = function() {
+		};
+
+		switch (this.fullName) {
+
+		case 'Object':
+			isRoot = true;
+			this.classConstructor = Object;
+			break;
+		case 'Function':
+			this.classConstructor = Function;
+			break;
+		case 'Array':
+			this.classConstructor = Array;
+			break;
+		case 'String':
+			this.classConstructor = String;
+			break;
+		case 'Boolean':
+			this.classConstructor = Boolean;
+			break;
+		case 'Number':
+			this.classConstructor = Number;
+			break;
+		case 'Date':
+			this.classConstructor = Date;
+			break;
+		case 'RegExp':
+			this.classConstructor = RegExp;
+			break;
+		case 'Error':
+			this.classConstructor = Error;
+			break;
+		case 'EvalError':
+			this.classConstructor = EvalError;
+			break;
+		case 'RangeError':
+			this.classConstructor = RangeError;
+			break;
+		case 'ReferenceError':
+			this.classConstructor = ReferenceError;
+			break;
+		case 'SyntaxError':
+			this.classConstructor = SyntaxError;
+			break;
+		case 'TypeError':
+			this.classConstructor = TypeError;
+			break;
+		case 'URIError':
+			this.classConstructor = URIError;
+			break;
+
+		default:
+			isKernel = false;
+
+			this.classConstructor = function() {
+				// 原始构造器
+				// 1设置class对象和hashCode值
+				this.$class = obj;
+
+				// 2.2初始化继承父类属性
+				var sc = obj.getSuperClass();
+				while (sc) {
+					var f = sc.getFields();
+					Object.each(f, function(i, v, o) {
+						if (!obj.getFields()[i]) {
+							var value = v.getValue();
+							this[i] = value ? value.clone() : value;
+						}
+					}, this);
+					// sc.getInitial().apply(this, arguments);
+					sc = sc.getSuperClass();
+				}
+
+				// 3初始化自身定义属性
+				Object.each(obj.getFields(), function(i, v, o) {
+					var value = v.getValue();
+					this[i] = value ? value.clone() : value;
+				}, this);
+
+				// 4用户构造器,先调用父类构造器以及initial方法
+				var initial = obj.getInitial();
+				initial && initial.apply(this, arguments);
+
+				// 5执行默认初始化方法
+				var init = obj.getInit();
+				(init = init || this.init || empty).apply(this, arguments);
+
+				// 6防止用户构造器修改class对象
+				if (this.$class != obj)
+					this.$class = obj;
+			};
+
+			break;
+		}
+
+		this.instance = this.classConstructor;
+
+		this.name = fetch(this.fullName, function(name, value) {
+			value[name] = this.classConstructor;
+			value[name].$class = this;
+			packages = value;
+			return name;
+		}, this);
+
+		// 默认无参构造函数
+		if (!c[this.name]) {
+			c[this.name] = empty;
+		}
+
+		if (!isRoot) {
+
+			if (superInterfacesDef) {
+				var len = superInterfacesDef.length;
 				for (var i = 0; i < len; i++) {
-					superinterfaces[i] = fetch(superinterfacesDef[i], function(
-							name, value) {
-						return value[name];
-					}).$class;
+					this.superInterfaces[i] = fetch(superInterfacesDef[i],
+							function(name, value) {
+								return value[name];
+							}).$class;
 				}
 			}
-			superclass = (fetch(superclassDef, function(name, value) {
+
+			this.superClass = (fetch(superClassDef, function(name, value) {
 				return value[name];
 			}) || Object).$class;
 
 			// TODO 判断父类是否final
+			if (!isKernel) {
 
-			instanceclass.prototype = ((superclass) ? superclass.instance
-					: Object).prototype;
-			constructor.prototype = new instanceclass;
-			constructor.prototype.constructor = constructor;
+				this.instanceclass.prototype = ((this.superClass) ? this.superClass.instance
+						: Object).prototype;
+				this.classConstructor.prototype = new this.instanceclass;
+				this.classConstructor.prototype.constructor = this.classConstructor;
 
-			// toString()方法定义
-			// if (superclass === Object.$class) {
-			// constructor.prototype.toString = function() {
-			// return this.getClass().getFullName() + " "
-			// + this.hashCode();
-			// };
-			// }
-		} else {
-			root = true;
-			constructor = Object;
+				if (this.superClass === Object.$class) {
+					// TODO 拷贝js.lang.Object中的toString方法
+					this.classConstructor.prototype.toString = Object.$class
+							.getMethod("toString").getValue();
+				}
+			}
 		}
 
 		Object.each(c, function(i, v, o) {
@@ -311,39 +532,43 @@ Class = function(c, classloader) {
 				var m = convert(i);
 				m = new attribute(m.name, v, this, m.modifiers, m.annotations);
 				if (Object.isFunction(v)) {
-					//确保Object的toString为原生
-					if (root && m.getName() === "toString") {
+					// 确保toString为原生
+					if (isKernel && m.getName() === "toString") {
+						this.methods[m.getName()] = m;
 						return true;
 					}
-					this.addMethod(m);
-
+					this.addMethod(m, isKernel);
 				} else {
 					this.addField(m);
 				}
 			}
 		}, this);
-		this.instance = constructor;
+
+		fetch(this.alias, function(name, value) {
+			value[name] = this.classConstructor;
+		}, this);
+
 		return this;
 	};
 	$class.prototype = {
 		getClassLoader : function() {
 
-			return classloader
+			return this.classloader
 					|| (window.js.lang.ClassLoader ? js.lang.ClassLoader
 							.getSystemClassLoader() : null);
 		},
 
 		getConstructor : function() {
-			return constructor;
+			return this.classConstructor;
 		},
 		getInitial : function() {
-			return initial;
+			return this.initial;
 		},
 		getInit : function() {
-			return init;
+			return this.init;
 		},
 		getPackage : function() {
-			return packages;
+			return this.packages;
 		},
 		getDeclaredField : function(name) {
 			return this.getField(name);
@@ -352,14 +577,14 @@ Class = function(c, classloader) {
 			return this.getFields();
 		},
 		getField : function(name) {
-			var v = fields[name];
+			var v = this.fields[name];
 			if (v) {
 				return v;
 			}
 			throw new js.lang.NoSuchFieldException();
 		},
 		getFields : function() {
-			return fields;
+			return this.fields;
 		},
 		getDeclaredMethod : function(name) {
 			return this.getMethod(name);
@@ -368,42 +593,47 @@ Class = function(c, classloader) {
 			return this.getMethods();
 		},
 		getMethod : function(name) {
-			var v = methods[name];
+			var v = this.methods[name];
 			if (v) {
 				return v;
 			}
 			throw new js.lang.NoSuchMethodException();
 		},
 		getMethods : function() {
-			return methods;
+			return this.methods;
 		},
 		getName : function() {
 			return name;
 		},
 		getFullName : function() {
-			return fullName;
+			return this.fullName;
 		},
 		getSuperClass : function() {
-			return superclass;
+			return this.superClass;
 		},
 		getModifiers : function() {
-			return modifiers;
+			return this.modifiers;
 		},
 		getAnnotations : function() {
-			return annotations;
+			return this.annotations;
 		},
 
 		// 构造器必须公有静态方法必须公有
 		addMethod : function(m) {
 			if (!Object.isEmpty(m) && Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m);
+					doAnnotations(this, m, this.methods);
 				}
-				if (m.getName() === name) {
-					// 将构造器代理，默认调用父类构造器
-					initial = proxy(m.getValue(),
-							(this.getSuperClass() || Object.$class)
-									.getInitial());
+				var n = m.getName();
+				if (n === this.name) {
+					if (this.name === "Object") {
+						this.initial = m.getValue();
+					} else {
+						// 将构造器代理，默认调用父类构造器
+						this.initial = proxy(m.getValue(), (this
+								.getSuperClass() || Object.$class).getInitial());
+					}
+
 				} else {
 					m.setValue(proxy(m.getValue()));
 					m.setDeclaringClass(this);
@@ -411,17 +641,20 @@ Class = function(c, classloader) {
 					if (window.js && window.js.lang && window.js.lang.reflect
 							&& window.js.lang.reflect.Method
 							&& window.js.lang.reflect.Method.loaded) {
-						m = new window.js.lang.reflect.Method(m.getName(), m
-								.getValue(), this, m.getModifiers(), m
-								.getAnnotations());
+						m = new window.js.lang.reflect.Method(n, m.getValue(),
+								this, m.getModifiers(), m.getAnnotations());
 					}
 
 					if ((m.getModifiers() & 8) != 0) {
-						constructor[m.getName()] = m.getValue();
-						statics[m.getName()] = m;
+						this.classConstructor[n] = m.getValue();
+						this.statics[n] = m;
 					} else {
-						constructor.prototype[m.getName()] = m.getValue();
-						methods[m.getName()] = m;
+						this.classConstructor.prototype[n] = m.getValue();
+						this.methods[n] = m;
+					}
+
+					if (n === "init") {
+						this.init = n;
 					}
 				}
 			}
@@ -429,7 +662,7 @@ Class = function(c, classloader) {
 		addField : function(m) {
 			if (!Object.isEmpty(m) && !Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m);
+					doAnnotations(this, m, this.methods);
 				}
 				m.setDeclaringClass(this);
 				if (window.js && window.js.lang && window.js.lang.reflect
@@ -441,83 +674,58 @@ Class = function(c, classloader) {
 				}
 
 				if ((m.getModifiers() & 8) != 0) {
-					constructor[m.getName()] = m.getValue();
-					statics[m.getName()] = m;
+					this.classConstructor[m.getName()] = m.getValue();
+					this.statics[m.getName()] = m;
 				} else {
-					fields[m.getName()] = m;
+					this.fields[m.getName()] = m;
 				}
 			}
 		},
 		getInstance : function() {
-			return constructor;
+			return this.instance;
+		},
+		isInstance : function(obj) {
+			return Object.isNull(obj) ? false : obj.getClass() === this;
 		},
 		newInstance : function() {
-			return new constructor();
+			return new this.classConstructor();
 		},
 		clone : function() {
 			return this;
+		},
+
+		isAssignableFrom : function() {
+			// TODO
+			return false;
+		},
+
+		isInterface : function() {
+			// TODO
+			return false;
+		},
+
+		isArray : function() {
+			// TODO
+			return false;
+		},
+		isPrimitive : function() {
+			// TODO
+			return false;
+		},
+		isAnnotation : function() {
+			// TODO
+			return false;
 		}
+
 	};
-	obj = new $class();
-	return obj;
-};
-Class.forName = function(c, loader) {
-	return new Class(c, loader);
-};
-Object.$class = Class.forName({
-	name : "class Object",
-	/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
-	"private _version" : "0.1.1.0001",
-	Object : function() {
-		this._hashCode = new Date().getTime().toString(16);
-	},
-	getClass : function() {
-		return this.$class;
-	},
-	/** 指示某个其他对象是否与此对象“相等”。 */
-	equals : function(obj) {
-		return obj === this;
-	},
-	getVersion : function() {
-		return this._version;
-	},
-	hashCode : function() {
-		return this._hashCode;
-	},
-	toString : function() {
-		return this.getClass().getFullName() + " " + this.hashCode();
-	},
 
-	clone : function() {
-		var b = null;
-		if (this instanceof Number || this instanceof String
-				|| this instanceof Boolean) {
-			return this.valueOf();
-		} else if (this instanceof Function || this instanceof RegExp
-				|| this instanceof Error || this instanceof EvalError
-				|| this instanceof RangeError || this instanceof ReferenceError
-				|| this instanceof SyntaxError || this instanceof TypeError
-				|| this instanceof URIError) {
-			return this;
-		} else if (this instanceof Date) {
-			b = new Date();
-			b.setTime(this.getTime());
-			return b;
-		} else if (this.$class) {
-			b = this.$class.newInstance();
-		} else {
-			b = this instanceof Array ? [] : {};
-		}
-		for ( var a in this) {
-			if (a === "_hashCode") {
-				b[a] = new Date().getTime().toString(16);
-				continue;
-			}
-			if (this.hasOwnProperty(a)) {
-				b[a] = this[a] ? this[a].clone() : this[a];
-			}
-		}
-		return b;
-	}
+	Class = function() {
+	};
+	Class.forName = function(cls, classloader) {
+		return new $class(cls, classloader);
+	};
+})();
 
-});
+// TODO
+// Function,Array,String,Boolean,Number,Date,RegExp,Error,EvalError,RangeError,ReferenceError,SyntaxError,TypeError,URIError对象的$class属性
+

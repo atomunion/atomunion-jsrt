@@ -8,6 +8,6 @@
 
 Class.forName({
 	name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
-	"private name" : "NoSuchMethodException",
-	"private number" : 9
+	"private name" : "js.lang.NoSuchMethodException",
+	"private number" : 106
 });
