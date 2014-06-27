@@ -18,7 +18,7 @@ Class.forName({
 		};
 	}(),
 	"public equals":function(s){
-		return this == s;
+		return Object.isString(s) && this == s;
 	}
 	
 	

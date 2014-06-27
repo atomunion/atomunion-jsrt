@@ -13,6 +13,6 @@ Class.forName({
 	Boolean : function() {
 	},
 	"public equals" : function(s) {
-		return this == s;
+		return Object.isBoolean(s) && this == s;
 	}
 });

@@ -6,11 +6,9 @@
  * Date: Feb 10, 2014
  */
 
-
-
 Class.forName({
 	name : "class Array",
-	alias:"js.lang.Array",
+	alias : "js.lang.Array",
 	Array : function() {
 	},
 	clear : function() {
@@ -20,7 +18,7 @@ Class.forName({
 		return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
 	},
 	indexOf : function(elem) {
-		for (var i = 0; i < this.length; i++) {
+		for (var i = 0, len = this.length; i < len; i++) {
 			if (this[i] === elem) {
 				return i;
 			}

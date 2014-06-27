@@ -15,7 +15,7 @@ Class.forName({
 	Number : function() {
 	},
 	"public equals" : function(s) {
-		return this == s;
+		return Object.isNumber(s) && this == s;
 	}
 
 });
