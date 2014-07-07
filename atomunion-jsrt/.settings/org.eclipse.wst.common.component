@@ -3,9 +3,15 @@
     <wb-module deploy-name="atomunion-jsrt">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+<<<<<<< HEAD
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/js"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/js"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/html"/>
+=======
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/js"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/js"/>
+>>>>>>> refs/heads/0.1.1-SNAPSHOT
         <property name="context-root" value="atomunion-jsrt"/>
         <property name="java-output-path" value="/atomunion-jsrt/target/classes"/>
     </wb-module>
