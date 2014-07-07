@@ -816,8 +816,6 @@ Object
 Object.$class = Class.forName({
 	name : "class Object",
 	alias : "js.lang.Object",
-	/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
-	"private _version" : "0.1.1.0001",
 	Object : function() {
 		this._hashCode = new Date().getTime().toString(16);
 	},
@@ -828,9 +826,13 @@ Object.$class = Class.forName({
 	equals : function(obj) {
 		return obj === this;
 	},
-	getVersion : function() {
-		return this._version;
-	},
+	getVersion : (function() {
+		/** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
+		var version = "0.1.1.0001";
+		return function() {
+			return this.version || version;
+		};
+	})(),
 	hashCode : function() {
 		return this._hashCode;
 	},
