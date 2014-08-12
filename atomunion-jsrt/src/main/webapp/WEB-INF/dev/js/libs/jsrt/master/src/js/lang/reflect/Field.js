@@ -13,20 +13,14 @@ Class.forName({
     "@Setter @Getter private _modifiers" : null,
     "@Setter @Getter private _annotations" : null,
     "@Setter @Getter private _value" : null,
-    "@Setter @Getter private writable" : true,
-    "@Setter @Getter private enumerable" : true,
-    "@Setter @Getter private configurable" : true,
 
-    Field : function(name, value, declaringClass, modifiers, annotations, _writable, _enumerable, _configurable) {
+    Field : function(name, value, declaringClass, modifiers, annotations) {
         this._name = name;
         this._declaringClass = declaringClass;
         this._modifiers = modifiers;
         this._annotations = annotations;
         this._value = value;
 
-        this.writable = _writable;
-        this.enumerable = _enumerable;
-        this.configurable = _configurable;
     },
     clone : function() {
         return this;

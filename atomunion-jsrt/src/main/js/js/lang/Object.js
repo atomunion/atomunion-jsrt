@@ -8,7 +8,7 @@
 
 Object.$class = Class.forName({
 	name : "class Object",
-	alias : "js.lang.Object",
+	"non-enumerable non-writeable non-configurable alias" : "js.lang.Object",
 	Object : function() {
 		this._hashCode = new Date().getTime().toString(16);
 	},

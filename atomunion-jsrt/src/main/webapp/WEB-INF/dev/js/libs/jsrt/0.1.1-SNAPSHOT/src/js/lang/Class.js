@@ -5,8 +5,11 @@
  * 
  * Date: Feb 10, 2014
  */
+var ECMA = true;
+Object.extend = function(d, s, k, m, pros) {
 
-Object.extend = function(d, s, k, m) {
+	pros = pros || {};
+	var writable = !!pros.writable, enumerable = !!pros.enumerable, configurable = !!pros.configurable;
 	if (d === null || s === null || d === undefined || s === undefined
 			|| typeof d === "number" || typeof s === "number"
 			|| typeof d === "string" || typeof s === "string"
@@ -22,42 +25,65 @@ Object.extend = function(d, s, k, m) {
 						if (!d[k]) {
 							d[k] = {};
 						}
-						if (m) {
-							d[k][i] = s[i][m];
+
+						if (ECMA) {
+							Object.defineProperty(d[k], i, {
+								value : m ? s[i][m] : s[i],
+								writable : writable,
+								enumerable : enumerable,
+								configurable : configurable
+							});
 						} else {
-							d[k][i] = s[i];
+
+							d[k][i] = m ? s[i][m] : s[i];
 						}
 					} else {
-						if (m) {
-							d[i] = s[i] ? s[i][m] : null;
+						if (ECMA) {
+							Object.defineProperty(d, i, {
+								value : m ? (s[i] ? s[i][m] : null) : s[i],
+								writable : writable,
+								enumerable : enumerable,
+								configurable : configurable
+							});
 						} else {
-							d[i] = s[i];
+							d[i] = m ? (s[i] ? s[i][m] : null) : s[i];
 						}
 					}
-
 				}
 			}
 		} else {
 			for (var j = 0; j < d.length; j++) {
 				for ( var i in s) {
 					if (s.hasOwnProperty(i)) {
+						if (!d[j]) {
+							d[j] = {};
+						}
 						if (k) {
-							if (!d[j]) {
-								d[j] = {};
-							}
 							if (!d[j][k]) {
 								d[j][k] = {};
 							}
-							if (m) {
-								d[j][k][i] = s[i][m];
+							if (ECMA) {
+								Object.defineProperty(d[j][k], i, {
+									value : m ? s[i][m] : s[i],
+									writable : writable,
+									enumerable : enumerable,
+									configurable : configurable
+								});
 							} else {
-								d[j][k][i] = s[i];
+								d[j][k][i] = m ? s[i][m] : s[i];
 							}
 						} else {
-							if (m) {
-								d[j][i] = s[i] ? s[i][m] : null;
+
+							if (ECMA) {
+								Object.defineProperty(d[j], i, {
+									value : m ? (s[i] ? s[i][m] : null) : s[i],
+									writable : writable,
+									enumerable : enumerable,
+									configurable : configurable
+								});
 							} else {
-								d[j][i] = s[i];
+
+								d[j][i] = m ? (s[i] ? s[i][m] : null) : s[i];
 							}
 						}
 					}
@@ -157,7 +183,11 @@ Object
 							return true;
 						}
 					};
-				}());
+				}(), null, null, {
+					writable : false,
+					enumerable : false,
+					configurable : false
+				});
 
 (function() {
 
@@ -188,6 +218,7 @@ Object
 		this._declaringClass = declaringClass;
 		this._modifiers = modifiers;
 		this._annotations = annotations;
+
 	};
 	attribute.prototype = {
 		getName : function() {
@@ -220,6 +251,7 @@ Object
 		setAnnotations : function(annotation) {
 			this._annotations = annotation;
 		}
+
 	};
 	var convert = function(m) {
 
@@ -267,13 +299,43 @@ Object
 				.indexOf("protected ") != -1, isPrivate = modify
 				.indexOf("private ") != -1, isDefault = modify
 				.indexOf("default ") != -1, isPublic = (modify
-				.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected));
+				.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isWritable = modify
+				.indexOf("writable ") != -1, isEnumerable = modify
+				.indexOf("enumerable ") != -1, isConfigurable = modify
+				.indexOf("configurable ") != -1, isNonWritable = modify
+				.indexOf("non-writeable ") != -1, isNonEnumerable = modify
+				.indexOf("non-enumerable ") != -1, isNonConfigurable = modify
+				.indexOf("non-configurable ") != -1;
 
 		/*
 		 * abstract 1024, interface 512, final 16, static 8, protected 4,
 		 * private 2 ,public 1,default 0
 		 */
 		var modifiers = 0;
+
+		if (isNonWritable) {
+			modifiers += 65536;
+		}
+
+		if (isWritable) {
+			modifiers += 32768;
+		}
+
+		if (isNonEnumerable) {
+			modifiers += 16384;
+		}
+		if (isEnumerable) {
+			modifiers += 8192;
+		}
+
+		if (isNonConfigurable) {
+			modifiers += 4096;
+		}
+
+		if (isConfigurable) {
+			modifiers += 2048;
+		}
+
 		if (isAbstract) {
 			modifiers += 1024;
 		}
@@ -345,7 +407,7 @@ Object
 
 				var modifier = (((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
 
-				if (m.getAnnotations().indexOf("@Getter")!=-1) {
+				if (m.getAnnotations().indexOf("@Getter") != -1) {
 					var getName = "get" + name;
 					if (!methods[getName]) {
 						self.addMethod(new attribute(getName, function() {
@@ -353,7 +415,7 @@ Object
 						}, self, modifier, []));
 					}
 				}
-				if (m.getAnnotations().indexOf("@Setter")!=-1) {
+				if (m.getAnnotations().indexOf("@Setter") != -1) {
 					var setName = "set" + name;
 					if (!methods[setName]) {
 						self.addMethod(new attribute(setName, function(value) {
@@ -507,18 +569,51 @@ Object
 			classConstructor = function() {
 				// 原始构造器
 				// 1设置class对象和hashCode值
-				this.$class = classObj;
+
+				if (ECMA) {
+					Object.defineProperty(this, "$class", {
+						value : classObj,
+						writable : false,
+						enumerable : false,
+						configurable : false
+					});
+				} else {
+					this.$class = classObj;
+				}
 
 				// 2.2初始化继承父类属性
 				var sc = classObj.getSuperClass();
 				while (sc) {
 					var f = sc.getFields();
-					Object.each(f, function(i, v, o) {
-						if (!classObj.getFields()[i]) {
-							var value = v.getValue();
-							this[i] = value ? value.clone() : value;
-						}
-					}, this);
+					Object
+							.each(
+									f,
+									function(i, v, o) {
+										if (!classObj.getFields()[i]) {
+											var value = v.getValue();
+
+											value = value ? value.clone()
+													: value;
+
+											if (ECMA) {
+												Object
+														.defineProperty(
+																this,
+																i,
+																{
+																	value : value,
+																	writable : (v
+																			.getModifiers() & 65536) == 0,
+																	enumerable : (v
+																			.getModifiers() & 16384) == 0,
+																	configurable : (v
+																			.getModifiers() & 4096) == 0
+																});
+											} else {
+												this[i] = value;
+											}
+										}
+									}, this);
 					// sc.getConstructor().apply(this, arguments);
 					sc = sc.getSuperClass();
 				}
@@ -526,7 +621,17 @@ Object
 				// 3初始化自身定义属性
 				Object.each(classObj.getFields(), function(i, v, o) {
 					var value = v.getValue();
-					this[i] = value ? value.clone() : value;
+					value = value ? value.clone() : value;
+					if (ECMA) {
+						Object.defineProperty(this, i, {
+							value : value,
+							writable : (v.getModifiers() & 65536) == 0,
+							enumerable : (v.getModifiers() & 16384) == 0,
+							configurable : (v.getModifiers() & 4096) == 0
+						});
+					} else {
+						this[i] = value;
+					}
 				}, this);
 
 				// 4用户构造器,先调用父类构造器以及constructor2方法
@@ -535,11 +640,13 @@ Object
 
 				// 5执行默认初始化方法
 				var initial = classObj.getInitial();
-				(initial = initial || this.initial || empty).apply(this, arguments);
+				(initial = initial || this.initial || empty).apply(this,
+						arguments);
 
 				// 6防止用户构造器修改class对象
-				if (this.$class != classObj)
+				if (!ECMA && this.$class != classObj) {
 					this.$class = classObj;
+				}
 			};
 
 			break;
@@ -587,7 +694,13 @@ Object
 				var instanceClass = heap.get(this, "instanceClass");
 				instanceClass.prototype = ((superClass) ? heap.get(superClass,
 						"instance") : Object).prototype;
-				classConstructor.prototype = new instanceClass;
+
+				if (ECMA) {
+					classConstructor.prototype = Object
+							.create(instanceClass.prototype);
+				} else {
+					classConstructor.prototype = new instanceClass;
+				}
 				classConstructor.prototype.constructor = classConstructor;
 
 				if (superClass === Object.$class) {
@@ -704,10 +817,9 @@ Object
 						heap.set(this, "constructor2", m.getValue());
 					} else {
 						// 将构造器代理，默认调用父类构造器
-						heap.set(this, "constructor2",
-								proxy(m.getValue(),
-										(this.getSuperClass() || Object.$class)
-												.getConstructor()));
+						heap.set(this, "constructor2", proxy(m.getValue(),
+								(this.getSuperClass() || Object.$class)
+										.getConstructor()));
 					}
 
 				} else {
@@ -722,10 +834,40 @@ Object
 					}
 
 					if ((m.getModifiers() & 8) != 0) {
-						this.getClassConstructor()[n] = m.getValue();
+
+						if (ECMA) {
+							Object
+									.defineProperty(
+											this.getClassConstructor(),
+											n,
+											{
+												value : m.getValue(),
+												writable : (m.getModifiers() & 32768) != 0,
+												enumerable : (m.getModifiers() & 8192) != 0,
+												configurable : (m
+														.getModifiers() & 2048) != 0
+											});
+						} else {
+							this.getClassConstructor()[n] = m.getValue();
+						}
 						this.getStatics()[n] = m;
 					} else {
-						this.getClassConstructor().prototype[n] = m.getValue();
+						if (ECMA) {
+							Object
+									.defineProperty(
+											this.getClassConstructor().prototype,
+											n,
+											{
+												value : m.getValue(),
+												writable : (m.getModifiers() & 32768) != 0,
+												enumerable : (m.getModifiers() & 8192) != 0,
+												configurable : (m
+														.getModifiers() & 2048) != 0
+											});
+						} else {
+							this.getClassConstructor().prototype[n] = m
+									.getValue();
+						}
 						this.getMethods()[n] = m;
 					}
 
@@ -750,7 +892,18 @@ Object
 				}
 
 				if ((m.getModifiers() & 8) != 0) {
-					this.getClassConstructor()[m.getName()] = m.getValue();
+
+					if (ECMA) {
+						Object.defineProperty(this.getClassConstructor(), m
+								.getName(), {
+							value : m.getValue(),
+							writable : (m.getModifiers() & 65536) == 0,
+							enumerable : (m.getModifiers() & 16384) == 0,
+							configurable : (m.getModifiers() & 4096) == 0
+						});
+					} else {
+						this.getClassConstructor()[m.getName()] = m.getValue();
+					}
 					this.getStatics()[m.getName()] = m;
 				} else {
 					this.getFields()[m.getName()] = m;
