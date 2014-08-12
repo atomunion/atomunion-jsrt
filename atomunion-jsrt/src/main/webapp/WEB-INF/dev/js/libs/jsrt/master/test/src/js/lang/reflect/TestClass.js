@@ -9,14 +9,14 @@ Class.forName({
 	"@Test @Auto @Setter @Getter private dog" : testReflectObject.getClass(),
 	TestClass : function() {
 	},
+	testGetClassConstructor : function() {
+		js.lang.System.out.println(this.getClassConstructor());
+	},
 	testGetConstructor : function() {
 		js.lang.System.out.println(this.getConstructor());
 	},
 	testGetInitial : function() {
 		js.lang.System.out.println(this.getInitial());
-	},
-	testGetInit : function() {
-		js.lang.System.out.println(this.getInit());
 	},
 	testGetName : function() {
 		js.lang.System.out.println(this.getName());

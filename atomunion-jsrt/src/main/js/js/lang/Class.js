@@ -345,7 +345,7 @@ Object
 
 				var modifier = (((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
 
-				if (m.getAnnotations().contains("@Getter")) {
+				if (m.getAnnotations().indexOf("@Getter")!=-1) {
 					var getName = "get" + name;
 					if (!methods[getName]) {
 						self.addMethod(new attribute(getName, function() {
@@ -353,7 +353,7 @@ Object
 						}, self, modifier, []));
 					}
 				}
-				if (m.getAnnotations().contains("@Setter")) {
+				if (m.getAnnotations().indexOf("@Setter")!=-1) {
 					var setName = "set" + name;
 					if (!methods[setName]) {
 						self.addMethod(new attribute(setName, function(value) {
@@ -519,7 +519,7 @@ Object
 							this[i] = value ? value.clone() : value;
 						}
 					}, this);
-					// sc.getInitial().apply(this, arguments);
+					// sc.getConstructor().apply(this, arguments);
 					sc = sc.getSuperClass();
 				}
 
@@ -529,13 +529,13 @@ Object
 					this[i] = value ? value.clone() : value;
 				}, this);
 
-				// 4用户构造器,先调用父类构造器以及initial方法
-				var initial = classObj.getInitial();
-				initial && initial.apply(this, arguments);
+				// 4用户构造器,先调用父类构造器以及constructor2方法
+				var constructor2 = classObj.getConstructor();
+				constructor2 && constructor2.apply(this, arguments);
 
 				// 5执行默认初始化方法
-				var init = classObj.getInit();
-				(init = init || this.init || empty).apply(this, arguments);
+				var initial = classObj.getInitial();
+				(initial = initial || this.initial || empty).apply(this, arguments);
 
 				// 6防止用户构造器修改class对象
 				if (this.$class != classObj)
@@ -629,14 +629,14 @@ Object
 							.getSystemClassLoader() : null);
 		},
 
-		getConstructor : function() {
+		getClassConstructor : function() {
 			return heap.get(this, "classConstructor");
+		},
+		getConstructor : function() {
+			return heap.get(this, "constructor2");
 		},
 		getInitial : function() {
 			return heap.get(this, "initial");
-		},
-		getInit : function() {
-			return heap.get(this, "init");
 		},
 		getPackage : function() {
 			return heap.get(this, "packages");
@@ -701,13 +701,13 @@ Object
 				var n = m.getName(), name = heap.get(this, "name");
 				if (n === name) {
 					if (name === "Object") {
-						heap.set(this, "initial", m.getValue());
+						heap.set(this, "constructor2", m.getValue());
 					} else {
 						// 将构造器代理，默认调用父类构造器
-						heap.set(this, "initial",
+						heap.set(this, "constructor2",
 								proxy(m.getValue(),
 										(this.getSuperClass() || Object.$class)
-												.getInitial()));
+												.getConstructor()));
 					}
 
 				} else {
@@ -722,15 +722,15 @@ Object
 					}
 
 					if ((m.getModifiers() & 8) != 0) {
-						this.getConstructor()[n] = m.getValue();
+						this.getClassConstructor()[n] = m.getValue();
 						this.getStatics()[n] = m;
 					} else {
-						this.getConstructor().prototype[n] = m.getValue();
+						this.getClassConstructor().prototype[n] = m.getValue();
 						this.getMethods()[n] = m;
 					}
 
-					if (n === "init") {
-						heap.set(this, "init", n);
+					if (n === "initial") {
+						heap.set(this, "initial", n);
 					}
 				}
 			}
@@ -750,7 +750,7 @@ Object
 				}
 
 				if ((m.getModifiers() & 8) != 0) {
-					this.getConstructor()[m.getName()] = m.getValue();
+					this.getClassConstructor()[m.getName()] = m.getValue();
 					this.getStatics()[m.getName()] = m;
 				} else {
 					this.getFields()[m.getName()] = m;

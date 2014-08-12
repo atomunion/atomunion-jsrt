@@ -13,7 +13,7 @@ Class.forName({
 	"@Setter @Getter private _testMethods" : [],
 	TestCase : function() {
 	},
-	init : function() {
+	initial : function() {
 		this.reset();
 		this.injectTestObjects();
 		this.injectTestMethods();

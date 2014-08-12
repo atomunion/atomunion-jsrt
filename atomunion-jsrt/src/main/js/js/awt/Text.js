@@ -8,11 +8,11 @@
  * Date: 2014年7月7日
  */
 
-$import("js.awt.Text");
+$import("js.awt.Component");
 
 Class.forName({
-	name : "class js.awt.TextArea extends js.awt.Text",
-	"public TextArea" : function() {
+	name : "class js.awt.Text extends js.awt.Component",
+	"public Text" : function() {
 
 	}
 });
