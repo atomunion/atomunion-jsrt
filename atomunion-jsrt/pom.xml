@@ -4,7 +4,7 @@
 
 	<groupId>com.atomunion</groupId>
 	<artifactId>atomunion-jsrt</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.2.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>atomunion-jsrt</name>
@@ -14,8 +14,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.jdkcompile.version>1.7</project.jdkcompile.version>
 		<project.artifactId>atomunion-jsrt</project.artifactId>
-		<project.version>0.1.1-SNAPSHOT</project.version>
-		<project.atomunion.parent.version>0.0.1-SNAPSHOT</project.atomunion.parent.version>
+		<project.version>0.2.2-SNAPSHOT</project.version>
+		<project.atomunion.parent.version>1.0.1-SNAPSHOT</project.atomunion.parent.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
