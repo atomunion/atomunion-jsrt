@@ -11,7 +11,7 @@
         name : "class Object",
         "non-enumerable non-writable non-configurable alias" : "js.lang.Object",
         Object : function() {
-            var _hashCode = new Date().getTime().toString(16);
+            var _hashCode = (new Date().getTime() + Math.random()).toString(16);
             if (Object.USEECMA) {
                 Object.defineProperty(this, "_hashCode", {
                     value : _hashCode,
@@ -38,6 +38,9 @@
             };
         })(),
         "non-configurable hashCode" : function() {
+            if(!this._hashCode){
+                this._hashCode = (new Date().getTime() + Math.random()).toString(16);
+            }
             return this._hashCode;
         },
         "toString" : function() {
