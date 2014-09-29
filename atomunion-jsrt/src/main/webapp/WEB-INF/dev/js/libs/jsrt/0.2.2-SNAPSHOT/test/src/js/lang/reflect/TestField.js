@@ -6,32 +6,32 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
 	name : "class test.lang.reflect.TestField extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private fields" : testReflectObject.getClass()
+	"@Setter @Getter private field" : testReflectObject.getClass()
 			.getFields()["color"],
 	TestField : function() {
 	},
-	testGetDeclaringClass : function() {
-		js.lang.System.out.println(this.getDeclaringClass());
+	"@Test testGetDeclaringClass" : function() {
+		js.lang.System.out.println(this.getField().getDeclaringClass());
 	},
-	testGetName : function() {
-		js.lang.System.out.println(this.getName());
+	"@Test testGetName" : function() {
+		js.lang.System.out.println(this.getField().getName());
 	},
-	testGetModifiers : function() {
-		js.lang.System.out.println(this.getModifiers());
+	"@Test testGetModifiers" : function() {
+		js.lang.System.out.println(this.getField().getModifiers());
 	},
-	testGetAnnotations : function() {
-		js.lang.System.out.println(this.getAnnotations());
+	"@Test testGetAnnotations" : function() {
+		js.lang.System.out.println(this.getField().getAnnotations());
 	},
-	testGetValue : function() {
-		js.lang.System.out.println(this.getValue());
+	"@Test testGetValue" : function() {
+		js.lang.System.out.println(this.getField().getValue());
 	},
-	testGet : function() {
-		js.lang.System.out.println(this.get(testReflectObject));
+	"@Test testGet" : function() {
+		js.lang.System.out.println(this.getField().get(testReflectObject));
 	},
-	testSet : function() {
+	"@Test testSet" : function() {
 		js.lang.System.out.println("set(\"red\")");
-		this.set(testReflectObject, "red");
-		js.lang.System.out.println(this.get(testReflectObject));
+		this.getField().set(testReflectObject, "red");
+		js.lang.System.out.println(this.getField().get(testReflectObject));
 	}
 });
 new test.lang.reflect.TestField();

@@ -46,9 +46,9 @@ var dog = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
     name : "class test.lang.TestObject extends js.test.TestCase",
-    "@Test @Auto @Setter @Getter private obj" : dog,
+    "@Setter @Getter private obj" : dog,
 
-    testIsNull : function() {
+    "@Test testIsNull" : function() {
 
         js.test.Assert.assertTrue("null", Object.isNull(null));
         js.test.Assert.assertTrue("undefined", Object.isNull(undefined));
@@ -66,7 +66,7 @@ Class.forName({
         js.test.Assert.assertFalse("true", Object.isNull(true));
         js.test.Assert.assertFalse("false", Object.isNull(false));
     },
-    testIsEmpty : function() {
+    "@Test testIsEmpty" : function() {
         js.test.Assert.assertTrue("null", Object.isEmpty(null));
         js.test.Assert.assertTrue("undefined", Object.isEmpty(undefined));
         js.test.Assert.assertFalse("{}", Object.isEmpty({}));
@@ -84,7 +84,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isEmpty(false));
     },
 
-    testIsArray : function() {
+    "@Test testIsArray" : function() {
 
         js.test.Assert.assertFalse("null", Object.isArray(null));
         js.test.Assert.assertFalse("undefined", Object.isArray(undefined));
@@ -103,7 +103,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isArray(false));
     },
 
-    testIsDate : function() {
+    "@Test testIsDate" : function() {
 
         js.test.Assert.assertFalse("null", Object.isDate(null));
         js.test.Assert.assertFalse("undefined", Object.isDate(undefined));
@@ -123,7 +123,7 @@ Class.forName({
 
     },
 
-    testIsObject : function() {
+    "@Test testIsObject" : function() {
 
         js.test.Assert.assertFalse("null", Object.isObject(null));
         js.test.Assert.assertFalse("undefined", Object.isObject(undefined));
@@ -143,7 +143,7 @@ Class.forName({
 
     },
 
-    testIsFunction : function() {
+    "@Test testIsFunction" : function() {
 
         js.test.Assert.assertFalse("null", Object.isFunction(null));
         js.test.Assert.assertFalse("undefined", Object.isFunction(undefined));
@@ -162,7 +162,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isFunction(false));
     },
 
-    testIsNumber : function() {
+    "@Test testIsNumber" : function() {
 
         js.test.Assert.assertFalse("null", Object.isNumber(null));
         js.test.Assert.assertFalse("undefined", Object.isNumber(undefined));
@@ -182,7 +182,7 @@ Class.forName({
 
     },
 
-    testIsString : function() {
+    "@Test testIsString" : function() {
 
         js.test.Assert.assertFalse("null", Object.isString(null));
         js.test.Assert.assertFalse("undefined", Object.isString(undefined));
@@ -202,7 +202,7 @@ Class.forName({
 
     },
 
-    testIsBoolean : function() {
+    "@Test testIsBoolean" : function() {
 
         js.test.Assert.assertFalse("null", Object.isBoolean(null));
         js.test.Assert.assertFalse("undefined", Object.isBoolean(undefined));
@@ -221,7 +221,7 @@ Class.forName({
 
     },
 
-    testIsDefined : function() {
+    "@Test testIsDefined" : function() {
 
         js.test.Assert.assertTrue("null", Object.isDefined(null));
         js.test.Assert.assertFalse("undefined", Object.isDefined(undefined));
@@ -239,66 +239,66 @@ Class.forName({
         js.test.Assert.assertTrue("false", Object.isDefined(false));
 
     },
-    testClone : function() {
-        js.lang.System.out.println("克隆前：" + this.toString());
-        var c = this.clone();
+    "@Test testClone" : function() {
+        js.lang.System.out.println("克隆前：" + this.getObj().toString());
+        var c = this.getObj().clone();
         js.lang.System.out.println("克隆后：" + c.toString());
 
-        js.test.Assert.assertNotSame("克隆前后  assertSame ", this, c);
+        js.test.Assert.assertNotSame("克隆前后  assertSame ", this.getObj(), c);
     },
 
-    testEach : function() {
-        Object.each(this, function(i, o, a) {
-            js.lang.System.out.println(i + ":" + o + "    this[" + this + "]" + "    被遍历的对象[" + a.toString() + "]");
+    "@Test testEach" : function() {
+        js.lang.System.out.println("被遍历的对象:" + this.getObj().toString());
+        Object.each(this.getObj(), function(i, o, a) {
+            js.lang.System.out.println(i + ":" + o + "    被遍历的对象[" + a.toString() + "]");
         }, null);
     },
-    testEnumerate : function() {
-        var scope = dog;
-        js.lang.System.out.println("scope:" + scope.toString());
+    "@Test testEnumerate" : function() {
+        js.lang.System.out.println("被遍历的对象:" + this.getObj().toString());
 
-        Object.enumerate(this, function(i, o, a) {
-            js.lang.System.out.println(i + ":" + o + "    this[" + this + "]    this==scope[" + (this === scope) + "]    被遍历的对象[" + a.toString() + "]");
+        Object.enumerate(this.getObj(), function(i, o, a) {
+            js.lang.System.out.println(i + ":" + o + "   被遍历的对象[" + a.toString() + "]");
         }, dog, true);
     },
-    testToJson : function() {
-        js.lang.System.out.println(this.toJson());
+    "@Test testToJson" : function() {
+        js.lang.System.out.println(this.getObj().toJson());
 
     },
-    testToQueryString : function() {
-        js.lang.System.out.println(this.toQueryString());
+    "@Test testToQueryString" : function() {
+        js.lang.System.out.println(this.getObj().toQueryString());
     },
-    testGetClass : function() {
-        js.lang.System.out.println(this.getClass());
+    "@Test testGetClass" : function() {
+        js.lang.System.out.println(this.getObj().getClass());
 
-        js.test.Assert.assertNotNull("this.getClass()", this.getClass());
+        js.test.Assert.assertNotNull("this.getObj().getClass()", this.getObj().getClass());
     },
-    testEquals : function() {
+    "@Test testEquals" : function() {
 
-        js.test.Assert.assertTrue("this.equals(this)", this.equals(this));
-        js.test.Assert.assertFalse("this.equals(null)", this.equals(null));
-        js.test.Assert.assertFalse("this.equals(undefined)", this.equals(undefined));
+        js.test.Assert.assertTrue("this.getObj().equals(this.getObj())", this.getObj().equals(this.getObj()));
+        js.test.Assert.assertFalse("this.getObj().equals(null)", this.getObj().equals(null));
+        js.test.Assert.assertFalse("this.getObj().equals(undefined)", this.getObj().equals(undefined));
 
     },
-    testGetVersion : function() {
-        js.test.Assert.assertNotNull("this.getVersion():", this.getVersion());
+    "@Test testGetVersion" : function() {
+        js.test.Assert.assertNotNull("this.getObj().getVersion():", this.getObj().getVersion());
     },
-    testHashCode : function() {
-        js.test.Assert.assertNotNull("this.hashCode():", this.hashCode());
+    "@Test testHashCode" : function() {
+        js.test.Assert.assertNotNull("this.getObj().hashCode():", this.getObj().hashCode());
     },
-    testToString : function() {
-        js.test.Assert.assertNotNull("this.toString()", this.toString());
+    "@Test testToString" : function() {
+        js.test.Assert.assertNotNull("this.getObj().toString()", this.getObj().toString());
     },
-    testForIn : function() {
-        for (var i in this) {
-            js.lang.System.out.println("key:" + i + "    value:" + this[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+    "@Test testForIn" : function() {
+        for (var i in this.getObj()) {
+            js.lang.System.out.println("key:" + i + "    value:" + this.getObj()[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
 
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in Object^^^^^^^^^^^^^^^^^^^^^^^");
         for (var i in Object) {
-            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in newObj^^^^^^^^^^^^^^^^^^^^^^^");
-        var newObj = Object.create(this, {
+        var newObj = Object.create(this.getObj(), {
             add1 : {
                 value : "add1",
                 writable : true,
@@ -339,7 +339,7 @@ Class.forName({
         });
 
         for (var i in newObj) {
-            js.lang.System.out.println("key:" + i + "    value:" + newObj[i] + "   this.hasOwnProperty:" + newObj.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + newObj[i] + "   this.getObj().hasOwnProperty:" + newObj.hasOwnProperty(i));
         }
 
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in new Object^^^^^^^^^^^^^^^^^^^^^^^");
@@ -385,11 +385,11 @@ Class.forName({
         });
 
         for (var i in Object) {
-            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
         var obj = new Object();
         for (var i in obj) {
-            js.lang.System.out.println("key:" + i + "    value:" + obj[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + obj[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
 
     }
@@ -403,77 +403,77 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
 	name : "class test.lang.TestClass extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private dog" : testReflectObject.getClass(),
+	"@Setter @Getter private dog" : testReflectObject.getClass(),
 	TestClass : function() {
 	},
-	testGetClassConstructor : function() {
-		js.lang.System.out.println(this.getClassConstructor());
+	"@Test testGetClassConstructor" : function() {
+		js.lang.System.out.println(this.getDog().getClassConstructor());
 	},
-	testGetConstructor : function() {
-		js.lang.System.out.println(this.getConstructor());
+	"@Test testGetConstructor" : function() {
+		js.lang.System.out.println(this.getDog().getConstructor());
 	},
-	testGetInitial : function() {
-		js.lang.System.out.println(this.getInitial());
+	"@Test testGetInitial" : function() {
+		js.lang.System.out.println(this.getDog().getInitial());
 	},
-	testGetName : function() {
-		js.lang.System.out.println(this.getName());
+	"@Test testGetName" : function() {
+		js.lang.System.out.println(this.getDog().getName());
 	},
-	testGetFullName : function() {
-		js.lang.System.out.println(this.getFullName());
+	"@Test testGetFullName" : function() {
+		js.lang.System.out.println(this.getDog().getFullName());
 	},
-	testGetInstance : function() {
-		js.lang.System.out.println(this.getInstance());
+	"@Test testGetInstance" : function() {
+		js.lang.System.out.println(this.getDog().getInstance());
 	},
-	testGetAnnotations : function() {
-		js.lang.System.out.println(this.getAnnotations());
+	"@Test testGetAnnotations" : function() {
+		js.lang.System.out.println(this.getDog().getAnnotations());
 	},
-	testGetPackage : function() {
-		js.lang.System.out.println(this.getPackage());
+	"@Test testGetPackage" : function() {
+		js.lang.System.out.println(this.getDog().getPackage());
 	},
-	testGetDeclaredField : function() {
-		js.lang.System.out.println(this.getDeclaredField("color"));
+	"@Test testGetDeclaredField" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredField("color"));
 	},
-	testGetDeclaredFields : function() {
-		js.lang.System.out.println(this.getDeclaredFields());
+	"@Test testGetDeclaredFields" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredFields());
 	},
-	testGetField : function() {
-		js.lang.System.out.println(this.getField("color"));
+	"@Test testGetField" : function() {
+		js.lang.System.out.println(this.getDog().getField("color"));
 	},
-	testGetFields : function() {
-		js.lang.System.out.println(this.getFields());
+	"@Test testGetFields" : function() {
+		js.lang.System.out.println(this.getDog().getFields());
 	},
-	testGetDeclaredMethod : function() {
-		js.lang.System.out.println(this.getDeclaredMethod("say"));
+	"@Test testGetDeclaredMethod" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredMethod("say"));
 	},
-	testGetDeclaredMethods : function() {
-		js.lang.System.out.println(this.getDeclaredMethods());
+	"@Test testGetDeclaredMethods" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredMethods());
 	},
-	testGetMethod : function() {
-		js.lang.System.out.println(this.getMethod("say"));
+	"@Test testGetMethod" : function() {
+		js.lang.System.out.println(this.getDog().getMethod("say"));
 	},
-	testGetMethods : function() {
-		js.lang.System.out.println(this.getMethods());
+	"@Test testGetMethods" : function() {
+		js.lang.System.out.println(this.getDog().getMethods());
 	},
-	testGetSuperClass : function() {
-		js.lang.System.out.println(this.getSuperClass());
+	"@Test testGetSuperClass" : function() {
+		js.lang.System.out.println(this.getDog().getSuperClass());
 	},
-	testGetModifiers : function() {
-		js.lang.System.out.println(this.getModifiers());
+	"@Test testGetModifiers" : function() {
+		js.lang.System.out.println(this.getDog().getModifiers());
 	},
-	testAddMethod : function() {
-		this.addMethod(new js.lang.reflect.Method("testAddMethod", function() {
+	"@Test testAddMethod" : function() {
+		this.getDog().addMethod(new js.lang.reflect.Method("testAddMethod", function() {
 			return "我是动态新增的方法";
-		}, this, 1, []));
+		}, this.getDog(), 1, []));
 		js.lang.System.out.println(testReflectObject.testAddMethod());
 	},
-	testAddField : function() {
-		js.lang.System.out.println(this
+	"@Test testAddField" : function() {
+		js.lang.System.out.println(this.getDog()
 				.addField(new js.lang.reflect.Field("testAddField",
-						"我是动态新增的属性", this, 1, [ "@Getter", "@Setter" ])));
+						"我是动态新增的属性", this.getDog(), 1, [ "@Getter", "@Setter" ])));
 		js.lang.System.out.println(testReflectObject.getTestAddField());
 	},
-	testNewInstance : function() {
-		var c = this.newInstance();
+	"@Test testNewInstance" : function() {
+		var c = this.getDog().newInstance();
 		js.lang.System.out.println(c.getColor());
 	}
 });
@@ -487,32 +487,32 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
 	name : "class test.lang.reflect.TestField extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private fields" : testReflectObject.getClass()
+	"@Setter @Getter private field" : testReflectObject.getClass()
 			.getFields()["color"],
 	TestField : function() {
 	},
-	testGetDeclaringClass : function() {
-		js.lang.System.out.println(this.getDeclaringClass());
+	"@Test testGetDeclaringClass" : function() {
+		js.lang.System.out.println(this.getField().getDeclaringClass());
 	},
-	testGetName : function() {
-		js.lang.System.out.println(this.getName());
+	"@Test testGetName" : function() {
+		js.lang.System.out.println(this.getField().getName());
 	},
-	testGetModifiers : function() {
-		js.lang.System.out.println(this.getModifiers());
+	"@Test testGetModifiers" : function() {
+		js.lang.System.out.println(this.getField().getModifiers());
 	},
-	testGetAnnotations : function() {
-		js.lang.System.out.println(this.getAnnotations());
+	"@Test testGetAnnotations" : function() {
+		js.lang.System.out.println(this.getField().getAnnotations());
 	},
-	testGetValue : function() {
-		js.lang.System.out.println(this.getValue());
+	"@Test testGetValue" : function() {
+		js.lang.System.out.println(this.getField().getValue());
 	},
-	testGet : function() {
-		js.lang.System.out.println(this.get(testReflectObject));
+	"@Test testGet" : function() {
+		js.lang.System.out.println(this.getField().get(testReflectObject));
 	},
-	testSet : function() {
+	"@Test testSet" : function() {
 		js.lang.System.out.println("set(\"red\")");
-		this.set(testReflectObject, "red");
-		js.lang.System.out.println(this.get(testReflectObject));
+		this.getField().set(testReflectObject, "red");
+		js.lang.System.out.println(this.getField().get(testReflectObject));
 	}
 });
 new test.lang.reflect.TestField();
@@ -525,29 +525,32 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 Class
 		.forName({
 			name : "class test.lang.reflect.TestMethod extends js.test.TestCase",
-			"@Test @Auto @Setter @Getter private methods" : testReflectObject
+			
+			"@Setter @Getter private method" : testReflectObject
 					.getClass().getMethods()["say"],
+			
 			TestMethod : function() {
 			},
-			testInvoke : function() {
+			
+			"@Test testInvoke" : function() {
 				js.lang.System.out
 						.println("invoke say(), The desired operation is to print \"汪汪\"");
-				js.lang.System.out.println(this.invoke(testReflectObject));
+				js.lang.System.out.println(this.getMethod().invoke(testReflectObject));
 			},
-			testGetDeclaringClass : function() {
-				js.lang.System.out.println(this.getDeclaringClass());
+			"@Test testGetDeclaringClass" : function() {
+				js.lang.System.out.println(this.getMethod().getDeclaringClass());
 			},
-			testGetName : function() {
-				js.lang.System.out.println(this.getName());
+			"@Test testGetName" : function() {
+				js.lang.System.out.println(this.getMethod().getName());
 			},
-			testGetModifiers : function() {
-				js.lang.System.out.println(this.getModifiers());
+			"@Test testGetModifiers" : function() {
+				js.lang.System.out.println(this.getMethod().getModifiers());
 			},
-			testGetAnnotations : function() {
-				js.lang.System.out.println(this.getAnnotations());
+			"@Test testGetAnnotations" : function() {
+				js.lang.System.out.println(this.getMethod().getAnnotations());
 			},
-			testGetValue : function() {
-				js.lang.System.out.println(this.getValue());
+			"@Test testGetValue" : function() {
+				js.lang.System.out.println(this.getMethod().getValue());
 			}
 		});
 
@@ -556,14 +559,14 @@ $import("js.test.TestCase");
 $import("js.util.ArrayList");
 Class.forName({
 	name : "class test.util.TestList extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private list" : new js.util.ArrayList(),
+	"@Setter @Getter private list" : new js.util.ArrayList(),
 	TestList : function() {
 		for (var i = 0; i < 3; i++) {
 			this.getList().add("测试List接口" + i);
 		}
 	},
-	testListIterator : function() {
-		var itr = this.listIterator();
+	"@Test testListIterator" : function() {
+		var itr = this.getList().listIterator();
 		while (itr.hasNext()) {
 			js.lang.System.out.println(itr.next());
 		}
@@ -572,32 +575,32 @@ Class.forName({
 			js.lang.System.out.println(itr.previous());
 		}
 	},
-	testIterator : function() {
-		var itr = this.iterator();
+	"@Test testIterator" : function() {
+		var itr = this.getList().iterator();
 		while (itr.hasNext()) {
 			js.lang.System.out.println(itr.next());
 		}
 	},
-	testIndexOf : function() {
+	"@Test testIndexOf" : function() {
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("********indexOf:" + i + "   value:"
-					+ this.indexOf("测试" + i));
+					+ this.getList().indexOf("测试" + i));
 		}
 	},
-	testLastIndexOf : function() {
+	"@Test testLastIndexOf" : function() {
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("********lastIndexOf:" + i + "   value:"
-					+ this.lastIndexOf("测试" + i));
+					+ this.getList().lastIndexOf("测试" + i));
 		}
 	},
-	testSubList : function() {
+	"@Test testSubList" : function() {
 		js.lang.System.out.println("********subList(1,2)->" + "   value:"
-				+ this.subList(1, 2));
+				+ this.getList().subList(1, 2));
 	},
-	testClear : function() {
-		js.lang.System.out.println("clear前：" + this.size());
-		this.clear();
-		js.lang.System.out.println("clear后：" + this.size());
+	"@Test testClear" : function() {
+		js.lang.System.out.println("clear前：" + this.getList().size());
+		this.getList().clear();
+		js.lang.System.out.println("clear后：" + this.getList().size());
 	}
 });
 new test.util.TestList();
@@ -605,48 +608,50 @@ $import("js.test.TestCase");
 $import("js.util.ArrayList");
 Class.forName({
 	name : "class test.util.TestArrayList extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private list" : new js.util.ArrayList(),
-	TestArrayList : function() {
+	"@Setter @Getter private list" : new js.util.ArrayList(),
+	
+	"TestArrayList" : function() {
 		for (var i = 0; i < 3; i++) {
 			this.getList().add("测试ArrayList" + i);
 		}
 	},
-	testAdd : function() {
+	
+	"@Test testAdd" : function() {
 		for (var i = 4; i < 7; i++) {
-			this.add("测试ArrayList" + i);
+			this.getList().add("测试ArrayList" + i);
 			js.lang.System.out.println("添加->测试ArrayList" + i);
 		}
 	},
-	testGet : function() {
+	"@Test testGet" : function() {
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("********index:" + i + "   value:"
-					+ this.get(i));
+					+ this.getList().get(i));
 		}
 	},
-	testSet : function() {
+	"@Test testSet" : function() {
 		var i = 2, v = "新添加的3";
 		js.lang.System.out.println("set-> index:" + i + ",value:" + v
-				+ "  ,旧值：" + this.set(i, v) + "新值:" + this.get(i));
+				+ "  ,旧值：" + this.getList().set(i, v) + "新值:" + this.getList().get(i));
 	},
-	testRemove : function() {
+	"@Test testRemove" : function() {
 		var i = 2;
 		js.lang.System.out.println("remove-> index:" + i + ",旧值："
-				+ this.remove(i) + "size:" + this.size());
+				+ this.getList().remove(i) + "size:" + this.getList().size());
 
 	},
-	testSize : function() {
-		js.lang.System.out.println("size:" + this.size());
+	"@Test testSize" : function() {
+		js.lang.System.out.println("size:" + this.getList().size());
 	},
-	testClone : function() {
-		var c = this.clone();
+	"@Test testClone" : function() {
+		var c = this.getList().clone();
 
-		js.lang.System.out.println("克隆前：" + this.size());
+		js.lang.System.out.println("克隆前：" + this.getList().size());
 		js.lang.System.out.println("克隆后：" + c.size());
 
 		var itr = c.iterator();
 		var i = 0;
 		while (itr.hasNext()) {
-			js.lang.System.out.println("克隆前：" + this.get(i++) + "       克隆后："
+			js.lang.System.out.println("克隆前：" + this.getList().get(i++) + "       克隆后："
 					+ itr.next());
 		}
 	}
@@ -657,59 +662,59 @@ $import("js.test.TestCase");
 $import("js.util.HashSet");
 Class.forName({
 	name : "class test.util.TestHashSet extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private set" : new js.util.HashSet(),
+	"@Setter @Getter private set" : new js.util.HashSet(),
 	TestHashSet : function() {
 		for (var i = 0; i < 3; i++) {
 			this.getSet().add("测试set" + i);
 		}
 	},
-	testSize : function() {
-		js.lang.System.out.println("size:" + this.size());
+	"@Test testSize" : function() {
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testClear : function() {
+	"@Test testClear" : function() {
 		js.lang.System.out.println("clear:");
-		this.clear();
-		js.lang.System.out.println("size:" + this.size());
+		this.getSet().clear();
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testAdd : function() {
+	"@Test testAdd" : function() {
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("测试set" + i);
-			this.add("测试set" + i);
+			this.getSet().add("测试set" + i);
 		}
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("测试set" + i);
-			this.add("测试set" + i);
+			this.getSet().add("测试set" + i);
 		}
-		js.lang.System.out.println("size:" + this.size());
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testIterator : function() {
-		var itr = this.iterator();
+	"@Test testIterator" : function() {
+		var itr = this.getSet().iterator();
 		while (itr.hasNext()) {
 			js.lang.System.out.println(itr.next());
 		}
 	},
-	testContains : function() {
+	"@Test testContains" : function() {
 		var i = "测试set" + 3;
 		js.lang.System.out.println("value:" + i + ",contains:"
-				+ this.contains(i));
+				+ this.getSet().contains(i));
 	},
 
-	testIsEmpty : function() {
-		js.lang.System.out.println("isEmpty:" + this.isEmpty());
+	"@Test testIsEmpty" : function() {
+		js.lang.System.out.println("isEmpty:" + this.getSet().isEmpty());
 	},
 
-	testRemove : function() {
+	"@Test testRemove" : function() {
 		var i = "测试set" + 2;
 		js.lang.System.out.println("remove-> key:" + i + ",旧值："
-				+ this.remove(i) + " ,size:" + this.size());
+				+ this.getSet().remove(i) + " ,size:" + this.getSet().size());
 	},
-	testClone : function() {
-		var c = this.clone();
+	"@Test testClone" : function() {
+		var c = this.getSet().clone();
 
-		js.lang.System.out.println("克隆前：" + this.size());
+		js.lang.System.out.println("克隆前：" + this.getSet().size());
 		js.lang.System.out.println("克隆后：" + c.size());
 
-		var itr1 = this.iterator();
+		var itr1 = this.getSet().iterator();
 
 		var itr2 = c.iterator();
 
@@ -727,57 +732,57 @@ $import("js.test.TestCase");
 $import("js.util.HashMap");
 Class.forName({
 	name : "class test.util.TestMap extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private map" : new js.util.HashMap(),
+	"@Setter @Getter private map" : new js.util.HashMap(),
 	TestMap : function() {
 		for (var i = 0; i < 6; i++) {
 			this.getMap().put(i, "测试Map" + i);
 		}
 	},
-	testContainsKey : function() {
+	"@Test testContainsKey" : function() {
 		for (var i = 2; i < 4; i++) {
 			js.lang.System.out.println("containsKey->  index:" + i
-					+ ",containsKey:" + this.containsKey(i));
+					+ ",containsKey:" + this.getMap().containsKey(i));
 		}
 	},
-	testContainsValue : function() {
+	"@Test testContainsValue" : function() {
 		for (var i = 2; i < 4; i++) {
 			js.lang.System.out.println("containsValue->  value:测试Map" + i
-					+ ",containsValue:" + this.containsValue("测试Map" + i));
+					+ ",containsValue:" + this.getMap().containsValue("测试Map" + i));
 		}
 	},
-	testGet : function() {
+	"@Test testGet" : function() {
 		for (var i = 4; i < 6; i++) {
 			js.lang.System.out.println("get-> index:" + i + ",value:"
-					+ this.get(i));
+					+ this.getMap().get(i));
 		}
 	},
-	testIsEmpty : function() {
-		js.lang.System.out.println("isEmpty->" + this.isEmpty());
+	"@Test testIsEmpty" : function() {
+		js.lang.System.out.println("isEmpty->" + this.getMap().isEmpty());
 
 	},
-	testPut : function() {
+	"@Test testPut" : function() {
 		for (var i = 3; i < 6; i++) {
-			this.put(i, "新put" + i);
+			this.getMap().put(i, "新put" + i);
 			js.lang.System.out.println("put->key:" + i + ",value:"
-					+ this.get(i));
+					+ this.getMap().get(i));
 		}
 	},
-	testSize : function() {
-		js.lang.System.out.println("size:" + this.size());
+	"@Test testSize" : function() {
+		js.lang.System.out.println("size:" + this.getMap().size());
 	},
-	testRemove : function() {
+	"@Test testRemove" : function() {
 		var i = 5;
 		js.lang.System.out.println("remove-> key:" + i + ",旧值："
-				+ this.remove(i) + " ,size:" + this.size());
+				+ this.getMap().remove(i) + " ,size:" + this.getMap().size());
 
 	},
-	testClone : function() {
-		var c = this.clone();
+	"@Test testClone" : function() {
+		var c = this.getMap().clone();
 
-		js.lang.System.out.println("克隆前：" + this.size());
+		js.lang.System.out.println("克隆前：" + this.getMap().size());
 		js.lang.System.out.println("克隆后：" + c.size());
 
-		var itr1 = this.entrySet().iterator();
+		var itr1 = this.getMap().entrySet().iterator();
 
 		var itr2 = c.entrySet().iterator();
 
@@ -795,30 +800,30 @@ $import("js.test.TestCase");
 $import("js.util.HashMap");
 Class.forName({
 	name : "class test.util.TestHashMap extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private map" : new js.util.HashMap(),
+	"@Setter @Getter private map" : new js.util.HashMap(),
 	TestHashMap : function() {
 		for (var i = 0; i < 6; i++) {
 			this.getMap().put(i, "测试Map" + i);
 		}
 	},
-	testEntrySet : function() {
-		var itr = this.entrySet().iterator();
+	"@Test testEntrySet" : function() {
+		var itr = this.getMap().entrySet().iterator();
 		while (itr.hasNext()) {
 			var entry = itr.next();
 			js.lang.System.out.println("key:" + entry.getKey() + ",value:"
 					+ entry.getValue());
 		}
 	},
-	testKeySet : function() {
-		var itr = this.keySet().iterator();
+	"@Test testKeySet" : function() {
+		var itr = this.getMap().keySet().iterator();
 		while (itr.hasNext()) {
 			var key = itr.next();
 			js.lang.System.out
-					.println("key:" + key + ",value:" + this.get(key));
+					.println("key:" + key + ",value:" + this.getMap().get(key));
 		}
 	},
-	testValues : function() {
-		var itr = this.values().iterator();
+	"@Test testValues" : function() {
+		var itr = this.getMap().values().iterator();
 		while (itr.hasNext()) {
 			var value = itr.next();
 			js.lang.System.out.println("value:" + value);
@@ -827,3 +832,300 @@ Class.forName({
 });
 
 new test.util.TestHashMap();
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年9月29日
+ */
+
+$import("js.test.TestCase");
+$import("js.util.Date");
+Class.forName({
+    name : "class test.util.TestDate extends js.test.TestCase",
+    "@Setter @Getter private date" : new js.util.Date(),
+    TestDate : function() {
+    },
+
+    "@Test public testEquals" : function() {
+        js.test.Assert.assertTrue("类js.util.Date中的equals方法测试不通过", !this.getDate().equals(new Date()));
+        js.test.Assert.assertTrue("类js.util.Date中的equals方法测试不通过", this.getDate().equals(this.getDate()));
+        js.test.Assert.assertTrue("类js.util.Date中的equals方法测试不通过", this.getDate().equals(this.getDate().clone()));
+    },
+
+    "@Test public testAfter" : function() {
+        js.test.Assert.assertTrue("类js.util.Date中的after方法测试不通过", new Date().after(this.getDate()));
+    },
+
+    "@Test public testBefore" : function() {
+        js.test.Assert.assertTrue("类js.util.Date中的after方法测试不通过", this.getDate().before(new Date()));
+    },
+
+    "@Test public testCompareTo" : function() {
+        js.test.Assert.assertTrue("类js.util.Date中的compareTo方法测试不通过", new Date().compareTo(this.getDate()) > 0);
+        js.test.Assert.assertTrue("类js.util.Date中的compareTo方法测试不通过", this.getDate().compareTo(new Date()) < 0);
+        js.test.Assert.assertTrue("类js.util.Date中的compareTo方法测试不通过", this.getDate().compareTo(this.getDate().clone()) == 0);
+    }
+}); 
+
+new test.util.TestDate();
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年9月29日
+ */
+
+$import("js.test.TestCase");
+$import("js.util.Calendar");
+$import("js.util.GregorianCalendar");
+Class.forName({
+    name : "class test.util.TestCalendar extends js.test.TestCase",
+    "@Setter @Getter private calendar" : null,
+
+    "@Setter @Getter private static staticField" : 1,
+
+    "@Setter @Getter private field" : 2,
+
+    TestCalendar : function() {
+    },
+
+    "@BeforeClass public static setUpBeforeClass" : function() {
+        js.test.Assert.assertTrue("类test.util.TestCalendar中的setUpBeforeClass方法测试不通过", this.staticField == 1);
+        js.test.Assert.assertTrue("类test.util.TestCalendar中的setUpBeforeClass方法测试不通过", this.field == null);
+    },
+
+    "@AfterClass public static tearDownAfterClass" : function() {
+        js.test.Assert.assertTrue("类test.util.TestCalendar中的setUpBeforeClass方法测试不通过", this.staticField == 1);
+        js.test.Assert.assertTrue("类test.util.TestCalendar中的setUpBeforeClass方法测试不通过", this.field == null);
+    },
+
+    "@Before public setUp" : function() {
+        this.setCalendar(js.util.Calendar.getInstance());
+        this.getCalendar().setTimeInMillis(0);
+    },
+
+    "@After public tearDown" : function() {
+    },
+
+    "@Test testAfter" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的after方法测试不通过", js.util.Calendar.getInstance().after(this.getCalendar()));
+    },
+
+    "@Test testBefore" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的before方法测试不通过", this.getCalendar().before(js.util.Calendar.getInstance()));
+    },
+
+    "@Test testClear" : function() {
+        this.getCalendar().clear(js.util.Calendar.YEAR);
+        js.test.Assert.assertTrue("类js.util.Calendar中的clear方法测试不通过", this.getCalendar().get(js.util.Calendar.YEAR) == 0);
+
+        this.getCalendar().clear();
+        js.test.Assert.assertTrue("类js.util.Calendar中的clear方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
+
+    },
+
+    "@Test testClone" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的clone方法测试不通过", this.getCalendar().clone().compareTo(this.getCalendar()) == 0);
+    },
+
+    "@Test testCompareTo" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的compareTo方法测试不通过", js.util.Calendar.getInstance().compareTo(this.getCalendar()) > 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的compareTo方法测试不通过", this.getCalendar().compareTo(js.util.Calendar.getInstance()) < 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的compareTo方法测试不通过", this.getCalendar().clone().compareTo(this.getCalendar()) == 0);
+    },
+
+    "@Test testEquals" : function() {
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的equals方法测试不通过", this.getCalendar().clone().equals(this.getCalendar()));
+        js.test.Assert.assertTrue("类js.util.Calendar中的equals方法测试不通过", !this.getCalendar().clone().equals(js.util.Calendar.getInstance()));
+    },
+
+    "@Test testGet" : function() {
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(YEAR) 正确值：1970 实际值：" + this.getCalendar().get(js.util.Calendar.YEAR), this.getCalendar().get(js.util.Calendar.YEAR) == 1970);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(MONTH) 正确值：0 实际值：", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(WEEK_OF_YEAR) 正确值：1 实际值：", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(WEEK_OF_MONTH) 正确值：1 实际值：", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(DAY_OF_MONTH) 正确值：1 实际值：", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(DAY_OF_YEAR) 正确值：1 实际值：", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(DAY_OF_WEEK) 正确值：5 实际值：", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(DAY_OF_WEEK_IN_MONTH) 正确值：1 实际值：", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(AM_PM) 正确值：0 实际值：", this.getCalendar().get(js.util.Calendar.AM_PM) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(HOUR) 正确值：8 实际值：", this.getCalendar().get(js.util.Calendar.HOUR) == 8);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(HOUR_OF_DAY) 正确值：8 实际值：", this.getCalendar().get(js.util.Calendar.HOUR_OF_DAY) == 8);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(MINUTE) 正确值：0 实际值：", this.getCalendar().get(js.util.Calendar.MINUTE) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(SECOND) 正确值：0 实际值：", this.getCalendar().get(js.util.Calendar.SECOND) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的get方法测试不通过 get(MILLISECOND) 正确值：0 实际值：", this.getCalendar().get(js.util.Calendar.MILLISECOND) == 0);
+    },
+
+    "@Test testGetInstance" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的getInstance方法测试不通过", Object.isNull(this.getCalendar()) || Object.isInstanceof(this.getCalendar(), js.util.Calendar));
+    },
+
+    "@Test testGetTime" : function() {
+        js.lang.System.out.println(this.getCalendar().getTime());
+        js.test.Assert.assertTrue("类js.util.Calendar中的getTime方法测试不通过", this.getCalendar().getTime().compareTo(new Date(0)) == 0);
+    },
+
+    "@Test testGetTimeInMillis" : function() {
+        js.test.Assert.assertTrue("类js.util.Calendar中的getTime方法测试不通过", this.getCalendar().getTimeInMillis() == 0);
+    },
+
+    "@Test testSetField" : function() {
+
+        this.getCalendar().setField(js.util.Calendar.YEAR, 1987);
+        this.getCalendar().setField(js.util.Calendar.MONTH, 3);
+        this.getCalendar().setField(js.util.Calendar.DAY_OF_MONTH, 10);
+        this.getCalendar().setField(js.util.Calendar.AM_PM, 1);
+        this.getCalendar().setField(js.util.Calendar.HOUR, 10);
+        this.getCalendar().setField(js.util.Calendar.MINUTE, 10);
+        this.getCalendar().setField(js.util.Calendar.SECOND, 10);
+        this.getCalendar().setField(js.util.Calendar.MILLISECOND, 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1987);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 3);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 15);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 100);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 6);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setField方法测试不通过", this.getCalendar().getField(js.util.Calendar.MILLISECOND) == 10);
+
+    },
+
+    "@Test testIsFieldSet" : function() {
+        this.getCalendar().setField(js.util.Calendar.YEAR, 1987);
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的isFieldSet方法测试不通过", this.getCalendar().isFieldSet(js.util.Calendar.YEAR));
+    },
+
+    "@Test testSet" : function(year, month, date, hourOfDay, minute, second) {
+        this.getCalendar().set(1987, 3, 10, 22, 10, 10);
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1987);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 3);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 15);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 100);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 6);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 10);
+
+    },
+
+    "@Test testSetTime" : function(date) {
+        this.getCalendar().setTime(new Date(545062210010));
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1987);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 3);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 15);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 100);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 6);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 10);
+    },
+
+    "@Test testSetTimeInMillis" : function(millis) {
+
+        this.getCalendar().setTimeInMillis(545062210010);
+
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1987);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 3);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 15);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 100);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 6);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTimeInMillis方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 10);
+
+    },
+
+    "@Test testToString" : function() {
+        js.lang.System.out.println(this.getCalendar().toString());
+    }
+});
+
+new test.util.TestCalendar();
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年9月29日
+ */
+
+$import("js.test.TestCase");
+$import("js.util.Calendar");
+$import("js.util.GregorianCalendar");
+Class.forName({
+    name : "class test.util.TestGregorianCalendar extends js.test.TestCase",
+    "@Setter @Getter private calendar" : new js.util.GregorianCalendar(),
+    TestGregorianCalendar : function() {
+    },
+
+    "@Before public setUp" : function() {
+        js.lang.System.out.println("setUp");
+
+        this.setCalendar(js.util.Calendar.getInstance());
+        this.getCalendar().setTimeInMillis(545062210010);
+    },
+
+    "@Test testAdd" : function() {
+        
+        
+        this.getCalendar().add(js.util.Calendar.YEAR,-10);
+        this.getCalendar().add(js.util.Calendar.MONTH,25);
+        this.getCalendar().add(js.util.Calendar.DAY_OF_MONTH,21);
+        this.getCalendar().add(js.util.Calendar.HOUR_OF_DAY,-10);
+        this.getCalendar().add(js.util.Calendar.MINUTE,51);
+        this.getCalendar().add(js.util.Calendar.SECOND,15);
+        
+     
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1979);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 4);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 31);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 151);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 13);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 25);
+        
+    }
+}); 
+
+new test.util.TestGregorianCalendar();

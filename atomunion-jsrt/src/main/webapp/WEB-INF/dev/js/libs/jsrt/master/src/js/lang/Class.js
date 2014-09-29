@@ -1,5 +1,5 @@
 /*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * ! JSRT JavaScript Library 0.1.5 lico.atom@gmail.com
  *
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  *
@@ -300,26 +300,7 @@ Object.extend(Object, function() {
         }
 
         var regx = /@\S*/g;
-        var isAbstract = modify.indexOf("abstract ") != -1, 
-        isInterface = modify.indexOf("interface ") != -1, 
-        isFinal = modify.indexOf("final ") != -1, 
-        isStatic = modify.indexOf("static ") != -1, 
-        isProtected = modify.indexOf("protected ") != -1, 
-        isPrivate = modify.indexOf("private ") != -1, 
-        isDefault = modify.indexOf("default ") != -1, 
-        isPublic = (modify.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), 
-        
-        isNonWritable = modify.indexOf("non-writable ") != -1, 
-        isNonEnumerable = modify.indexOf("non-enumerable ") != -1, 
-        isNonConfigurable = modify.indexOf("non-configurable ") != -1,
-        
-        
-        isWritable = !isNonWritable && modify.indexOf("writable ") != -1, 
-        isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, 
-        isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1
-        
-        
-        ;
+        var isAbstract = modify.indexOf("abstract ") != -1, isInterface = modify.indexOf("interface ") != -1, isFinal = modify.indexOf("final ") != -1, isStatic = modify.indexOf("static ") != -1, isProtected = modify.indexOf("protected ") != -1, isPrivate = modify.indexOf("private ") != -1, isDefault = modify.indexOf("default ") != -1, isPublic = (modify.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isNonWritable = modify.indexOf("non-writable ") != -1, isNonEnumerable = modify.indexOf("non-enumerable ") != -1, isNonConfigurable = modify.indexOf("non-configurable ") != -1, isWritable = !isNonWritable && modify.indexOf("writable ") != -1, isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1;
 
         /*
          * abstract 1024, interface 512, final 16, static 8, protected 4,
@@ -381,7 +362,8 @@ Object.extend(Object, function() {
             implement : implement
         };
     };
-    var proxy = function(f, b, t, a) {
+    var proxy = function(m, b, t, a) {
+        var f = m.getValue(), isStatic = (m.getModifiers() & 8) != 0;
         return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f : function() {
             // 判断权限private,default,protected,public
             // 判断是否可以被重写final
@@ -389,7 +371,7 @@ Object.extend(Object, function() {
 
             var result = null;
             try {
-                result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply(this, arguments) : f;
+                result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply( isStatic ? this.getClass().getClassConstructor() : this, arguments) : f;
             } catch (e) {
                 if (Object.isEmpty(t)) {
                     throw e;
@@ -469,7 +451,7 @@ Object.extend(Object, function() {
                 }
             }
         },
-        create : function($class, name, fullName, alias, packages, type, modifiers, annotations, fields, methods, statics, superClass, superInterfaces, classloader, instanceClass, classConstructor) {
+        create : function($class, name, fullName, alias, packages, type, modifiers, annotations, fields, methods, superClass, superInterfaces, classloader, instanceClass, classConstructor) {
 
             if (this.find($class)) {
                 throw new Error("class or interface <" + fullName + "> have already loaded!");
@@ -489,7 +471,6 @@ Object.extend(Object, function() {
                     // 自身method和fields,不包含从父类继承来的
                     fields : fields || {},
                     methods : methods || {},
-                    statics : statics || {},
 
                     superClass : superClass,
                     superInterfaces : superInterfaces || [],
@@ -515,7 +496,7 @@ Object.extend(Object, function() {
         // zzz,ttt
         var modify = convert(classDef["name"]), alias = classDef["alias"], fullName = modify.name, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
 
-        heap.create(this, null, fullName, alias, null, modify.type, modify.modifiers, modify.annotations, null, null, null, null, null, classloader, null, null);
+        heap.create(this, null, fullName, alias, null, modify.type, modify.modifiers, modify.annotations, null, null, null, null, classloader, null, null);
 
         switch (fullName) {
 
@@ -772,9 +753,7 @@ Object.extend(Object, function() {
         getPackage : function() {
             return heap.get(this, "packages");
         },
-        getStatics : function() {
-            return heap.get(this, "statics");
-        },
+
         getDeclaredField : function(name) {
             return this.getField(name);
         },
@@ -835,11 +814,11 @@ Object.extend(Object, function() {
                         heap.set(this, "constructor2", m.getValue());
                     } else {
                         // 将构造器代理，默认调用父类构造器
-                        heap.set(this, "constructor2", proxy(m.getValue(), (this.getSuperClass() || Object.$class).getConstructor()));
+                        heap.set(this, "constructor2", proxy(m, (this.getSuperClass() || Object.$class).getConstructor()));
                     }
 
                 } else {
-                    m.setValue(proxy(m.getValue()));
+                    m.setValue(proxy(m));
                     m.setDeclaringClass(this);
 
                     if (window.js && window.js.lang && window.js.lang.reflect && window.js.lang.reflect.Method && window.js.lang.reflect.Method.loaded) {
@@ -858,7 +837,6 @@ Object.extend(Object, function() {
                         } else {
                             this.getClassConstructor()[n] = m.getValue();
                         }
-                        this.getStatics()[n] = m;
                     } else {
                         if (Object.USEECMA) {
                             Object.defineProperty(this.getClassConstructor().prototype, n, {
@@ -870,8 +848,8 @@ Object.extend(Object, function() {
                         } else {
                             this.getClassConstructor().prototype[n] = m.getValue();
                         }
-                        this.getMethods()[n] = m;
                     }
+                    this.getMethods()[n] = m;
 
                     if (n === "initial") {
                         heap.set(this, "initial", m.getValue());
@@ -901,10 +879,8 @@ Object.extend(Object, function() {
                     } else {
                         this.getClassConstructor()[m.getName()] = m.getValue();
                     }
-                    this.getStatics()[m.getName()] = m;
-                } else {
-                    this.getFields()[m.getName()] = m;
                 }
+                this.getFields()[m.getName()] = m;
             }
         },
         getInstance : function() {

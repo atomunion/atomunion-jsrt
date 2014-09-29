@@ -7,11 +7,14 @@
  */
 "use strict";
 (function() {
+    var currentTimeMillis = function(){
+                return new Date().getTime();
+    };
     var $class = Class.forName({
         name : "class Object",
         "non-enumerable non-writable non-configurable alias" : "js.lang.Object",
         Object : function() {
-            var _hashCode = (new Date().getTime() + Math.random()).toString(16);
+            var _hashCode = (currentTimeMillis() + Math.random()).toString(16);
             if (Object.USEECMA) {
                 Object.defineProperty(this, "_hashCode", {
                     value : _hashCode,
@@ -39,7 +42,7 @@
         })(),
         "non-configurable hashCode" : function() {
             if(!this._hashCode){
-                this._hashCode = (new Date().getTime() + Math.random()).toString(16);
+                this._hashCode = (currentTimeMillis() + Math.random()).toString(16);
             }
             return this._hashCode;
         },
@@ -65,7 +68,7 @@
             }
             for (var a in this) {
                 if (a === "_hashCode") {
-                    b[a] = new Date().getTime().toString(16);
+                    b[a] = currentTimeMillis().toString(16);
                     continue;
                 }
                 if (this.hasOwnProperty(a)) {

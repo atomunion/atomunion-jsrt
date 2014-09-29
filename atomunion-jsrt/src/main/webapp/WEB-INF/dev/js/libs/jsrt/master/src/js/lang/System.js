@@ -62,6 +62,10 @@ Class
 			 */
 			"static getenv" : function(env) {
 				return (env) ? this._env[env] : this._env;
+			},
+			
+			"public static currentTimeMillis":function(){
+			    return new Date().getTime();
 			}
 
 		});

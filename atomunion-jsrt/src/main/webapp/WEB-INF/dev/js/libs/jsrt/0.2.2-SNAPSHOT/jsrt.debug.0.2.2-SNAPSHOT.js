@@ -1,5 +1,5 @@
 /*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * ! JSRT JavaScript Library 0.1.5 lico.atom@gmail.com
  *
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  *
@@ -300,26 +300,7 @@ Object.extend(Object, function() {
         }
 
         var regx = /@\S*/g;
-        var isAbstract = modify.indexOf("abstract ") != -1, 
-        isInterface = modify.indexOf("interface ") != -1, 
-        isFinal = modify.indexOf("final ") != -1, 
-        isStatic = modify.indexOf("static ") != -1, 
-        isProtected = modify.indexOf("protected ") != -1, 
-        isPrivate = modify.indexOf("private ") != -1, 
-        isDefault = modify.indexOf("default ") != -1, 
-        isPublic = (modify.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), 
-        
-        isNonWritable = modify.indexOf("non-writable ") != -1, 
-        isNonEnumerable = modify.indexOf("non-enumerable ") != -1, 
-        isNonConfigurable = modify.indexOf("non-configurable ") != -1,
-        
-        
-        isWritable = !isNonWritable && modify.indexOf("writable ") != -1, 
-        isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, 
-        isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1
-        
-        
-        ;
+        var isAbstract = modify.indexOf("abstract ") != -1, isInterface = modify.indexOf("interface ") != -1, isFinal = modify.indexOf("final ") != -1, isStatic = modify.indexOf("static ") != -1, isProtected = modify.indexOf("protected ") != -1, isPrivate = modify.indexOf("private ") != -1, isDefault = modify.indexOf("default ") != -1, isPublic = (modify.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isNonWritable = modify.indexOf("non-writable ") != -1, isNonEnumerable = modify.indexOf("non-enumerable ") != -1, isNonConfigurable = modify.indexOf("non-configurable ") != -1, isWritable = !isNonWritable && modify.indexOf("writable ") != -1, isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1;
 
         /*
          * abstract 1024, interface 512, final 16, static 8, protected 4,
@@ -381,7 +362,8 @@ Object.extend(Object, function() {
             implement : implement
         };
     };
-    var proxy = function(f, b, t, a) {
+    var proxy = function(m, b, t, a) {
+        var f = m.getValue(), isStatic = (m.getModifiers() & 8) != 0;
         return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f : function() {
             // 判断权限private,default,protected,public
             // 判断是否可以被重写final
@@ -389,7 +371,7 @@ Object.extend(Object, function() {
 
             var result = null;
             try {
-                result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply(this, arguments) : f;
+                result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply( isStatic ? this.getClass().getClassConstructor() : this, arguments) : f;
             } catch (e) {
                 if (Object.isEmpty(t)) {
                     throw e;
@@ -469,7 +451,7 @@ Object.extend(Object, function() {
                 }
             }
         },
-        create : function($class, name, fullName, alias, packages, type, modifiers, annotations, fields, methods, statics, superClass, superInterfaces, classloader, instanceClass, classConstructor) {
+        create : function($class, name, fullName, alias, packages, type, modifiers, annotations, fields, methods, superClass, superInterfaces, classloader, instanceClass, classConstructor) {
 
             if (this.find($class)) {
                 throw new Error("class or interface <" + fullName + "> have already loaded!");
@@ -489,7 +471,6 @@ Object.extend(Object, function() {
                     // 自身method和fields,不包含从父类继承来的
                     fields : fields || {},
                     methods : methods || {},
-                    statics : statics || {},
 
                     superClass : superClass,
                     superInterfaces : superInterfaces || [],
@@ -515,7 +496,7 @@ Object.extend(Object, function() {
         // zzz,ttt
         var modify = convert(classDef["name"]), alias = classDef["alias"], fullName = modify.name, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
 
-        heap.create(this, null, fullName, alias, null, modify.type, modify.modifiers, modify.annotations, null, null, null, null, null, classloader, null, null);
+        heap.create(this, null, fullName, alias, null, modify.type, modify.modifiers, modify.annotations, null, null, null, null, classloader, null, null);
 
         switch (fullName) {
 
@@ -772,9 +753,7 @@ Object.extend(Object, function() {
         getPackage : function() {
             return heap.get(this, "packages");
         },
-        getStatics : function() {
-            return heap.get(this, "statics");
-        },
+
         getDeclaredField : function(name) {
             return this.getField(name);
         },
@@ -835,11 +814,11 @@ Object.extend(Object, function() {
                         heap.set(this, "constructor2", m.getValue());
                     } else {
                         // 将构造器代理，默认调用父类构造器
-                        heap.set(this, "constructor2", proxy(m.getValue(), (this.getSuperClass() || Object.$class).getConstructor()));
+                        heap.set(this, "constructor2", proxy(m, (this.getSuperClass() || Object.$class).getConstructor()));
                     }
 
                 } else {
-                    m.setValue(proxy(m.getValue()));
+                    m.setValue(proxy(m));
                     m.setDeclaringClass(this);
 
                     if (window.js && window.js.lang && window.js.lang.reflect && window.js.lang.reflect.Method && window.js.lang.reflect.Method.loaded) {
@@ -858,7 +837,6 @@ Object.extend(Object, function() {
                         } else {
                             this.getClassConstructor()[n] = m.getValue();
                         }
-                        this.getStatics()[n] = m;
                     } else {
                         if (Object.USEECMA) {
                             Object.defineProperty(this.getClassConstructor().prototype, n, {
@@ -870,8 +848,8 @@ Object.extend(Object, function() {
                         } else {
                             this.getClassConstructor().prototype[n] = m.getValue();
                         }
-                        this.getMethods()[n] = m;
                     }
+                    this.getMethods()[n] = m;
 
                     if (n === "initial") {
                         heap.set(this, "initial", m.getValue());
@@ -901,10 +879,8 @@ Object.extend(Object, function() {
                     } else {
                         this.getClassConstructor()[m.getName()] = m.getValue();
                     }
-                    this.getStatics()[m.getName()] = m;
-                } else {
-                    this.getFields()[m.getName()] = m;
                 }
+                this.getFields()[m.getName()] = m;
             }
         },
         getInstance : function() {
@@ -963,11 +939,14 @@ Object.extend(Object, function() {
  */
 "use strict";
 (function() {
+    var currentTimeMillis = function(){
+                return new Date().getTime();
+    };
     var $class = Class.forName({
         name : "class Object",
         "non-enumerable non-writable non-configurable alias" : "js.lang.Object",
         Object : function() {
-            var _hashCode = (new Date().getTime() + Math.random()).toString(16);
+            var _hashCode = (currentTimeMillis() + Math.random()).toString(16);
             if (Object.USEECMA) {
                 Object.defineProperty(this, "_hashCode", {
                     value : _hashCode,
@@ -995,7 +974,7 @@ Object.extend(Object, function() {
         })(),
         "non-configurable hashCode" : function() {
             if(!this._hashCode){
-                this._hashCode = (new Date().getTime() + Math.random()).toString(16);
+                this._hashCode = (currentTimeMillis() + Math.random()).toString(16);
             }
             return this._hashCode;
         },
@@ -1021,7 +1000,7 @@ Object.extend(Object, function() {
             }
             for (var a in this) {
                 if (a === "_hashCode") {
-                    b[a] = new Date().getTime().toString(16);
+                    b[a] = currentTimeMillis().toString(16);
                     continue;
                 }
                 if (this.hasOwnProperty(a)) {
@@ -1775,123 +1754,135 @@ Class.forName({
 	
 
 });/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
+ * ! JSRT JavaScript Library 0.1.5 lico.atom@gmail.com
+ *
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
+ *
  * Date: Feb 15, 2014
  */
 
 Class.forName({
-	name : "class js.test.TestCase extends Object",
-	"@Setter @Getter private _testObjects" : [],
-	"@Setter @Getter private _autoTestObjects" : [],
-	"@Setter @Getter private _testMethods" : [],
-	TestCase : function() {
-	},
-	initial : function() {
-		this.reset();
-		this.injectTestObjects();
-		this.injectTestMethods();
-		this.main();
-	},
-	reset : function() {
-		var objs = this.getTestObjects();
-		if (objs) {
-			objs.clear();
-		}
+    name : "class js.test.TestCase extends Object",
+    "@Setter @Getter private _testMethods" : [],
+    "@Setter @Getter private _ignoreTestMethods" : [],
+    "@Setter @Getter private _configMethods" : [],
 
-		var autoObjs = this.getAutoTestObjects();
-		if (autoObjs) {
-			autoObjs.clear();
-		}
+    TestCase : function() {
+    },
+    initial : function() {
 
-		var methods = this.getTestMethods();
-		if (methods) {
-			methods.clear();
-		}
-	},
-	injectTestObjects : function() {
-		var fields = this.$class.getFields();
-		Object.each(fields, function(i, v, o) {
-			if (v.getAnnotations()) {
-				if (v.getAnnotations().contains("@Test")) {
-					this.getTestObjects().push(i);
-				}
-				if (v.getAnnotations().contains("@Auto")) {
-					this.getAutoTestObjects().push(i);
-				}
-			}
-		}, this);
-	},
-	injectTestMethods : function() {
-		var methods = this.$class.getMethods();
-		Object.each(methods, function(i, v, o) {
-			if (i.indexOf("test") === 0) {
-				this.getTestMethods().push(i);
-			}
-		}, this);
+        var msg = ["########  TestCase { ClassName「", this.getClass().getName(), "」 }  ########"];
 
-		/*
-		 * for (var i in methods) { if (i.indexOf("test")===0) {
-		 * this.getTestMethods().push(i); } }
-		 */
-	},
-	getTestMethod : function(name) {
-		var methods = this.$class.getMethods();
-		var method = null;
-		if (methods[name] && methods[name].getValue()) {
-			method = methods[name].getValue();
-		} else {
-			throw new js.lang.NoSuchMethodException(
-					"Test Object is missed! Details[name:" + name + "]");
-		}
-		return method;
-	},
-	getTestObject : function(name) {
-		var field = null;
-		if (this[name]) {
-			field = this[name];
-		} else {
-			throw new js.lang.NoSuchFieldException(
-					"Test Object is missed! Details[name:" + name + "]");
-		}
-		return field;
-	},
-	main : function() {
-		var i = 0, length = this.getAutoTestObjects().length, j = 0, len = this
-				.getTestMethods().length;
-		for (; i < length; i++) {
-			for (; j < len; j++) {
-				this
-						.run(this.getAutoTestObjects()[i], this
-								.getTestMethods()[j]);
-			}
-		}
-	},
-	run : function(f, m) {
-		var obj = this.getTestObject(f);
-		var method = this.getTestMethod(m);
+        js.lang.System.out.group(msg.join(""));
 
-		var msg = [ "****TestCase { TestObject「", obj.toString(), "」,  Field「",
-				f.toString(), "」,  Method「", m.charAt(4).toLowerCase(),
-				m.substring(5), "」 }****" ];
+        this.reset();
+        this.injectMethods();
+        this.invokeBeforeClass();
+        this.execute();
+        this.invokeAfterClass();
 
-		js.lang.System.out.group(msg.join(""));
+        js.lang.System.out.groupEnd();
+    },
+    reset : function() {
+        var methods = this.getTestMethods();
+        if (methods) {
+            methods.clear();
+        }
 
-		try {
-			method.call(obj);
-		} catch (e) {
-			js.lang.System.out.error("%s", [ "Name<", e.getName(),
-					">;  Number<", e.getNumber(), ">;  Message<",
-					e.getMessage(), ">" ].join(""));
-		}
-		// if (!obj[name]) {
-		// js.lang.System.out.warn("%s",
-		// "this test unit case is not be promoted !");
-		// }
-		js.lang.System.out.groupEnd();
-	}
+        var ignoreMethods = this.getIgnoreTestMethods();
+        if (ignoreMethods) {
+            ignoreMethods.clear();
+        }
+
+        var configMethods = this.getConfigMethods();
+        if (configMethods) {
+            configMethods.clear();
+        }
+    },
+    invokeBeforeClass : function() {
+
+        var beforeClass = this.getConfigMethods()[0];
+
+        if (beforeClass) {
+            beforeClass.getValue().call(this.getClass().getClassConstructor());
+        }
+
+    },
+    invokeAfterClass : function() {
+
+        var afterClass = this.getConfigMethods()[0];
+
+        if (afterClass) {
+            afterClass.getValue().call(this.getClass().getClassConstructor());
+        }
+    },
+    injectMethods : function() {
+        var methods = this.$class.getMethods();
+        Object.each(methods, function(i, v, o) {
+            if (v.getAnnotations().contains("@BeforeClass") && (v.getModifiers() & 8) != 0) {
+                this.getConfigMethods()[0] = v;
+
+            } else if (v.getAnnotations().contains("@AfterClass") && (v.getModifiers() & 8) != 0) {
+                this.getConfigMethods()[3] = v;
+            } else if (v.getAnnotations().contains("@After")) {
+                this.getConfigMethods()[2] = v;
+
+            } else if (v.getAnnotations().contains("@Before")) {
+                this.getConfigMethods()[1] = v;
+            } else {
+
+                if (v.getAnnotations().contains("@Ignore")) {
+                    this.getIgnoreTestMethods().push(v);
+                } else if (v.getAnnotations().contains("@Test")) {
+                    this.getTestMethods().push(v);
+                }
+            }
+
+            /*if (i.indexOf("test") === 0) {
+             this.getTestMethods().push(i);
+             }*/
+        }, this);
+    },
+
+    execute : function() {
+        var j = 0, len = this.getTestMethods().length;
+
+        for (; j < len; j++) {
+
+            var m = this.getTestMethods()[j];
+
+            var method = m.getValue();
+
+            var msg = ["        --------  Method「", m.getName(), "」  "];
+
+
+            js.lang.System.out.println(msg.join(""));
+
+            try {
+                var before = this.getConfigMethods()[1];
+                if (before) {
+                    before.getValue().call(this);
+                }
+
+                method.call(this);
+
+                var after = this.getConfigMethods()[2];
+                if (after) {
+                    after.getValue().call(this);
+                }
+
+                js.lang.System.out.println("        结果： √ ");
+            } catch (e) {
+                js.lang.System.out.error("        结果： ×     详细描述：  %s", ["Name<", e.getName(), ">;  Number<", e.getNumber(), ">;  Message<", e.getMessage(), ">"].join(""));
+            }
+            // if (!obj[name]) {
+            // js.lang.System.out.warn("%s",
+            // "this test unit case is not be promoted !");
+            // }
+            js.lang.System.out.println("");
+        }
+
+    }
 });
 /*!
  * JSRT JavaScript Library 0.2.1
@@ -2900,6 +2891,10 @@ Class
 			 */
 			"static getenv" : function(env) {
 				return (env) ? this._env[env] : this._env;
+			},
+			
+			"public static currentTimeMillis":function(){
+			    return new Date().getTime();
 			}
 
 		});
@@ -4066,15 +4061,612 @@ Class.forName({
  * Date: 2014年6月25日
  */
 
+Class.forName({
+    name : "class Date",
+    alias:"js.util.Date",
+    Date : function() {
+    },
+    "public equals" : function(s) {
+        if(Object.isNull(s) || !Object.isInstanceof(s,js.util.Date)){
+            return false;
+        }
+        return this === s || this.getTime() == s.getTime();
+    },
+    /**Tests if this date is after the specified date.*/
+    "public after" : function(when) {
+        return this.compareTo(when) > 0;
+    },
+
+    /** Tests if this date is before the specified date.*/
+    "public before" : function(when) {
+        return this.compareTo(when) < 0;
+    },
+
+    "public compareTo" : function(anotherDate) {
+        if(Object.isNull(anotherDate)){
+            throw new js.lang.IllegalArgumentException("Parameters of the compareTo method of the Date object to receive only not null type");
+        }
+        if(!Object.isDate(anotherDate)){
+            throw new js.lang.IllegalArgumentException("Parameters of the compareTo method of the Date object to receive only Date type");
+        }
+        var thisTime = this.getTime(),anotherTime = anotherDate.getTime();
+        return thisTime > anotherTime ? 1 : thisTime == anotherTime ? 0 : -1;
+    }
+
+});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ *
+ * Date: Sep 23, 2014
+ */
 
 Class.forName({
-	name : "class Date",
-	alias:"js.util.Date",
-	Date : function() {
-	},
-	"public equals" : function(s) {
-		return this === s;
-	}
+    name : "abstract class js.util.Calendar extends Object",
+
+    "private static final String[] FIELD_NAMES" : ["YEAR", "MONTH", "WEEK_OF_YEAR", "WEEK_OF_MONTH", "DAY_OF_MONTH", "DAY_OF_YEAR", "DAY_OF_WEEK", "DAY_OF_WEEK_IN_MONTH", "AM_PM", "HOUR", "HOUR_OF_DAY", "MINUTE", "SECOND", "MILLISECOND"],
+
+    "public final static YEAR" : 1,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * month. This is a calendar-specific value. The first month of
+     * the year in the Gregorian and Julian calendars is
+     * <code>JANUARY</code> which is 0, the last depends on the number
+     * of months in a year.
+     *
+     * @see #JANUARY
+     * @see #FEBRUARY
+     * @see #MARCH
+     * @see #APRIL
+     * @see #MAY
+     * @see #JUNE
+     * @see #JULY
+     * @see #AUGUST
+     * @see #SEPTEMBER
+     * @see #OCTOBER
+     * @see #NOVEMBER
+     * @see #DECEMBER
+     * @see #UNDECIMBER
+     */
+    "public final static MONTH" : 2,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * week number within the current year.  The first week of the year, as
+     * defined by <code>getFirstDayOfWeek()</code> and
+     * <code>getMinimalDaysInFirstWeek()</code>, has value 1.  Subclasses define
+     * the value of <code>WEEK_OF_YEAR</code> for days before the first week of
+     * the year.
+     *
+     * @see #getFirstDayOfWeek
+     * @see #getMinimalDaysInFirstWeek
+     */
+    "public final static WEEK_OF_YEAR" : 3,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * week number within the current month.  The first week of the month, as
+     * defined by <code>getFirstDayOfWeek()</code> and
+     * <code>getMinimalDaysInFirstWeek()</code>, has value 1.  Subclasses define
+     * the value of <code>WEEK_OF_MONTH</code> for days before the first week of
+     * the month.
+     *
+     * @see #getFirstDayOfWeek
+     * @see #getMinimalDaysInFirstWeek
+     */
+    "public final static WEEK_OF_MONTH" : 4,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * day of the month. This is a synonym for <code>DAY_OF_MONTH</code>.
+     * The first day of the month has value 1.
+     *
+     * @see #DAY_OF_MONTH
+     */
+    "public final static DATE" : 5,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * day of the month. This is a synonym for <code>DATE</code>.
+     * The first day of the month has value 1.
+     *
+     * @see #DATE
+     */
+    "public final static DAY_OF_MONTH" : 5,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the day
+     * number within the current year.  The first day of the year has value 1.
+     */
+    "public final static DAY_OF_YEAR" : 6,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the day
+     * of the week.  This field takes values <code>SUNDAY</code>,
+     * <code>MONDAY</code>, <code>TUESDAY</code>, <code>WEDNESDAY</code>,
+     * <code>THURSDAY</code>, <code>FRIDAY</code>, and <code>SATURDAY</code>.
+     *
+     * @see #SUNDAY
+     * @see #MONDAY
+     * @see #TUESDAY
+     * @see #WEDNESDAY
+     * @see #THURSDAY
+     * @see #FRIDAY
+     * @see #SATURDAY
+     */
+    "public final static DAY_OF_WEEK" : 7,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * ordinal number of the day of the week within the current month. Together
+     * with the <code>DAY_OF_WEEK</code> field, this uniquely specifies a day
+     * within a month.  Unlike <code>WEEK_OF_MONTH</code> and
+     * <code>WEEK_OF_YEAR</code>, this field's value does <em>not</em> depend on
+     * <code>getFirstDayOfWeek()</code> or
+     * <code>getMinimalDaysInFirstWeek()</code>.  <code>DAY_OF_MONTH 1</code>
+     * through <code>7</code> always correspond to <code>DAY_OF_WEEK_IN_MONTH
+     * 1</code>, <code>8</code> through <code>14</code> correspond to
+     * <code>DAY_OF_WEEK_IN_MONTH 2</code>, and so on.
+     * <code>DAY_OF_WEEK_IN_MONTH 0</code> indicates the week before
+     * <code>DAY_OF_WEEK_IN_MONTH 1</code>.  Negative values count back from the
+     * end of the month, so the last Sunday of a month is specified as
+     * <code>DAY_OF_WEEK = SUNDAY, DAY_OF_WEEK_IN_MONTH = -1</code>.  Because
+     * negative values count backward they will usually be aligned differently
+     * within the month than positive values.  For example, if a month has 31
+     * days, <code>DAY_OF_WEEK_IN_MONTH -1</code> will overlap
+     * <code>DAY_OF_WEEK_IN_MONTH 5</code> and the end of <code>4</code>.
+     *
+     * @see #DAY_OF_WEEK
+     * @see #WEEK_OF_MONTH
+     */
+    "public final static DAY_OF_WEEK_IN_MONTH" : 8,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating
+     * whether the <code>HOUR</code> is before or after noon.
+     * E.g., at 10:04:15.250 PM the <code>AM_PM</code> is <code>PM</code>.
+     *
+     * @see #AM
+     * @see #PM
+     * @see #HOUR
+     */
+    "public final static AM_PM" : 9,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * hour of the morning or afternoon. <code>HOUR</code> is used for the
+     * 12-hour clock (0 - 11). Noon and midnight are represented by 0, not by 12.
+     * E.g., at 10:04:15.250 PM the <code>HOUR</code> is 10.
+     *
+     * @see #AM_PM
+     * @see #HOUR_OF_DAY
+     */
+    "public final static HOUR" : 10,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * hour of the day. <code>HOUR_OF_DAY</code> is used for the 24-hour clock.
+     * E.g., at 10:04:15.250 PM the <code>HOUR_OF_DAY</code> is 22.
+     *
+     * @see #HOUR
+     */
+    "public final static HOUR_OF_DAY" : 11,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * minute within the hour.
+     * E.g., at 10:04:15.250 PM the <code>MINUTE</code> is 4.
+     */
+    "public final static MINUTE" : 12,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * second within the minute.
+     * E.g., at 10:04:15.250 PM the <code>SECOND</code> is 15.
+     */
+    "public final static SECOND" : 13,
+
+    /**
+     * Field number for <code>get</code> and <code>set</code> indicating the
+     * millisecond within the second.
+     * E.g., at 10:04:15.250 PM the <code>MILLISECOND</code> is 250.
+     */
+    "public final static MILLISECOND" : 14,
+
+    /**
+     * The number of distinct fields recognized by <code>get</code> and <code>set</code>.
+     * Field numbers range from <code>0..FIELD_COUNT-1</code>.
+     */
+    "public final static FIELD_COUNT" : 17,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Sunday.
+     */
+    "public final static SUNDAY" : 1,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Monday.
+     */
+    "public final static MONDAY" : 2,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Tuesday.
+     */
+    "public final static TUESDAY" : 3,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Wednesday.
+     */
+    "public final static WEDNESDAY" : 4,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Thursday.
+     */
+    "public final static THURSDAY" : 5,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Friday.
+     */
+    "public final static FRIDAY" : 6,
+
+    /**
+     * Value of the {@link #DAY_OF_WEEK} field indicating
+     * Saturday.
+     */
+    "public final static SATURDAY" : 7,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * first month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static JANUARY" : 0,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * second month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static FEBRUARY" : 1,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * third month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static MARCH" : 2,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * fourth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static APRIL" : 3,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * fifth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static MAY" : 4,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * sixth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static JUNE" : 5,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * seventh month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static JULY" : 6,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * eighth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static AUGUST" : 7,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * ninth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static SEPTEMBER" : 8,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * tenth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static OCTOBER" : 9,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * eleventh month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static NOVEMBER" : 10,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * twelfth month of the year in the Gregorian and Julian calendars.
+     */
+    "public final static DECEMBER" : 11,
+
+    /**
+     * Value of the {@link #MONTH} field indicating the
+     * thirteenth month of the year. Although <code>GregorianCalendar</code>
+     * does not use this value, lunar calendars do.
+     */
+    "public final static UNDECIMBER" : 12,
+
+    /**
+     * Value of the {@link #AM_PM} field indicating the
+     * period of the day from midnight to just before noon.
+     */
+    "public final static AM" : 0,
+
+    /**
+     * Value of the {@link #AM_PM} field indicating the
+     * period of the day from noon to just before midnight.
+     */
+    "public final static PM" : 1,
+
+    /**
+     * The calendar field values for the currently set time for this calendar.
+     * This is an array of <code>FIELD_COUNT</code> integers, with index values
+     * <code>ERA</code> through <code>DST_OFFSET</code>.
+     * @serial
+     */
+    "protected fields" : [],
+
+    /**
+     * The flags which tell if a specified calendar field for the calendar is set.
+     * A new object has no fields set.  After the first call to a method
+     * which generates the fields, they all remain set after that.
+     * This is an array of <code>FIELD_COUNT</code> booleans, with index values
+     * <code>ERA</code> through <code>DST_OFFSET</code>.
+     * @serial
+     */
+    "protected isSet" : [],
+
+    "protected time" : 0,
+    "protected isTimeSet" : false,
+
+    "protected areFieldsSet" : false,
+
+    /**
+     * True if all fields have been set.
+     * @serial
+     */
+    "protected areAllFieldsSet" : false,
+
+    /**Adds or subtracts the specified amount of time to the given calendar field, based on the calendar's rules.*/
+    "abstract add" : function(field, amount) {
+    },
+
+    /**Returns whether this Calendar represents a time after the time represented by the specified Object.*/
+    "after" : function(when) {
+        return this.compareTo(when) > 0;
+    },
+
+    /**Returns whether this Calendar represents a time before the time represented by the specified Object.*/
+    "before" : function(when) {
+        return this.compareTo(when) < 0;
+    },
+
+    /**
+     * Sets all the calendar field values and the time value (millisecond offset from the Epoch) of this Calendar undefined.
+     * Sets the given calendar field value and the time value (millisecond offset from the Epoch) of this Calendar undefined.
+     * */
+    "clear" : function(field) {
+        if (field) {
+            this.fields[field] = 0;
+            this.isSet[field] = false;
+
+            this.areAllFieldsSet = this.areFieldsSet = false;
+            this.isTimeSet = false;
+        } else {
+            for (var i = 0; i < this.fields.length; ) {
+                this.fields[i] = 0;
+                // UNSET == 0
+                this.isSet[i++] = false;
+            }
+            this.areAllFieldsSet = this.areFieldsSet = false;
+            this.isTimeSet = false;
+        }
+
+    },
+
+    /**Creates and returns a copy of this object.*/
+    "clone" : function() {
+        var other = this.getClass().newInstance(), Calendar = js.util.Calendar, names = Calendar.FIELD_NAMES, len = names.length;
+
+        for (var i = 0; i < len; i++) {
+            other.fields[i] = this.fields[i];
+            other.isSet[i] = this.isSet[i];
+        }
+
+        other.time = this.time;
+        return other;
+    },
+
+    /**Compares the time values (millisecond offsets from the Epoch) represented by two Calendar objects.*/
+    "compareTo" : function(anotherCalendar) {
+        if (!Object.isInstanceof(anotherCalendar, js.util.Calendar)) {
+            throw new js.lang.IllegalArgumentException("Parameters of the compareTo method of the js.util.Calendar object to receive only js.util.Calendar type");
+        }
+        var anotherTime = anotherCalendar.getTimeInMillis();
+
+        return this.time > anotherTime ? 1 : (this.time == anotherTime ? 0 : -1);
+    },
+
+    /**Compares this Calendar to the specified Object.*/
+    "equals" : function(obj) {
+
+        if (this == obj)
+            return true;
+
+        var that = obj;
+        return this.compareTo(that) == 0;
+    },
+
+    /**Returns the value of the given calendar field.*/
+    "get" : function(field) {
+        this.complete();
+        return this.internalGet(field);
+    },
+
+    "protected final internalGet" : function(field) {
+        return this.fields[field];
+    },
+
+    /**Gets a calendar with the specified time zone and locale.*/
+    "static getInstance" : function() {
+        return new js.util.GregorianCalendar();
+    },
+
+    /**Returns a Date object representing this Calendar's time value (millisecond offset from the Epoch").*/
+    "getTime" : function() {
+        return new Date(this.getTimeInMillis());
+    },
+
+    /**
+     * Recomputes the time and updates the status fields isTimeSet
+     * and areFieldsSet.  Callers should check isTimeSet and only
+     * call this method if isTimeSet is false.
+     */
+    "private void updateTime" : function() {
+        this.computeTime();
+        // The areFieldsSet and areAllFieldsSet values are no longer
+        // controlled here (as of 1.5).
+        this.isTimeSet = true;
+    },
+
+    /**
+     * Converts the current calendar field values in {@link #fields fields[]}
+     * to the millisecond time value
+     * {@link #time}.
+     *
+     * @see #complete()
+     * @see #computeFields()
+     */
+    "protected abstract computeTime" : function() {
+    },
+    "protected abstract computeFields" : function() {
+    },
+
+    "protected void complete" : function() {
+        if (!this.isTimeSet)
+            this.updateTime();
+        if (!this.areFieldsSet || !this.areAllFieldsSet) {
+            this.computeFields();
+            // fills in unset fields
+            this.areAllFieldsSet = this.areFieldsSet = true;
+        }
+    },
+
+    /**Returns this Calendar's time value in milliseconds.*/
+    "getTimeInMillis" : function() {
+        if (!this.isTimeSet) {
+            this.updateTime();
+        }
+        return this.time;
+    },
+
+    "public setField" : function(field, value) {
+        // If the fields are partially normalized, calculate all the
+        // fields before changing any fields.
+        if (this.areFieldsSet && !this.areAllFieldsSet) {
+            this.computeFields();
+        }
+        this.internalSet(field, value);
+        this.isTimeSet = false;
+        this.areFieldsSet = false;
+        this.isSet[field] = true;
+
+    },
+    "final internalSet" : function(field, value) {
+        this.fields[field] = value;
+    },
+
+    /**
+     * Determines if the given calendar field has a value set,
+     * including cases that the value has been set by internal fields
+     * calculations triggered by a <code>get</code> method call.
+     *
+     * @return <code>true</code> if the given calendar field has a value set;
+     * <code>false</code> otherwise.
+     */
+    "public final isFieldSet" : function(field) {
+        return isSet[field];
+    },
+
+    /**
+     * Sets the values for the calendar fields <code>YEAR</code>,
+     * <code>MONTH</code>, and <code>DAY_OF_MONTH</code>.
+     * Previous values of other calendar fields are retained.  If this is not desired,
+     * call {@link #clear()} first.
+     *
+     * @param year the value used to set the <code>YEAR</code> calendar field.
+     * @param month the value used to set the <code>MONTH</code> calendar field.
+     * Month value is 0-based. e.g., 0 for January.
+     * @param date the value used to set the <code>DAY_OF_MONTH</code> calendar field.
+     * @see #set(int,int)
+     * @see #set(int,int,int,int,int)
+     * @see #set(int,int,int,int,int,int)
+     */
+
+    "set" : function(year, month, date, hourOfDay, minute, second) {
+        var Calendar = js.util.Calendar;
+        this.setField(Calendar.YEAR, year);
+        this.setField(Calendar.MONTH, month);
+        this.setField(Calendar.DATE, date);
+        this.setField(Calendar.HOUR_OF_DAY, hourOfDay);
+        this.setField(Calendar.MINUTE, minute);
+        this.setField(Calendar.SECOND, second);
+    },
+
+    /**Sets this Calendar's time with the given Date.*/
+    "setTime" : function(date) {
+        if (!Object.isDate(date)) {
+            throw new js.lang.IllegalArgumentException("Parameters of the setTime method of the js.util.Calendar object to receive only Date type");
+        }
+        this.setTimeInMillis(date.getTime());
+    },
+
+    /**Sets this Calendar's current time from the given long value.*/
+    "setTimeInMillis" : function(millis) {
+
+        if (this.time == millis && this.isTimeSet && this.areFieldsSet && this.areAllFieldsSet) {
+            return;
+        }
+        this.time = millis;
+        this.isTimeSet = true;
+        this.areFieldsSet = false;
+        this.computeFields();
+        this.areAllFieldsSet = areFieldsSet = true;
+
+    },
+
+    /**Return a string representation of this calendar.*/
+    "toString" : function() {
+
+        var buffer = new js.lang.StringBuffer(), Calendar = js.util.Calendar, names = Calendar.FIELD_NAMES;
+        buffer.append(this.getClass().getFullName()).append('[');
+        buffer.append("time=").append(this.time);
+        buffer.append(",areFieldsSet=").append(this.areFieldsSet);
+        buffer.append(",areAllFieldsSet=").append(this.areAllFieldsSet);
+
+        for (var i = 0, len = names.length; i < len; ++i) {
+            buffer.append(',');
+            buffer.append(names[i]).append("=").append(this.fields[i]);
+        }
+        buffer.append(']');
+        return buffer.toString();
+    }
 });
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
@@ -4084,18 +4676,409 @@ Class.forName({
  * Date: Feb 11, 2014
  */
 
-Class.forName({
-	name : "abstract class js.util.Calendar extends Object"
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 11, 2014
- */
-
 $import("js.util.Calendar");
 
-Class.forName({
-	name : "abstract class js.util.GregorianCalendar extends js.util.Calendar"
-});
+Class
+		.forName({
+			name : "abstract class js.util.GregorianCalendar extends js.util.Calendar",
+
+			"private static final int EPOCH_OFFSET" : 719163,// Fixed date of
+			// January 1,
+			// 1970
+			// (Gregorian)
+			"private static final int EPOCH_YEAR" : 1970,
+
+			"static final int MONTH_LENGTH" : [ 31, 28, 31, 30, 31, 30, 31, 31,
+					30, 31, 30, 31 ], // 0-based
+			"static final int LEAP_MONTH_LENGTH" : [ 31, 29, 31, 30, 31, 30,
+					31, 31, 30, 31, 30, 31 ], // 0-based
+
+			// Useful millisecond constants. Although ONE_DAY and ONE_WEEK can
+			// fit
+			// into ints, they must be longs in order to prevent arithmetic
+			// overflow
+			// when performing (bug 4173516).
+			"private static final int  ONE_SECOND" : 1000,
+			"private static final int  ONE_MINUTE" : 60 * 1000,
+			"private static final int  ONE_HOUR" : 60 * 60 * 1000,
+			"private static final long ONE_DAY " : 24 * 60 * 60 * 1000,
+			"private static final long ONE_WEEK" : 7 * 24 * 60 * 60 * 1000,
+
+			/*
+			 * <pre> Greatest Least Field name Minimum Minimum Maximum Maximum
+			 * ---------- ------- ------- ------- ------- YEAR 1 1 292269054
+			 * 292278994 MONTH 0 0 11 11 WEEK_OF_YEAR 1 1 52* 53 WEEK_OF_MONTH 0
+			 * 0 4* 6 DAY_OF_MONTH 1 1 28* 31 DAY_OF_YEAR 1 1 365* 366
+			 * DAY_OF_WEEK 1 1 7 7 DAY_OF_WEEK_IN_MONTH -1 -1 4* 6 AM_PM 0 0 1 1
+			 * HOUR 0 0 11 11 HOUR_OF_DAY 0 0 23 23 MINUTE 0 0 59 59 SECOND 0 0
+			 * 59 59 MILLISECOND 0 0 999 999 </pre> *: depends on the Gregorian
+			 * change date
+			 */
+			"static final int MIN_VALUES" : [ 1, // YEAR
+			js.util.Calendar.JANUARY, // MONTH
+			1, // WEEK_OF_YEAR
+			0, // WEEK_OF_MONTH
+			1, // DAY_OF_MONTH
+			1, // DAY_OF_YEAR
+			js.util.Calendar.SUNDAY, // DAY_OF_WEEK
+			1, // DAY_OF_WEEK_IN_MONTH
+			js.util.Calendar.AM, // AM_PM
+			0, // HOUR
+			0, // HOUR_OF_DAY
+			0, // MINUTE
+			0, // SECOND
+			0 // MILLISECOND
+			],
+			"static final int LEAST_MAX_VALUES" : [ 292269054, // YEAR
+			js.util.Calendar.DECEMBER, // MONTH
+			52, // WEEK_OF_YEAR
+			4, // WEEK_OF_MONTH
+			28, // DAY_OF_MONTH
+			365, // DAY_OF_YEAR
+			js.util.Calendar.SATURDAY, // DAY_OF_WEEK
+			4, // DAY_OF_WEEK_IN
+			js.util.Calendar.PM, // AM_PM
+			11, // HOUR
+			23, // HOUR_OF_DAY
+			59, // MINUTE
+			59, // SECOND
+			999 // MILLISECOND
+			],
+			"static final int MAX_VALUES" : [ 292278994, // YEAR
+			js.util.Calendar.DECEMBER, // MONTH
+			53, // WEEK_OF_YEAR
+			6, // WEEK_OF_MONTH
+			31, // DAY_OF_MONTH
+			366, // DAY_OF_YEAR
+			js.util.Calendar.SATURDAY, // DAY_OF_WEEK
+			6, // DAY_OF_WEEK_IN
+			js.util.Calendar.PM, // AM_PM
+			11, // HOUR
+			23, // HOUR_OF_DAY
+			59, // MINUTE
+			59, // SECOND
+			999 // MILLISECOND
+			],
+
+			GregorianCalendar : function() {
+				this.setTimeInMillis(js.lang.System.currentTimeMillis());
+			},
+
+			"protected computeTime" : function() {
+				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar, year = this
+						.isFieldSet(Calendar.YEAR) ? this.internalGet(Calendar.YEAR)
+						: GregorianCalendar.EPOCH_YEAR, month = 0, day = 1,
+
+				hours = 0, minutes = 0, seconds = 0, milliseconds = 0;
+
+				if (this.isFieldSet(Calendar.MONTH)) {
+					// No need to check if MONTH has been set (no isSet(MONTH)
+					// call) since its unset value happens to be JANUARY (0).
+					month = this.internalGet(Calendar.MONTH);
+
+					// If the month is out of range, adjust it into range
+					if (month > Calendar.DECEMBER) {
+						year += month / 12;
+						month %= 12;
+					} else if (month < Calendar.JANUARY) {
+						year -= (12 - month) / 12;
+						month = 12 + month % 12;
+					}
+
+					// Month-based calculations
+					if (this.isFieldSet(Calendar.DAY_OF_MONTH)) {
+						// We are on the first day of the month. Just add the
+						// offset if DAY_OF_MONTH is set. If the isSet call
+						// returns false, that means DAY_OF_MONTH has been
+						// selected just because of the selected
+						// combination. We don't need to add any since the
+						// default value is the 1st.
+						// To avoid underflow with DAY_OF_MONTH-1, add
+						// DAY_OF_MONTH, then subtract 1.
+						day = this.internalGet(Calendar.DAY_OF_MONTH);
+					} else {
+
+						var truncMonth = new Date();
+						truncMonth.setFullYear(year);
+						truncMonth.setMonth(month);
+						truncMonth.setDate(day);
+						truncMonth.setHours(hours);
+						truncMonth.setMinutes(minutes);
+						truncMonth.setSeconds(seconds);
+						truncMonth.setMilliseconds(milliseconds);
+
+						if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
+							day = this.internalGet(Calendar.WEEK_OF_MONTH - 1)
+									* 7 - truncMonth.getDay();
+
+							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
+								day += this.internalGet(Calendar.DAY_OF_WEEK);
+							}
+
+						} else {
+
+							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
+								var fistDay = truncMonth.getDay(), dayOfWeek = this
+										.internalGet(Calendar.DAY_OF_WEEK);
+								while (fistDay == dayOfWeek) {
+									fistDay++;
+									if (fistDay >= 7) {
+										fistDay = 0;
+									}
+									day++;
+								}
+							}
+							// We are basing this on the day-of-week-in-month.
+							// The only
+							// trickiness occurs if the day-of-week-in-month is
+							// negative.
+							if (this.isFieldSet(Calendar.DAY_OF_WEEK_IN_MONTH)) {
+								day = this
+										.internalGet(Calendar.DAY_OF_WEEK_IN_MONTH - 1) * 7 + 1;
+							}
+						}
+					}
+				} else {
+
+					var truncMonth = new Date();
+					truncMonth.setFullYear(year);
+					truncMonth.setMonth(month);
+					truncMonth.setDate(day);
+					truncMonth.setHours(hours);
+					truncMonth.setMinutes(minutes);
+					truncMonth.setSeconds(seconds);
+					truncMonth.setMilliseconds(milliseconds);
+					// We are on the first day of the year.
+					if (this.isFieldSet(Calendar.DAY_OF_YEAR)) {
+						// Add the offset, then subtract 1. (Make sure to avoid
+						// underflow.)
+						var dayOfYear = this.internalGet(Calendar.DAY_OF_YEAR);
+
+						while (true) {
+							if (month >= 12
+									|| truncMonth.getTime()
+											% GregorianCalendar.ONE_DAY + 1 >= dayOfYear) {
+								break;
+							}
+							truncMonth.setMonth(++month);
+						}
+						truncMonth.setMonth(--month);
+						day = truncMonth.getTime() % GregorianCalendar.ONE_DAY
+								+ 1;
+
+					} else {
+						if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
+							var fistDay = truncMonth.getDay(), dayOfWeek = this
+									.internalGet(Calendar.DAY_OF_WEEK);
+							while (fistDay == dayOfWeek) {
+								fistDay++;
+								if (fistDay >= 7) {
+									fistDay = 0;
+								}
+								day++;
+							}
+						}
+					}
+				}
+
+				var timeDate = new Date();
+
+				timeDate.setFullYear(year);
+				timeDate.setMonth(month);
+				timeDate.setDate(day);
+				timeDate.setHours(hours);
+				timeDate.setMinutes(minutes);
+				timeDate.setSeconds(seconds);
+				timeDate.setMilliseconds(milliseconds);
+
+				var millis = timeDate.getTime();
+
+				if (this.isFieldSet(Calendar.HOUR_OF_DAY)) {
+					millis += this.internalGet(Calendar.HOUR_OF_DAY);
+				} else {
+					millis += this.internalGet(Calendar.HOUR);
+					// The default value of AM_PM is 0 which designates AM.
+					if (this.isFieldSet(Calendar.AM_PM)) {
+						millis += 12 * this.internalGet(Calendar.AM_PM);
+					}
+				}
+				millis *= 60;
+				millis += this.internalGet(Calendar.MINUTE);
+				millis *= 60;
+				millis += this.internalGet(Calendar.SECOND);
+				millis *= 1000;
+				millis += this.internalGet(Calendar.MILLISECOND);
+
+				this.time = millis + timeDate.getTimezoneOffset() * 60 * 1000;
+			},
+
+			"protected computeFields" : function() {
+
+				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar, zone = new Date(
+						this.time), offset = zone.getTimezoneOffset() * 60 * 1000,
+
+				date = new Date(this.time + offset),
+
+				year = date.getFullYear(), month = date.getMonth(), dayOfMonth = date
+						.getDate(), dayOfWeek = date.getDay(), hours = date
+						.getHours(), minutes = date.getMinutes(), seconds = date
+						.getSeconds(), milliseconds = date.getMilliseconds();
+
+				var truncYear = new Date();
+				truncYear.setFullYear(year);
+				truncYear.setMonth(0);
+				truncYear.setDate(1);
+				truncYear.setHours(0);
+				truncYear.setMinutes(0);
+				truncYear.setSeconds(0);
+				truncYear.setMilliseconds(0);
+
+				var dayOfYear = (this.time + offset - truncYear.getTime())
+						% GregorianCalendar.ONE_DAY + 1, weekOfYear = dayOfYear % 7;
+
+				truncYear.setMonth(month);
+				var truncMonth = truncYear, weekOfMonth = (truncMonth.getDate() + truncMonth
+						.getDay()) % 7;
+
+				this.internalSet(Calendar.YEAR, year);
+				this.internalSet(Calendar.MONTH, month);
+				this.internalSet(Calendar.WEEK_OF_YEAR, weekOfYear);
+				this.internalSet(Calendar.WEEK_OF_MONTH, weekOfMonth);
+				this.internalSet(Calendar.DAY_OF_MONTH, dayOfMonth);
+				this.internalSet(Calendar.DAY_OF_YEAR, dayOfYear);
+				this.internalSet(Calendar.DAY_OF_WEEK, dayOfWeek);
+				this.internalSet(Calendar.DAY_OF_WEEK_IN_MONTH,
+						(dayOfMonth % 7) + 1);
+				this.internalSet(Calendar.AM_PM, hours > 11 ? 1 : 0);
+				this
+						.internalSet(Calendar.HOUR, hours > 11 ? hours - 12
+								: hours);
+				this.internalSet(Calendar.HOUR_OF_DAY, hours);
+				this.internalSet(Calendar.MINUTE, minutes);
+				this.internalSet(Calendar.SECOND, seconds);
+				this.internalSet(Calendar.MILLISECOND, milliseconds);
+			},
+
+			"add" : function(field, amount) {
+				var Calendar = js.util.Calendar;
+				// If amount == 0, do nothing even the given field is out of
+				// range. This is tested by JCK.
+				if (amount == 0) {
+					return; // Do nothing!
+				}
+
+				if (field < 0) {
+					throw new js.lang.IllegalArgumentException();
+				}
+
+				// Sync the time and calendar fields.
+				this.complete();
+
+				if (field == Calendar.YEAR) {
+					var year = this.internalGet(Calendar.YEAR);
+					year += amount;
+					if (year > 0) {
+						this.setField(Calendar.YEAR, year);
+					} else { // year <= 0
+						this.setField(Calendar.YEAR, 1 - year);
+					}
+
+					var truncYear = new Date();
+					truncYear.setFullYear(year);
+					truncYear.setMonth(this.internalGet(Calendar.MONTH));
+					truncYear.setDate(this.internalGet(Calendar.DAY_OF_MONTH));
+					truncYear.setHours(this.internalGet(Calendar.HOUR));
+					truncYear.setMinutes(this.internalGet(Calendar.MINUTE));
+					truncYear.setSeconds(this.internalGet(Calendar.SECOND));
+					truncYear.setMilliseconds(this
+							.internalGet(Calendar.MILLISECOND));
+
+					this.setTime(truncYear);
+
+				} else if (field == Calendar.MONTH) {
+					var month = this.internalGet(MONTH) + amount;
+					var year = this.internalGet(YEAR);
+
+					if (month > Calendar.DECEMBER) {
+						year += month / 12;
+						month %= 12;
+					} else if (month < Calendar.JANUARY) {
+						year -= (12 - month) / 12;
+						month = 12 + month % 12;
+					}
+
+					var truncYear = new Date();
+					truncYear.setFullYear(year);
+					truncYear.setMonth(month);
+					truncYear.setDate(this.internalGet(Calendar.DAY_OF_MONTH));
+					truncYear.setHours(this.internalGet(Calendar.HOUR));
+					truncYear.setMinutes(this.internalGet(Calendar.MINUTE));
+					truncYear.setSeconds(this.internalGet(Calendar.SECOND));
+					truncYear.setMilliseconds(this
+							.internalGet(Calendar.MILLISECOND));
+
+					this.setTime(truncYear);
+
+				} else {
+					var delta = amount;
+					switch (field) {
+					// Handle the time fields here. Convert the given
+					// amount to milliseconds and call setTimeInMillis.
+					case Calendar.HOUR:
+					case Calendar.HOUR_OF_DAY:
+						delta *= 60 * 60 * 1000; // hours to minutes
+						break;
+
+					case Calendar.MINUTE:
+						delta *= 60 * 1000; // minutes to seconds
+						break;
+
+					case Calendar.SECOND:
+						delta *= 1000; // seconds to milliseconds
+						break;
+
+					case Calendar.MILLISECOND:
+						break;
+
+					// Handle week, day and AM_PM fields which involves
+					// time zone offset change adjustment. Convert the
+					// given amount to the number of days.
+					case Calendar.WEEK_OF_YEAR:
+					case Calendar.WEEK_OF_MONTH:
+					case Calendar.DAY_OF_WEEK_IN_MONTH:
+						delta *= 7;
+						break;
+
+					case Calendar.DAY_OF_MONTH: // synonym of DATE
+					case Calendar.DAY_OF_YEAR:
+					case Calendar.DAY_OF_WEEK:
+						break;
+
+					case Calendar.AM_PM:
+						// Convert the amount to the number of days (delta)
+						// and +12 or -12 hours (timeOfDay).
+						var am_pm = this.internalGet(Calendar.AM_PM);
+						if (am_pm == amount) {
+							return;
+						} else if (am_pm > amount) {
+							delta = -amount / 2;
+						} else {
+							delta = amount / 2;
+						}
+						break;
+					}
+
+					// The time fields don't require time zone offset change
+					// adjustment.
+					if (field >= Calendar.HOUR) {
+						this.setTimeInMillis(this.time + delta);
+					} else {
+
+						this.setTimeInMillis(this.time + delta
+								* GregorianCalendar.ONE_DAY);
+					}
+
+				}
+
+			}
+		});

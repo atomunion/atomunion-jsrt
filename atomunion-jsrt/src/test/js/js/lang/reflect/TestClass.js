@@ -6,77 +6,77 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
 	name : "class test.lang.TestClass extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private dog" : testReflectObject.getClass(),
+	"@Setter @Getter private dog" : testReflectObject.getClass(),
 	TestClass : function() {
 	},
-	testGetClassConstructor : function() {
-		js.lang.System.out.println(this.getClassConstructor());
+	"@Test testGetClassConstructor" : function() {
+		js.lang.System.out.println(this.getDog().getClassConstructor());
 	},
-	testGetConstructor : function() {
-		js.lang.System.out.println(this.getConstructor());
+	"@Test testGetConstructor" : function() {
+		js.lang.System.out.println(this.getDog().getConstructor());
 	},
-	testGetInitial : function() {
-		js.lang.System.out.println(this.getInitial());
+	"@Test testGetInitial" : function() {
+		js.lang.System.out.println(this.getDog().getInitial());
 	},
-	testGetName : function() {
-		js.lang.System.out.println(this.getName());
+	"@Test testGetName" : function() {
+		js.lang.System.out.println(this.getDog().getName());
 	},
-	testGetFullName : function() {
-		js.lang.System.out.println(this.getFullName());
+	"@Test testGetFullName" : function() {
+		js.lang.System.out.println(this.getDog().getFullName());
 	},
-	testGetInstance : function() {
-		js.lang.System.out.println(this.getInstance());
+	"@Test testGetInstance" : function() {
+		js.lang.System.out.println(this.getDog().getInstance());
 	},
-	testGetAnnotations : function() {
-		js.lang.System.out.println(this.getAnnotations());
+	"@Test testGetAnnotations" : function() {
+		js.lang.System.out.println(this.getDog().getAnnotations());
 	},
-	testGetPackage : function() {
-		js.lang.System.out.println(this.getPackage());
+	"@Test testGetPackage" : function() {
+		js.lang.System.out.println(this.getDog().getPackage());
 	},
-	testGetDeclaredField : function() {
-		js.lang.System.out.println(this.getDeclaredField("color"));
+	"@Test testGetDeclaredField" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredField("color"));
 	},
-	testGetDeclaredFields : function() {
-		js.lang.System.out.println(this.getDeclaredFields());
+	"@Test testGetDeclaredFields" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredFields());
 	},
-	testGetField : function() {
-		js.lang.System.out.println(this.getField("color"));
+	"@Test testGetField" : function() {
+		js.lang.System.out.println(this.getDog().getField("color"));
 	},
-	testGetFields : function() {
-		js.lang.System.out.println(this.getFields());
+	"@Test testGetFields" : function() {
+		js.lang.System.out.println(this.getDog().getFields());
 	},
-	testGetDeclaredMethod : function() {
-		js.lang.System.out.println(this.getDeclaredMethod("say"));
+	"@Test testGetDeclaredMethod" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredMethod("say"));
 	},
-	testGetDeclaredMethods : function() {
-		js.lang.System.out.println(this.getDeclaredMethods());
+	"@Test testGetDeclaredMethods" : function() {
+		js.lang.System.out.println(this.getDog().getDeclaredMethods());
 	},
-	testGetMethod : function() {
-		js.lang.System.out.println(this.getMethod("say"));
+	"@Test testGetMethod" : function() {
+		js.lang.System.out.println(this.getDog().getMethod("say"));
 	},
-	testGetMethods : function() {
-		js.lang.System.out.println(this.getMethods());
+	"@Test testGetMethods" : function() {
+		js.lang.System.out.println(this.getDog().getMethods());
 	},
-	testGetSuperClass : function() {
-		js.lang.System.out.println(this.getSuperClass());
+	"@Test testGetSuperClass" : function() {
+		js.lang.System.out.println(this.getDog().getSuperClass());
 	},
-	testGetModifiers : function() {
-		js.lang.System.out.println(this.getModifiers());
+	"@Test testGetModifiers" : function() {
+		js.lang.System.out.println(this.getDog().getModifiers());
 	},
-	testAddMethod : function() {
-		this.addMethod(new js.lang.reflect.Method("testAddMethod", function() {
+	"@Test testAddMethod" : function() {
+		this.getDog().addMethod(new js.lang.reflect.Method("testAddMethod", function() {
 			return "我是动态新增的方法";
-		}, this, 1, []));
+		}, this.getDog(), 1, []));
 		js.lang.System.out.println(testReflectObject.testAddMethod());
 	},
-	testAddField : function() {
-		js.lang.System.out.println(this
+	"@Test testAddField" : function() {
+		js.lang.System.out.println(this.getDog()
 				.addField(new js.lang.reflect.Field("testAddField",
-						"我是动态新增的属性", this, 1, [ "@Getter", "@Setter" ])));
+						"我是动态新增的属性", this.getDog(), 1, [ "@Getter", "@Setter" ])));
 		js.lang.System.out.println(testReflectObject.getTestAddField());
 	},
-	testNewInstance : function() {
-		var c = this.newInstance();
+	"@Test testNewInstance" : function() {
+		var c = this.getDog().newInstance();
 		js.lang.System.out.println(c.getColor());
 	}
 });

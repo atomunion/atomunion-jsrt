@@ -21,18 +21,18 @@ var animal2 = js.model.Animal.$class.newInstance();
 
 Class.forName({
 	name : "class test.lang.TestOOP extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private dog" : dog1,
+	"@Setter @Getter private dog" : dog1,
 
-	testConstrator : function() {
-		js.lang.System.out.println("this.getName():" + this.getName());
+	"@Test testConstrator" : function() {
+		js.lang.System.out.println("this.getDog().getName():" + this.getDog().getName());
 	},
 
-	testClone : function() {
-		js.test.Assert.assertEquals("this.getName()", this.getName(), "dog1");
-		js.test.Assert.assertEquals("this.say()", this.say(), "汪汪1");
+	"@Test testClone" : function() {
+		js.test.Assert.assertEquals("this.getDog().getName()", this.getDog().getName(), "dog1");
+		js.test.Assert.assertEquals("this.getDog().say()", this.getDog().say(), "汪汪1");
 
-		var c = this.clone();
-		js.test.Assert.assertNotSame("克隆前后值相等", this, c);
+		var c = this.getDog().clone();
+		js.test.Assert.assertNotSame("克隆前后值相等", this.getDog(), c);
 		js.test.Assert.assertEquals("clone.getName()", c.getName(), "dog1");
 		js.test.Assert.assertEquals("clone.say()", c.say(), "汪汪1");
 

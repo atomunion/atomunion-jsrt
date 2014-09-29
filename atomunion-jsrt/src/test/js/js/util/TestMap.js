@@ -2,57 +2,57 @@ $import("js.test.TestCase");
 $import("js.util.HashMap");
 Class.forName({
 	name : "class test.util.TestMap extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private map" : new js.util.HashMap(),
+	"@Setter @Getter private map" : new js.util.HashMap(),
 	TestMap : function() {
 		for (var i = 0; i < 6; i++) {
 			this.getMap().put(i, "测试Map" + i);
 		}
 	},
-	testContainsKey : function() {
+	"@Test testContainsKey" : function() {
 		for (var i = 2; i < 4; i++) {
 			js.lang.System.out.println("containsKey->  index:" + i
-					+ ",containsKey:" + this.containsKey(i));
+					+ ",containsKey:" + this.getMap().containsKey(i));
 		}
 	},
-	testContainsValue : function() {
+	"@Test testContainsValue" : function() {
 		for (var i = 2; i < 4; i++) {
 			js.lang.System.out.println("containsValue->  value:测试Map" + i
-					+ ",containsValue:" + this.containsValue("测试Map" + i));
+					+ ",containsValue:" + this.getMap().containsValue("测试Map" + i));
 		}
 	},
-	testGet : function() {
+	"@Test testGet" : function() {
 		for (var i = 4; i < 6; i++) {
 			js.lang.System.out.println("get-> index:" + i + ",value:"
-					+ this.get(i));
+					+ this.getMap().get(i));
 		}
 	},
-	testIsEmpty : function() {
-		js.lang.System.out.println("isEmpty->" + this.isEmpty());
+	"@Test testIsEmpty" : function() {
+		js.lang.System.out.println("isEmpty->" + this.getMap().isEmpty());
 
 	},
-	testPut : function() {
+	"@Test testPut" : function() {
 		for (var i = 3; i < 6; i++) {
-			this.put(i, "新put" + i);
+			this.getMap().put(i, "新put" + i);
 			js.lang.System.out.println("put->key:" + i + ",value:"
-					+ this.get(i));
+					+ this.getMap().get(i));
 		}
 	},
-	testSize : function() {
-		js.lang.System.out.println("size:" + this.size());
+	"@Test testSize" : function() {
+		js.lang.System.out.println("size:" + this.getMap().size());
 	},
-	testRemove : function() {
+	"@Test testRemove" : function() {
 		var i = 5;
 		js.lang.System.out.println("remove-> key:" + i + ",旧值："
-				+ this.remove(i) + " ,size:" + this.size());
+				+ this.getMap().remove(i) + " ,size:" + this.getMap().size());
 
 	},
-	testClone : function() {
-		var c = this.clone();
+	"@Test testClone" : function() {
+		var c = this.getMap().clone();
 
-		js.lang.System.out.println("克隆前：" + this.size());
+		js.lang.System.out.println("克隆前：" + this.getMap().size());
 		js.lang.System.out.println("克隆后：" + c.size());
 
-		var itr1 = this.entrySet().iterator();
+		var itr1 = this.getMap().entrySet().iterator();
 
 		var itr2 = c.entrySet().iterator();
 

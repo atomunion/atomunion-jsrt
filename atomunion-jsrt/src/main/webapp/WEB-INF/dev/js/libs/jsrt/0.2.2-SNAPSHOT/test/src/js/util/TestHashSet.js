@@ -2,59 +2,59 @@ $import("js.test.TestCase");
 $import("js.util.HashSet");
 Class.forName({
 	name : "class test.util.TestHashSet extends js.test.TestCase",
-	"@Test @Auto @Setter @Getter private set" : new js.util.HashSet(),
+	"@Setter @Getter private set" : new js.util.HashSet(),
 	TestHashSet : function() {
 		for (var i = 0; i < 3; i++) {
 			this.getSet().add("测试set" + i);
 		}
 	},
-	testSize : function() {
-		js.lang.System.out.println("size:" + this.size());
+	"@Test testSize" : function() {
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testClear : function() {
+	"@Test testClear" : function() {
 		js.lang.System.out.println("clear:");
-		this.clear();
-		js.lang.System.out.println("size:" + this.size());
+		this.getSet().clear();
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testAdd : function() {
+	"@Test testAdd" : function() {
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("测试set" + i);
-			this.add("测试set" + i);
+			this.getSet().add("测试set" + i);
 		}
 		for (var i = 0; i < 3; i++) {
 			js.lang.System.out.println("测试set" + i);
-			this.add("测试set" + i);
+			this.getSet().add("测试set" + i);
 		}
-		js.lang.System.out.println("size:" + this.size());
+		js.lang.System.out.println("size:" + this.getSet().size());
 	},
-	testIterator : function() {
-		var itr = this.iterator();
+	"@Test testIterator" : function() {
+		var itr = this.getSet().iterator();
 		while (itr.hasNext()) {
 			js.lang.System.out.println(itr.next());
 		}
 	},
-	testContains : function() {
+	"@Test testContains" : function() {
 		var i = "测试set" + 3;
 		js.lang.System.out.println("value:" + i + ",contains:"
-				+ this.contains(i));
+				+ this.getSet().contains(i));
 	},
 
-	testIsEmpty : function() {
-		js.lang.System.out.println("isEmpty:" + this.isEmpty());
+	"@Test testIsEmpty" : function() {
+		js.lang.System.out.println("isEmpty:" + this.getSet().isEmpty());
 	},
 
-	testRemove : function() {
+	"@Test testRemove" : function() {
 		var i = "测试set" + 2;
 		js.lang.System.out.println("remove-> key:" + i + ",旧值："
-				+ this.remove(i) + " ,size:" + this.size());
+				+ this.getSet().remove(i) + " ,size:" + this.getSet().size());
 	},
-	testClone : function() {
-		var c = this.clone();
+	"@Test testClone" : function() {
+		var c = this.getSet().clone();
 
-		js.lang.System.out.println("克隆前：" + this.size());
+		js.lang.System.out.println("克隆前：" + this.getSet().size());
 		js.lang.System.out.println("克隆后：" + c.size());
 
-		var itr1 = this.iterator();
+		var itr1 = this.getSet().iterator();
 
 		var itr2 = c.iterator();
 

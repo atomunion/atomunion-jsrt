@@ -154,6 +154,11 @@
 				<file name="js/util/TestHashSet.js" />
 				<file name="js/util/TestMap.js" />
 				<file name="js/util/TestHashMap.js" />
+				
+				<file name="js/util/TestDate.js" />
+				<file name="js/util/TestCalendar.js" />
+				<file name="js/util/TestGregorianCalendar.js" />
+					
 			</filelist>
 		</concat>
 	</target>

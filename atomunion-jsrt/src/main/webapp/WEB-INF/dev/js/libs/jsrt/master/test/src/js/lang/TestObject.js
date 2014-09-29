@@ -7,9 +7,9 @@ var dog = new js.model.Dog("dog", "汪汪");
 
 Class.forName({
     name : "class test.lang.TestObject extends js.test.TestCase",
-    "@Test @Auto @Setter @Getter private obj" : dog,
+    "@Setter @Getter private obj" : dog,
 
-    testIsNull : function() {
+    "@Test testIsNull" : function() {
 
         js.test.Assert.assertTrue("null", Object.isNull(null));
         js.test.Assert.assertTrue("undefined", Object.isNull(undefined));
@@ -27,7 +27,7 @@ Class.forName({
         js.test.Assert.assertFalse("true", Object.isNull(true));
         js.test.Assert.assertFalse("false", Object.isNull(false));
     },
-    testIsEmpty : function() {
+    "@Test testIsEmpty" : function() {
         js.test.Assert.assertTrue("null", Object.isEmpty(null));
         js.test.Assert.assertTrue("undefined", Object.isEmpty(undefined));
         js.test.Assert.assertFalse("{}", Object.isEmpty({}));
@@ -45,7 +45,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isEmpty(false));
     },
 
-    testIsArray : function() {
+    "@Test testIsArray" : function() {
 
         js.test.Assert.assertFalse("null", Object.isArray(null));
         js.test.Assert.assertFalse("undefined", Object.isArray(undefined));
@@ -64,7 +64,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isArray(false));
     },
 
-    testIsDate : function() {
+    "@Test testIsDate" : function() {
 
         js.test.Assert.assertFalse("null", Object.isDate(null));
         js.test.Assert.assertFalse("undefined", Object.isDate(undefined));
@@ -84,7 +84,7 @@ Class.forName({
 
     },
 
-    testIsObject : function() {
+    "@Test testIsObject" : function() {
 
         js.test.Assert.assertFalse("null", Object.isObject(null));
         js.test.Assert.assertFalse("undefined", Object.isObject(undefined));
@@ -104,7 +104,7 @@ Class.forName({
 
     },
 
-    testIsFunction : function() {
+    "@Test testIsFunction" : function() {
 
         js.test.Assert.assertFalse("null", Object.isFunction(null));
         js.test.Assert.assertFalse("undefined", Object.isFunction(undefined));
@@ -123,7 +123,7 @@ Class.forName({
         js.test.Assert.assertFalse("false", Object.isFunction(false));
     },
 
-    testIsNumber : function() {
+    "@Test testIsNumber" : function() {
 
         js.test.Assert.assertFalse("null", Object.isNumber(null));
         js.test.Assert.assertFalse("undefined", Object.isNumber(undefined));
@@ -143,7 +143,7 @@ Class.forName({
 
     },
 
-    testIsString : function() {
+    "@Test testIsString" : function() {
 
         js.test.Assert.assertFalse("null", Object.isString(null));
         js.test.Assert.assertFalse("undefined", Object.isString(undefined));
@@ -163,7 +163,7 @@ Class.forName({
 
     },
 
-    testIsBoolean : function() {
+    "@Test testIsBoolean" : function() {
 
         js.test.Assert.assertFalse("null", Object.isBoolean(null));
         js.test.Assert.assertFalse("undefined", Object.isBoolean(undefined));
@@ -182,7 +182,7 @@ Class.forName({
 
     },
 
-    testIsDefined : function() {
+    "@Test testIsDefined" : function() {
 
         js.test.Assert.assertTrue("null", Object.isDefined(null));
         js.test.Assert.assertFalse("undefined", Object.isDefined(undefined));
@@ -200,66 +200,66 @@ Class.forName({
         js.test.Assert.assertTrue("false", Object.isDefined(false));
 
     },
-    testClone : function() {
-        js.lang.System.out.println("克隆前：" + this.toString());
-        var c = this.clone();
+    "@Test testClone" : function() {
+        js.lang.System.out.println("克隆前：" + this.getObj().toString());
+        var c = this.getObj().clone();
         js.lang.System.out.println("克隆后：" + c.toString());
 
-        js.test.Assert.assertNotSame("克隆前后  assertSame ", this, c);
+        js.test.Assert.assertNotSame("克隆前后  assertSame ", this.getObj(), c);
     },
 
-    testEach : function() {
-        Object.each(this, function(i, o, a) {
-            js.lang.System.out.println(i + ":" + o + "    this[" + this + "]" + "    被遍历的对象[" + a.toString() + "]");
+    "@Test testEach" : function() {
+        js.lang.System.out.println("被遍历的对象:" + this.getObj().toString());
+        Object.each(this.getObj(), function(i, o, a) {
+            js.lang.System.out.println(i + ":" + o + "    被遍历的对象[" + a.toString() + "]");
         }, null);
     },
-    testEnumerate : function() {
-        var scope = dog;
-        js.lang.System.out.println("scope:" + scope.toString());
+    "@Test testEnumerate" : function() {
+        js.lang.System.out.println("被遍历的对象:" + this.getObj().toString());
 
-        Object.enumerate(this, function(i, o, a) {
-            js.lang.System.out.println(i + ":" + o + "    this[" + this + "]    this==scope[" + (this === scope) + "]    被遍历的对象[" + a.toString() + "]");
+        Object.enumerate(this.getObj(), function(i, o, a) {
+            js.lang.System.out.println(i + ":" + o + "   被遍历的对象[" + a.toString() + "]");
         }, dog, true);
     },
-    testToJson : function() {
-        js.lang.System.out.println(this.toJson());
+    "@Test testToJson" : function() {
+        js.lang.System.out.println(this.getObj().toJson());
 
     },
-    testToQueryString : function() {
-        js.lang.System.out.println(this.toQueryString());
+    "@Test testToQueryString" : function() {
+        js.lang.System.out.println(this.getObj().toQueryString());
     },
-    testGetClass : function() {
-        js.lang.System.out.println(this.getClass());
+    "@Test testGetClass" : function() {
+        js.lang.System.out.println(this.getObj().getClass());
 
-        js.test.Assert.assertNotNull("this.getClass()", this.getClass());
+        js.test.Assert.assertNotNull("this.getObj().getClass()", this.getObj().getClass());
     },
-    testEquals : function() {
+    "@Test testEquals" : function() {
 
-        js.test.Assert.assertTrue("this.equals(this)", this.equals(this));
-        js.test.Assert.assertFalse("this.equals(null)", this.equals(null));
-        js.test.Assert.assertFalse("this.equals(undefined)", this.equals(undefined));
+        js.test.Assert.assertTrue("this.getObj().equals(this.getObj())", this.getObj().equals(this.getObj()));
+        js.test.Assert.assertFalse("this.getObj().equals(null)", this.getObj().equals(null));
+        js.test.Assert.assertFalse("this.getObj().equals(undefined)", this.getObj().equals(undefined));
 
     },
-    testGetVersion : function() {
-        js.test.Assert.assertNotNull("this.getVersion():", this.getVersion());
+    "@Test testGetVersion" : function() {
+        js.test.Assert.assertNotNull("this.getObj().getVersion():", this.getObj().getVersion());
     },
-    testHashCode : function() {
-        js.test.Assert.assertNotNull("this.hashCode():", this.hashCode());
+    "@Test testHashCode" : function() {
+        js.test.Assert.assertNotNull("this.getObj().hashCode():", this.getObj().hashCode());
     },
-    testToString : function() {
-        js.test.Assert.assertNotNull("this.toString()", this.toString());
+    "@Test testToString" : function() {
+        js.test.Assert.assertNotNull("this.getObj().toString()", this.getObj().toString());
     },
-    testForIn : function() {
-        for (var i in this) {
-            js.lang.System.out.println("key:" + i + "    value:" + this[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+    "@Test testForIn" : function() {
+        for (var i in this.getObj()) {
+            js.lang.System.out.println("key:" + i + "    value:" + this.getObj()[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
 
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in Object^^^^^^^^^^^^^^^^^^^^^^^");
         for (var i in Object) {
-            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in newObj^^^^^^^^^^^^^^^^^^^^^^^");
-        var newObj = Object.create(this, {
+        var newObj = Object.create(this.getObj(), {
             add1 : {
                 value : "add1",
                 writable : true,
@@ -300,7 +300,7 @@ Class.forName({
         });
 
         for (var i in newObj) {
-            js.lang.System.out.println("key:" + i + "    value:" + newObj[i] + "   this.hasOwnProperty:" + newObj.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + newObj[i] + "   this.getObj().hasOwnProperty:" + newObj.hasOwnProperty(i));
         }
 
         js.lang.System.out.println("^^^^^^^^^^^^^^^^^^^^^^^test for in new Object^^^^^^^^^^^^^^^^^^^^^^^");
@@ -346,11 +346,11 @@ Class.forName({
         });
 
         for (var i in Object) {
-            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + Object[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
         var obj = new Object();
         for (var i in obj) {
-            js.lang.System.out.println("key:" + i + "    value:" + obj[i] + "   this.hasOwnProperty:" + this.hasOwnProperty(i));
+            js.lang.System.out.println("key:" + i + "    value:" + obj[i] + "   this.getObj().hasOwnProperty:" + this.getObj().hasOwnProperty(i));
         }
 
     }
