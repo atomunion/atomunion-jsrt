@@ -118,7 +118,7 @@ Class.forName({
 
                 js.lang.System.out.println("        结果： √ ");
             } catch (e) {
-                js.lang.System.out.error("        结果： ×     详细描述：  %s", ["Name<", e.getName(), ">;  Number<", e.getNumber(), ">;  Message<", e.getMessage(), ">"].join(""));
+                js.lang.System.out.error("        结果： ×     详细描述：  %s", ["Name< ", e.getName(), " >;  Number< ", e.getNumber(), " >;  Message< ", e.getMessage(), " >"].join(""));
             }
             // if (!obj[name]) {
             // js.lang.System.out.warn("%s",

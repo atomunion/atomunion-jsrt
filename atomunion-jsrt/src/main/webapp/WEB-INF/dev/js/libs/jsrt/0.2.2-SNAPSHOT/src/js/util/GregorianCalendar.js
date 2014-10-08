@@ -12,27 +12,63 @@ Class
 		.forName({
 			name : "abstract class js.util.GregorianCalendar extends js.util.Calendar",
 
-			"private static final int EPOCH_OFFSET" : 719163,// Fixed date of
+			/**
+			 * Value of the <code>ERA</code> field indicating the period
+			 * before the common era (before Christ), also known as BCE. The
+			 * sequence of years at the transition from <code>BC</code> to
+			 * <code>AD</code> is ..., 2 BC, 1 BC, 1 AD, 2 AD,...
+			 * 
+			 * @see #ERA
+			 */
+			"public static final BC" : 0,
+
+			/**
+			 * Value of the {@link #ERA} field indicating the period before the
+			 * common era, the same value as {@link #BC}.
+			 * 
+			 * @see #CE
+			 */
+			"static final BCE" : 0,
+
+			/**
+			 * Value of the <code>ERA</code> field indicating the common era
+			 * (Anno Domini), also known as CE. The sequence of years at the
+			 * transition from <code>BC</code> to <code>AD</code> is ..., 2
+			 * BC, 1 BC, 1 AD, 2 AD,...
+			 * 
+			 * @see #ERA
+			 */
+			"public static final AD" : 1,
+
+			/**
+			 * Value of the {@link #ERA} field indicating the common era, the
+			 * same value as {@link #AD}.
+			 * 
+			 * @see #BCE
+			 */
+			"static final CE" : 1,
+
+			"private static final EPOCH_OFFSET" : 719163,// Fixed date of
 			// January 1,
 			// 1970
 			// (Gregorian)
-			"private static final int EPOCH_YEAR" : 1970,
+			"private static final EPOCH_YEAR" : 1970,
 
-			"static final int MONTH_LENGTH" : [ 31, 28, 31, 30, 31, 30, 31, 31,
-					30, 31, 30, 31 ], // 0-based
-			"static final int LEAP_MONTH_LENGTH" : [ 31, 29, 31, 30, 31, 30,
-					31, 31, 30, 31, 30, 31 ], // 0-based
+			"static final MONTH_LENGTH" : [ 31, 28, 31, 30, 31, 30, 31, 31, 30,
+					31, 30, 31 ], // 0-based
+			"static final LEAP_MONTH_LENGTH" : [ 31, 29, 31, 30, 31, 30, 31,
+					31, 30, 31, 30, 31 ], // 0-based
 
 			// Useful millisecond constants. Although ONE_DAY and ONE_WEEK can
 			// fit
 			// into ints, they must be longs in order to prevent arithmetic
 			// overflow
 			// when performing (bug 4173516).
-			"private static final int  ONE_SECOND" : 1000,
-			"private static final int  ONE_MINUTE" : 60 * 1000,
-			"private static final int  ONE_HOUR" : 60 * 60 * 1000,
-			"private static final long ONE_DAY " : 24 * 60 * 60 * 1000,
-			"private static final long ONE_WEEK" : 7 * 24 * 60 * 60 * 1000,
+			"private static final ONE_SECOND" : 1000,
+			"private static final ONE_MINUTE" : 60 * 1000,
+			"private static final ONE_HOUR" : 60 * 60 * 1000,
+			"private static final ONE_DAY " : 24 * 60 * 60 * 1000,
+			"private static final ONE_WEEK" : 7 * 24 * 60 * 60 * 1000,
 
 			/*
 			 * <pre> Greatest Least Field name Minimum Minimum Maximum Maximum
@@ -44,7 +80,7 @@ Class
 			 * 59 59 MILLISECOND 0 0 999 999 </pre> *: depends on the Gregorian
 			 * change date
 			 */
-			"static final int MIN_VALUES" : [ 1, // YEAR
+			"static final MIN_VALUES" : [ 0, 1, // YEAR
 			js.util.Calendar.JANUARY, // MONTH
 			1, // WEEK_OF_YEAR
 			0, // WEEK_OF_MONTH
@@ -57,9 +93,11 @@ Class
 			0, // HOUR_OF_DAY
 			0, // MINUTE
 			0, // SECOND
-			0 // MILLISECOND
-			],
-			"static final int LEAST_MAX_VALUES" : [ 292269054, // YEAR
+			0, // MILLISECOND
+			-13 * 60 * 60 * 1000, // ZONE_OFFSET (UNIX
+			// compatibility)
+			0 ],
+			"static final LEAST_MAX_VALUES" : [ 1, 292269054, // YEAR
 			js.util.Calendar.DECEMBER, // MONTH
 			52, // WEEK_OF_YEAR
 			4, // WEEK_OF_MONTH
@@ -72,9 +110,11 @@ Class
 			23, // HOUR_OF_DAY
 			59, // MINUTE
 			59, // SECOND
-			999 // MILLISECOND
+			999, // MILLISECOND
+			14 * 60 * 60 * 1000, // ZONE_OFFSET
+			20 * 60 * 1000 // DST_OFFSET (historical least maximum)
 			],
-			"static final int MAX_VALUES" : [ 292278994, // YEAR
+			"static final MAX_VALUES" : [ 1, 292278994, // YEAR
 			js.util.Calendar.DECEMBER, // MONTH
 			53, // WEEK_OF_YEAR
 			6, // WEEK_OF_MONTH
@@ -87,7 +127,11 @@ Class
 			23, // HOUR_OF_DAY
 			59, // MINUTE
 			59, // SECOND
-			999 // MILLISECOND
+			999, // MILLISECOND
+			14 * 60 * 60 * 1000, // ZONE_OFFSET
+			2 * 60 * 60 * 1000 // DST_OFFSET
+			// (double summer
+			// time)
 			],
 
 			GregorianCalendar : function() {
@@ -96,10 +140,9 @@ Class
 
 			"protected computeTime" : function() {
 				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar, year = this
-						.isFieldSet(Calendar.YEAR) ? this.internalGet(Calendar.YEAR)
-						: GregorianCalendar.EPOCH_YEAR, month = 0, day = 1,
-
-				hours = 0, minutes = 0, seconds = 0, milliseconds = 0;
+						.isFieldSet(Calendar.YEAR) ? this
+						.internalGet(Calendar.YEAR)
+						: GregorianCalendar.EPOCH_YEAR, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0, zone = new Date(),offset = zone.getTimezoneOffset() * 60 * 1000;
 
 				if (this.isFieldSet(Calendar.MONTH)) {
 					// No need to check if MONTH has been set (no isSet(MONTH)
@@ -138,22 +181,25 @@ Class
 						truncMonth.setMilliseconds(milliseconds);
 
 						if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
-							day = this.internalGet(Calendar.WEEK_OF_MONTH - 1)
-									* 7 - truncMonth.getDay();
+							day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 1)
+									* 7 - (truncMonth.getDay());
 
 							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
 								day += this.internalGet(Calendar.DAY_OF_WEEK);
 							}
 
+							if(day <= 0){
+								day = 1;
+							}
 						} else {
 
 							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
-								var fistDay = truncMonth.getDay(), dayOfWeek = this
+								var fistDay = truncMonth.getDay()+1, dayOfWeek = this
 										.internalGet(Calendar.DAY_OF_WEEK);
-								while (fistDay == dayOfWeek) {
+								while (fistDay != dayOfWeek) {
 									fistDay++;
-									if (fistDay >= 7) {
-										fistDay = 0;
+									if (fistDay > 7) {
+										fistDay = 1;
 									}
 									day++;
 								}
@@ -187,28 +233,49 @@ Class
 						while (true) {
 							if (month >= 12
 									|| truncMonth.getTime()
-											% GregorianCalendar.ONE_DAY + 1 >= dayOfYear) {
+											/ GregorianCalendar.ONE_DAY + 1 >= dayOfYear) {
 								break;
 							}
 							truncMonth.setMonth(++month);
 						}
 						truncMonth.setMonth(--month);
-						day = truncMonth.getTime() % GregorianCalendar.ONE_DAY
+						day = Math.floor(truncMonth.getTime() / GregorianCalendar.ONE_DAY)
 								+ 1;
 
 					} else {
 						if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
-							var fistDay = truncMonth.getDay(), dayOfWeek = this
+							var fistDay = truncMonth.getDay()+1, dayOfWeek = this
 									.internalGet(Calendar.DAY_OF_WEEK);
-							while (fistDay == dayOfWeek) {
+							while (fistDay != dayOfWeek) {
 								fistDay++;
-								if (fistDay >= 7) {
-									fistDay = 0;
+								if (fistDay > 7) {
+									fistDay = 1;
 								}
 								day++;
 							}
 						}
 					}
+				}
+
+				if (this.isFieldSet(Calendar.HOUR_OF_DAY)) {
+					hours = this.internalGet(Calendar.HOUR_OF_DAY);
+				} else if(this.isFieldSet(Calendar.HOUR)){
+					hours = this.internalGet(Calendar.HOUR);
+					// The default value of AM_PM is 0 which designates AM.
+					if (this.isFieldSet(Calendar.AM_PM)) {
+						hours += 12 * this.internalGet(Calendar.AM_PM);
+					}
+				}
+				if (this.isFieldSet(Calendar.MINUTE)) {
+					minutes = this.internalGet(Calendar.MINUTE);
+				}
+				
+				if (this.isFieldSet(Calendar.SECOND)) {
+					seconds = this.internalGet(Calendar.SECOND);
+				}
+				
+				if (this.isFieldSet(Calendar.MILLISECOND)) {
+					milliseconds = this.internalGet(Calendar.MILLISECOND);
 				}
 
 				var timeDate = new Date();
@@ -220,39 +287,22 @@ Class
 				timeDate.setMinutes(minutes);
 				timeDate.setSeconds(seconds);
 				timeDate.setMilliseconds(milliseconds);
-
-				var millis = timeDate.getTime();
-
-				if (this.isFieldSet(Calendar.HOUR_OF_DAY)) {
-					millis += this.internalGet(Calendar.HOUR_OF_DAY);
-				} else {
-					millis += this.internalGet(Calendar.HOUR);
-					// The default value of AM_PM is 0 which designates AM.
-					if (this.isFieldSet(Calendar.AM_PM)) {
-						millis += 12 * this.internalGet(Calendar.AM_PM);
-					}
-				}
-				millis *= 60;
-				millis += this.internalGet(Calendar.MINUTE);
-				millis *= 60;
-				millis += this.internalGet(Calendar.SECOND);
-				millis *= 1000;
-				millis += this.internalGet(Calendar.MILLISECOND);
-
-				this.time = millis + timeDate.getTimezoneOffset() * 60 * 1000;
+				
+				this.time = timeDate.getTime();
+				
+				this.areFieldsSet = true;
+				this.areAllFieldsSet = false;
 			},
 
 			"protected computeFields" : function() {
 
 				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar, zone = new Date(
-						this.time), offset = zone.getTimezoneOffset() * 60 * 1000,
-
-				date = new Date(this.time + offset),
-
-				year = date.getFullYear(), month = date.getMonth(), dayOfMonth = date
-						.getDate(), dayOfWeek = date.getDay(), hours = date
-						.getHours(), minutes = date.getMinutes(), seconds = date
-						.getSeconds(), milliseconds = date.getMilliseconds();
+						this.time), offset = zone.getTimezoneOffset() * 60 * 1000, date = new Date(
+						this.time), year = date.getFullYear(), month = date
+						.getMonth(), dayOfMonth = date.getDate(), dayOfWeek = date
+						.getDay()+1, hours = date.getHours(), minutes = date
+						.getMinutes(), seconds = date.getSeconds(), milliseconds = date
+						.getMilliseconds();
 
 				var truncYear = new Date();
 				truncYear.setFullYear(year);
@@ -263,12 +313,11 @@ Class
 				truncYear.setSeconds(0);
 				truncYear.setMilliseconds(0);
 
-				var dayOfYear = (this.time + offset - truncYear.getTime())
-						% GregorianCalendar.ONE_DAY + 1, weekOfYear = dayOfYear % 7;
+				var dayOfYear = Math.floor((this.time - truncYear.getTime())
+						/ GregorianCalendar.ONE_DAY) + 1, weekOfYear = Math.floor(dayOfYear / 7)+1;
 
 				truncYear.setMonth(month);
-				var truncMonth = truncYear, weekOfMonth = (truncMonth.getDate() + truncMonth
-						.getDay()) % 7;
+				var truncMonth = truncYear, weekOfMonth = Math.floor((dayOfMonth + truncMonth .getDay()) / 7) + 1;
 
 				this.internalSet(Calendar.YEAR, year);
 				this.internalSet(Calendar.MONTH, month);
@@ -278,7 +327,7 @@ Class
 				this.internalSet(Calendar.DAY_OF_YEAR, dayOfYear);
 				this.internalSet(Calendar.DAY_OF_WEEK, dayOfWeek);
 				this.internalSet(Calendar.DAY_OF_WEEK_IN_MONTH,
-						(dayOfMonth % 7) + 1);
+						Math.floor(dayOfMonth / 7) + 1);
 				this.internalSet(Calendar.AM_PM, hours > 11 ? 1 : 0);
 				this
 						.internalSet(Calendar.HOUR, hours > 11 ? hours - 12
@@ -287,6 +336,22 @@ Class
 				this.internalSet(Calendar.MINUTE, minutes);
 				this.internalSet(Calendar.SECOND, seconds);
 				this.internalSet(Calendar.MILLISECOND, milliseconds);
+				
+				this.isSet[Calendar.YEAR] = true;
+				this.isSet[Calendar.MONTH] = true;
+				this.isSet[Calendar.WEEK_OF_YEAR] = true;
+				this.isSet[Calendar.WEEK_OF_MONTH] = true;
+				this.isSet[Calendar.DAY_OF_MONTH] = true;
+				this.isSet[Calendar.DAY_OF_YEAR] = true;
+				this.isSet[Calendar.DAY_OF_WEEK] = true;
+				this.isSet[Calendar.DAY_OF_WEEK_IN_MONTH] = true;
+				this.isSet[Calendar.AM_PM] = true;
+				this.isSet[Calendar.HOUR] = true;
+				this.isSet[Calendar.HOUR_OF_DAY] = true;
+				this.isSet[Calendar.MINUTE] = true;
+				this.isSet[Calendar.SECOND] = true;
+				this.isSet[Calendar.MILLISECOND] = true;
+				this.areFieldsSet = this.areAllFieldsSet = true;
 			},
 
 			"add" : function(field, amount) {
@@ -308,9 +373,9 @@ Class
 					var year = this.internalGet(Calendar.YEAR);
 					year += amount;
 					if (year > 0) {
-						this.setField(Calendar.YEAR, year);
+						this.set(Calendar.YEAR, year);
 					} else { // year <= 0
-						this.setField(Calendar.YEAR, 1 - year);
+						this.set(Calendar.YEAR, 1 - year);
 					}
 
 					var truncYear = new Date();

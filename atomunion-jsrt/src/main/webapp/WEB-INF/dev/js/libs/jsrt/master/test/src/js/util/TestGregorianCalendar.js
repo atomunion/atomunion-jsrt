@@ -25,16 +25,14 @@ Class.forName({
     },
 
     "@Test testAdd" : function() {
-        
-        
-        this.getCalendar().add(js.util.Calendar.YEAR,-10);
-        this.getCalendar().add(js.util.Calendar.MONTH,25);
-        this.getCalendar().add(js.util.Calendar.DAY_OF_MONTH,21);
-        this.getCalendar().add(js.util.Calendar.HOUR_OF_DAY,-10);
-        this.getCalendar().add(js.util.Calendar.MINUTE,51);
-        this.getCalendar().add(js.util.Calendar.SECOND,15);
-        
-     
+
+        this.getCalendar().add(js.util.Calendar.YEAR, -10);
+        this.getCalendar().add(js.util.Calendar.MONTH, 25);
+        this.getCalendar().add(js.util.Calendar.DAY_OF_MONTH, 21);
+        this.getCalendar().add(js.util.Calendar.HOUR_OF_DAY, -10);
+        this.getCalendar().add(js.util.Calendar.MINUTE, 51);
+        this.getCalendar().add(js.util.Calendar.SECOND, 15);
+
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1979);
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 4);
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 22);
@@ -48,8 +46,8 @@ Class.forName({
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 13);
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 1);
         js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 25);
-        
-    }
-}); 
 
-new test.util.TestGregorianCalendar();
+    }
+});
+
+new test.util.TestGregorianCalendar(); 
