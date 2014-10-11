@@ -33,19 +33,19 @@ Class.forName({
         this.getCalendar().add(js.util.Calendar.MINUTE, 51);
         this.getCalendar().add(js.util.Calendar.SECOND, 15);
 
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.YEAR) == 1979);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MONTH) == 4);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_YEAR) == 22);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.WEEK_OF_MONTH) == 5);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_MONTH) == 31);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_YEAR) == 151);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK) == 5);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 5);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.AM_PM) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.HOUR_OF_DAY) == 13);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.MINUTE) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的setTime方法测试不通过", this.getCalendar().getField(js.util.Calendar.SECOND) == 25);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.YEAR) == 1979);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 4);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 31);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 151);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR_OF_DAY) == 13);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.MINUTE) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的add方法测试不通过", this.getCalendar().get(js.util.Calendar.SECOND) == 25);
 
     }
 });

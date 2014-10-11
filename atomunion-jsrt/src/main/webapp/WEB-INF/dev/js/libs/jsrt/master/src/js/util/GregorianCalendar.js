@@ -140,11 +140,52 @@ Class
 
 			"protected computeTime" : function() {
 				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar, year = this
-						.isFieldSet(Calendar.YEAR) ? this
-						.internalGet(Calendar.YEAR)
-						: GregorianCalendar.EPOCH_YEAR, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0, zone = new Date(),offset = zone.getTimezoneOffset() * 60 * 1000;
+						.isSet(Calendar.YEAR) ? this.internalGet(Calendar.YEAR)
+						: GregorianCalendar.EPOCH_YEAR, month = 0, day = 1, hours = 0, minutes = 0, seconds = 0, milliseconds = 0, zone = new Date(), offset = zone
+						.getTimezoneOffset() * 60 * 1000;
 
-				if (this.isFieldSet(Calendar.MONTH)) {
+				var truncMonth = new Date();
+				truncMonth.setFullYear(year);
+				truncMonth.setMonth(month);
+				truncMonth.setDate(day);
+				truncMonth.setHours(hours);
+				truncMonth.setMinutes(minutes);
+				truncMonth.setSeconds(seconds);
+				truncMonth.setMilliseconds(milliseconds);
+				// We are on the first day of the year.
+				if (this.isFieldSet(Calendar.DAY_OF_YEAR)) {
+					// Add the offset, then subtract 1. (Make sure to avoid
+					// underflow.)
+					var dayOfYear = this.internalGet(Calendar.DAY_OF_YEAR), yearTime = truncMonth
+							.getTime(), st = 1, days = 1;
+
+					while (true) {
+						if (month >= 12
+								|| (days = (Math
+										.floor((truncMonth.getTime() - yearTime)
+												/ GregorianCalendar.ONE_DAY) + 1)) >= dayOfYear) {
+							break;
+						}
+						st = days;
+						truncMonth.setMonth(++month);
+					}
+					if (month > 0) {
+						truncMonth.setMonth(--month);
+					}
+					day = dayOfYear - st + 1;
+
+				} else if (this.isFieldSet(Calendar.DAY_OF_WEEK)
+						&& !this.isFieldSet(Calendar.MONTH)) {
+					var fistDay = truncMonth.getDay() + 1, dayOfWeek = this
+							.internalGet(Calendar.DAY_OF_WEEK);
+					while (fistDay != dayOfWeek) {
+						fistDay++;
+						if (fistDay > 7) {
+							fistDay = 1;
+						}
+						day++;
+					}
+				} else if (this.isSet(Calendar.MONTH)) {
 					// No need to check if MONTH has been set (no isSet(MONTH)
 					// call) since its unset value happens to be JANUARY (0).
 					month = this.internalGet(Calendar.MONTH);
@@ -158,8 +199,52 @@ Class
 						month = 12 + month % 12;
 					}
 
-					// Month-based calculations
-					if (this.isFieldSet(Calendar.DAY_OF_MONTH)) {
+					var truncMonth = new Date();
+					truncMonth.setFullYear(year);
+					truncMonth.setMonth(month);
+					truncMonth.setDate(day);
+					truncMonth.setHours(hours);
+					truncMonth.setMinutes(minutes);
+					truncMonth.setSeconds(seconds);
+					truncMonth.setMilliseconds(milliseconds);
+
+					if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
+						day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 1)
+								* 7 - (truncMonth.getDay());
+
+						if (this.isSet(Calendar.DAY_OF_WEEK)) {
+							day += this.internalGet(Calendar.DAY_OF_WEEK);
+						}
+
+						if (day <= 0) {
+							day = 1;
+						}
+					} else if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
+						var fistDay = truncMonth.getDay() + 1, dayOfWeek = this
+								.internalGet(Calendar.DAY_OF_WEEK);
+						while (fistDay != dayOfWeek) {
+							fistDay++;
+							if (fistDay > 7) {
+								fistDay = 1;
+							}
+							day++;
+						}
+					} else if (this.isFieldSet(Calendar.DAY_OF_WEEK_IN_MONTH)) {
+						// We are basing this on the day-of-week-in-month.
+						// The only
+						// trickiness occurs if the day-of-week-in-month is
+						// negative.
+						day = (this.internalGet(Calendar.DAY_OF_WEEK_IN_MONTH) - 1)
+								* 7 + (7 - truncMonth.getDay()) + 1;
+						if (day < 0) {
+							truncMonth.setTime(truncMonth.getTime() + (day - 1)
+									* GregorianCalendar.ONE_DAY);
+							month = truncMonth.getMonth();
+							day = truncMonth.getDate();
+						}
+
+					} else if (this.isSet(Calendar.DAY_OF_MONTH)) {
+						// Month-based calculations
 						// We are on the first day of the month. Just add the
 						// offset if DAY_OF_MONTH is set. If the isSet call
 						// returns false, that means DAY_OF_MONTH has been
@@ -169,112 +254,28 @@ Class
 						// To avoid underflow with DAY_OF_MONTH-1, add
 						// DAY_OF_MONTH, then subtract 1.
 						day = this.internalGet(Calendar.DAY_OF_MONTH);
-					} else {
-
-						var truncMonth = new Date();
-						truncMonth.setFullYear(year);
-						truncMonth.setMonth(month);
-						truncMonth.setDate(day);
-						truncMonth.setHours(hours);
-						truncMonth.setMinutes(minutes);
-						truncMonth.setSeconds(seconds);
-						truncMonth.setMilliseconds(milliseconds);
-
-						if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
-							day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 1)
-									* 7 - (truncMonth.getDay());
-
-							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
-								day += this.internalGet(Calendar.DAY_OF_WEEK);
-							}
-
-							if(day <= 0){
-								day = 1;
-							}
-						} else {
-
-							if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
-								var fistDay = truncMonth.getDay()+1, dayOfWeek = this
-										.internalGet(Calendar.DAY_OF_WEEK);
-								while (fistDay != dayOfWeek) {
-									fistDay++;
-									if (fistDay > 7) {
-										fistDay = 1;
-									}
-									day++;
-								}
-							}
-							// We are basing this on the day-of-week-in-month.
-							// The only
-							// trickiness occurs if the day-of-week-in-month is
-							// negative.
-							if (this.isFieldSet(Calendar.DAY_OF_WEEK_IN_MONTH)) {
-								day = this
-										.internalGet(Calendar.DAY_OF_WEEK_IN_MONTH - 1) * 7 + 1;
-							}
-						}
-					}
-				} else {
-
-					var truncMonth = new Date();
-					truncMonth.setFullYear(year);
-					truncMonth.setMonth(month);
-					truncMonth.setDate(day);
-					truncMonth.setHours(hours);
-					truncMonth.setMinutes(minutes);
-					truncMonth.setSeconds(seconds);
-					truncMonth.setMilliseconds(milliseconds);
-					// We are on the first day of the year.
-					if (this.isFieldSet(Calendar.DAY_OF_YEAR)) {
-						// Add the offset, then subtract 1. (Make sure to avoid
-						// underflow.)
-						var dayOfYear = this.internalGet(Calendar.DAY_OF_YEAR);
-
-						while (true) {
-							if (month >= 12
-									|| truncMonth.getTime()
-											/ GregorianCalendar.ONE_DAY + 1 >= dayOfYear) {
-								break;
-							}
-							truncMonth.setMonth(++month);
-						}
-						truncMonth.setMonth(--month);
-						day = Math.floor(truncMonth.getTime() / GregorianCalendar.ONE_DAY)
-								+ 1;
-
-					} else {
-						if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
-							var fistDay = truncMonth.getDay()+1, dayOfWeek = this
-									.internalGet(Calendar.DAY_OF_WEEK);
-							while (fistDay != dayOfWeek) {
-								fistDay++;
-								if (fistDay > 7) {
-									fistDay = 1;
-								}
-								day++;
-							}
-						}
 					}
 				}
 
-				if (this.isFieldSet(Calendar.HOUR_OF_DAY)) {
-					hours = this.internalGet(Calendar.HOUR_OF_DAY);
-				} else if(this.isFieldSet(Calendar.HOUR)){
+				if (this.isFieldSet(Calendar.HOUR)) {
 					hours = this.internalGet(Calendar.HOUR);
 					// The default value of AM_PM is 0 which designates AM.
-					if (this.isFieldSet(Calendar.AM_PM)) {
+					if (this.isSet(Calendar.AM_PM)) {
 						hours += 12 * this.internalGet(Calendar.AM_PM);
 					}
+				} else if (this.isSet(Calendar.HOUR_OF_DAY)) {
+					hours = this.internalGet(Calendar.HOUR_OF_DAY);
 				}
-				if (this.isFieldSet(Calendar.MINUTE)) {
+
+				if (this.isSet(Calendar.MINUTE)) {
 					minutes = this.internalGet(Calendar.MINUTE);
 				}
-				
-				if (this.isFieldSet(Calendar.SECOND)) {
+
+				if (this.isSet(Calendar.SECOND)) {
 					seconds = this.internalGet(Calendar.SECOND);
 				}
-				
-				if (this.isFieldSet(Calendar.MILLISECOND)) {
+
+				if (this.isSet(Calendar.MILLISECOND)) {
 					milliseconds = this.internalGet(Calendar.MILLISECOND);
 				}
 
@@ -287,11 +288,10 @@ Class
 				timeDate.setMinutes(minutes);
 				timeDate.setSeconds(seconds);
 				timeDate.setMilliseconds(milliseconds);
-				
+
 				this.time = timeDate.getTime();
-				
-				this.areFieldsSet = true;
-				this.areAllFieldsSet = false;
+
+				this.setFieldsNormalized();
 			},
 
 			"protected computeFields" : function() {
@@ -300,7 +300,7 @@ Class
 						this.time), offset = zone.getTimezoneOffset() * 60 * 1000, date = new Date(
 						this.time), year = date.getFullYear(), month = date
 						.getMonth(), dayOfMonth = date.getDate(), dayOfWeek = date
-						.getDay()+1, hours = date.getHours(), minutes = date
+						.getDay() + 1, hours = date.getHours(), minutes = date
 						.getMinutes(), seconds = date.getSeconds(), milliseconds = date
 						.getMilliseconds();
 
@@ -314,10 +314,12 @@ Class
 				truncYear.setMilliseconds(0);
 
 				var dayOfYear = Math.floor((this.time - truncYear.getTime())
-						/ GregorianCalendar.ONE_DAY) + 1, weekOfYear = Math.floor(dayOfYear / 7)+1;
+						/ GregorianCalendar.ONE_DAY) + 1, weekOfYear = Math
+						.ceil((truncYear.getDay() + 1 + dayOfYear) / 7);
 
 				truncYear.setMonth(month);
-				var truncMonth = truncYear, weekOfMonth = Math.floor((dayOfMonth + truncMonth .getDay()) / 7) + 1;
+				var truncMonth = truncYear, weekOfMonth = Math
+						.ceil((dayOfMonth + truncMonth.getDay()) / 7);
 
 				this.internalSet(Calendar.YEAR, year);
 				this.internalSet(Calendar.MONTH, month);
@@ -326,8 +328,8 @@ Class
 				this.internalSet(Calendar.DAY_OF_MONTH, dayOfMonth);
 				this.internalSet(Calendar.DAY_OF_YEAR, dayOfYear);
 				this.internalSet(Calendar.DAY_OF_WEEK, dayOfWeek);
-				this.internalSet(Calendar.DAY_OF_WEEK_IN_MONTH,
-						Math.floor(dayOfMonth / 7) + 1);
+				this.internalSet(Calendar.DAY_OF_WEEK_IN_MONTH, Math
+						.ceil(dayOfMonth / 7));
 				this.internalSet(Calendar.AM_PM, hours > 11 ? 1 : 0);
 				this
 						.internalSet(Calendar.HOUR, hours > 11 ? hours - 12
@@ -336,26 +338,12 @@ Class
 				this.internalSet(Calendar.MINUTE, minutes);
 				this.internalSet(Calendar.SECOND, seconds);
 				this.internalSet(Calendar.MILLISECOND, milliseconds);
-				
-				this.isSet[Calendar.YEAR] = true;
-				this.isSet[Calendar.MONTH] = true;
-				this.isSet[Calendar.WEEK_OF_YEAR] = true;
-				this.isSet[Calendar.WEEK_OF_MONTH] = true;
-				this.isSet[Calendar.DAY_OF_MONTH] = true;
-				this.isSet[Calendar.DAY_OF_YEAR] = true;
-				this.isSet[Calendar.DAY_OF_WEEK] = true;
-				this.isSet[Calendar.DAY_OF_WEEK_IN_MONTH] = true;
-				this.isSet[Calendar.AM_PM] = true;
-				this.isSet[Calendar.HOUR] = true;
-				this.isSet[Calendar.HOUR_OF_DAY] = true;
-				this.isSet[Calendar.MINUTE] = true;
-				this.isSet[Calendar.SECOND] = true;
-				this.isSet[Calendar.MILLISECOND] = true;
-				this.areFieldsSet = this.areAllFieldsSet = true;
+
+				this.setFieldsComputed();
 			},
 
 			"add" : function(field, amount) {
-				var Calendar = js.util.Calendar;
+				var Calendar = js.util.Calendar, GregorianCalendar = js.util.GregorianCalendar;
 				// If amount == 0, do nothing even the given field is out of
 				// range. This is tested by JCK.
 				if (amount == 0) {
@@ -382,7 +370,7 @@ Class
 					truncYear.setFullYear(year);
 					truncYear.setMonth(this.internalGet(Calendar.MONTH));
 					truncYear.setDate(this.internalGet(Calendar.DAY_OF_MONTH));
-					truncYear.setHours(this.internalGet(Calendar.HOUR));
+					truncYear.setHours(this.internalGet(Calendar.HOUR_OF_DAY));
 					truncYear.setMinutes(this.internalGet(Calendar.MINUTE));
 					truncYear.setSeconds(this.internalGet(Calendar.SECOND));
 					truncYear.setMilliseconds(this
@@ -391,8 +379,8 @@ Class
 					this.setTime(truncYear);
 
 				} else if (field == Calendar.MONTH) {
-					var month = this.internalGet(MONTH) + amount;
-					var year = this.internalGet(YEAR);
+					var month = this.internalGet(Calendar.MONTH) + amount;
+					var year = this.internalGet(Calendar.YEAR);
 
 					if (month > Calendar.DECEMBER) {
 						year += month / 12;
@@ -406,7 +394,7 @@ Class
 					truncYear.setFullYear(year);
 					truncYear.setMonth(month);
 					truncYear.setDate(this.internalGet(Calendar.DAY_OF_MONTH));
-					truncYear.setHours(this.internalGet(Calendar.HOUR));
+					truncYear.setHours(this.internalGet(Calendar.HOUR_OF_DAY));
 					truncYear.setMinutes(this.internalGet(Calendar.MINUTE));
 					truncYear.setSeconds(this.internalGet(Calendar.SECOND));
 					truncYear.setMilliseconds(this

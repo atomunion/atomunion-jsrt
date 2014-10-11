@@ -371,7 +371,14 @@ Class
 			 * 
 			 * @serial
 			 */
-			"protected isSet" : [],
+			"protected isFieldsSet" : [],
+
+			/**
+			 * Pseudo-time-stamps which specify when each field was set. There
+			 * are two special values, UNSET and COMPUTED. Values from
+			 * MINIMUM_USER_SET to Integer.MAX_VALUE are legal user set values.
+			 */
+			"transient private int stamp" : [],
 
 			"protected time" : 0,
 			"protected isTimeSet" : false,
@@ -388,9 +395,11 @@ Class
 			Calendar : function() {
 				this.fields = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						0 ];
-				this.isSet = [ false, false, false, false, false, false, false,
+				this.stamp = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						0 ];
+				this.isFieldsSet = [ false, false, false, false, false, false,
 						false, false, false, false, false, false, false, false,
-						false, false ];
+						false, false, false ];
 			},
 
 			/**
@@ -425,15 +434,15 @@ Class
 			"clear" : function(field) {
 				if (field) {
 					this.fields[field] = 0;
-					this.isSet[field] = false;
-
+					this.isFieldsSet[field] = false;
+					this.stamp[field] = 0;
 					this.areAllFieldsSet = this.areFieldsSet = false;
 					this.isTimeSet = false;
 				} else {
 					for (var i = 0; i < this.fields.length;) {
 						this.fields[i] = 0;
-						// UNSET == 0
-						this.isSet[i++] = false;
+						this.stamp[i] = 0;// UNSET == 0
+						this.isFieldsSet[i++] = false;
 					}
 					this.areAllFieldsSet = this.areFieldsSet = false;
 					this.isTimeSet = false;
@@ -447,7 +456,8 @@ Class
 
 				for (var i = 0; i < len; i++) {
 					other.fields[i] = this.fields[i];
-					other.isSet[i] = this.isSet[i];
+					other.stamp[i] = this.stamp[i];
+					other.isFieldsSet[i] = this.isFieldsSet[i];
 				}
 
 				other.time = this.time;
@@ -524,6 +534,7 @@ Class
 			 */
 			"protected abstract computeTime" : function() {
 			},
+
 			"protected abstract computeFields" : function() {
 			},
 
@@ -554,10 +565,11 @@ Class
 				this.internalSet(field, value);
 				this.isTimeSet = false;
 				this.areFieldsSet = false;
-				this.isSet[field] = true;
+				this.isFieldsSet[field] = true;
 				this.areAllFieldsSet = false;
-
+				this.stamp[field] = 2;
 			},
+
 			"final internalSet" : function(field, value) {
 				this.fields[field] = value;
 			},
@@ -571,7 +583,19 @@ Class
 			 *         value set; <code>false</code> otherwise.
 			 */
 			"public final isFieldSet" : function(field) {
-				return this.isSet[field];
+				return this.stamp[field] > 1;
+			},
+
+			/**
+			 * Determines if the given calendar field has a value set, including
+			 * cases that the value has been set by internal fields calculations
+			 * triggered by a <code>get</code> method call.
+			 * 
+			 * @return <code>true</code> if the given calendar field has a
+			 *         value set; <code>false</code> otherwise.
+			 */
+			"public final boolean isSet" : function(field) {
+				return this.stamp[field] != 0;
 			},
 
 			/**
@@ -594,7 +618,6 @@ Class
 			 * @see #set(int,int,int,int,int)
 			 * @see #set(int,int,int,int,int,int)
 			 */
-
 			"setDate" : function(year, month, date, hourOfDay, minute, second) {
 				var Calendar = js.util.Calendar;
 				this.set(Calendar.YEAR, year);
@@ -616,7 +639,6 @@ Class
 
 			/** Sets this Calendar's current time from the given long value. */
 			"setTimeInMillis" : function(millis) {
-
 				if (this.time == millis && this.isTimeSet && this.areFieldsSet
 						&& this.areAllFieldsSet) {
 					return;
@@ -626,7 +648,25 @@ Class
 				this.areFieldsSet = false;
 				this.computeFields();
 				this.areAllFieldsSet = this.areFieldsSet = true;
+			},
 
+			"final setFieldsComputed" : function() {
+				for (var i = 0; i < this.fields.length; i++) {
+					this.stamp[i] = 1;
+					this.isSet[i] = true;
+				}
+				this.areFieldsSet = this.areAllFieldsSet = true;
+			},
+
+			"final setFieldsNormalized" : function() {
+				for (var i = 0; i < this.fields.length; i++) {
+					this.stamp[i] = this.fields[i] = 0; // UNSET == 0
+					this.isSet[i] = false;
+				}
+				// Some or all of the fields are in sync with the
+				// milliseconds, but the stamp values are not normalized yet.
+				this.areFieldsSet = true;
+				this.areAllFieldsSet = false;
 			},
 
 			/** Return a string representation of this calendar. */
