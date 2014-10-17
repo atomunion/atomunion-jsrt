@@ -7,924 +7,1017 @@
  */
 
 (function() {
-    var USEECMA = true;
+	var USEECMA = true;
 
-    var extend = function(d, s, k, m, pros) {
+	var extend = function(d, s, k, m, pros) {
 
-        pros = pros || {};
-        var writable = !!pros.writable, enumerable = !!pros.enumerable, configurable = !!pros.configurable;
-        if (d === null || s === null || d === undefined || s === undefined || typeof d === "number" || typeof s === "number" || typeof d === "string" || typeof s === "string" || typeof d === "boolean" || typeof s === "boolean") {
-            return d;
-        }
-        if (Object.prototype.toString.call(s) === "[object Object]") {
-            if (Object.prototype.toString.apply(d) !== "[object Array]" || d === Array.prototype) {
-                for (var i in s) {
-                    if (s.hasOwnProperty(i)) {
-                        if (k) {
-                            if (!d[k]) {
-                                d[k] = {};
-                            }
+		pros = pros || {};
+		var writable = !!pros.writable, enumerable = !!pros.enumerable, configurable = !!pros.configurable;
+		if (d === null || s === null || d === undefined || s === undefined
+				|| typeof d === "number" || typeof s === "number"
+				|| typeof d === "string" || typeof s === "string"
+				|| typeof d === "boolean" || typeof s === "boolean") {
+			return d;
+		}
+		if (Object.prototype.toString.call(s) === "[object Object]") {
+			if (Object.prototype.toString.apply(d) !== "[object Array]"
+					|| d === Array.prototype) {
+				for ( var i in s) {
+					if (s.hasOwnProperty(i)) {
+						if (k) {
+							if (!d[k]) {
+								d[k] = {};
+							}
 
-                            if (USEECMA) {
-                                Object.defineProperty(d[k], i, {
-                                    value : m ? s[i][m] : s[i],
-                                    writable : writable,
-                                    enumerable : enumerable,
-                                    configurable : configurable
-                                });
-                            } else {
+							if (USEECMA) {
+								Object.defineProperty(d[k], i, {
+									value : m ? s[i][m] : s[i],
+									writable : writable,
+									enumerable : enumerable,
+									configurable : configurable
+								});
+							} else {
 
-                                d[k][i] = m ? s[i][m] : s[i];
-                            }
-                        } else {
-                            if (USEECMA) {
-                                Object.defineProperty(d, i, {
-                                    value : m ? (s[i] ? s[i][m] : null) : s[i],
-                                    writable : writable,
-                                    enumerable : enumerable,
-                                    configurable : configurable
-                                });
-                            } else {
-                                d[i] = m ? (s[i] ? s[i][m] : null) : s[i];
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (var j = 0; j < d.length; j++) {
-                    for (var i in s) {
-                        if (s.hasOwnProperty(i)) {
-                            if (!d[j]) {
-                                d[j] = {};
-                            }
-                            if (k) {
-                                if (!d[j][k]) {
-                                    d[j][k] = {};
-                                }
-                                if (USEECMA) {
-                                    Object.defineProperty(d[j][k], i, {
-                                        value : m ? s[i][m] : s[i],
-                                        writable : writable,
-                                        enumerable : enumerable,
-                                        configurable : configurable
-                                    });
-                                } else {
-                                    d[j][k][i] = m ? s[i][m] : s[i];
-                                }
-                            } else {
+								d[k][i] = m ? s[i][m] : s[i];
+							}
+						} else {
+							if (USEECMA) {
+								Object.defineProperty(d, i, {
+									value : m ? (s[i] ? s[i][m] : null) : s[i],
+									writable : writable,
+									enumerable : enumerable,
+									configurable : configurable
+								});
+							} else {
+								d[i] = m ? (s[i] ? s[i][m] : null) : s[i];
+							}
+						}
+					}
+				}
+			} else {
+				for (var j = 0; j < d.length; j++) {
+					for ( var i in s) {
+						if (s.hasOwnProperty(i)) {
+							if (!d[j]) {
+								d[j] = {};
+							}
+							if (k) {
+								if (!d[j][k]) {
+									d[j][k] = {};
+								}
+								if (USEECMA) {
+									Object.defineProperty(d[j][k], i, {
+										value : m ? s[i][m] : s[i],
+										writable : writable,
+										enumerable : enumerable,
+										configurable : configurable
+									});
+								} else {
+									d[j][k][i] = m ? s[i][m] : s[i];
+								}
+							} else {
 
-                                if (USEECMA) {
-                                    Object.defineProperty(d[j], i, {
-                                        value : m ? (s[i] ? s[i][m] : null) : s[i],
-                                        writable : writable,
-                                        enumerable : enumerable,
-                                        configurable : configurable
-                                    });
-                                } else {
+								if (USEECMA) {
+									Object.defineProperty(d[j], i, {
+										value : m ? (s[i] ? s[i][m] : null)
+												: s[i],
+										writable : writable,
+										enumerable : enumerable,
+										configurable : configurable
+									});
+								} else {
 
-                                    d[j][i] = m ? (s[i] ? s[i][m] : null) : s[i];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return d;
-    };
-    if (USEECMA) {
-        Object.defineProperties(Object, {
-            "extend" : {
-                value : extend,
-                writable : false,
-                enumerable : false,
-                configurable : false
-            },
+									d[j][i] = m ? (s[i] ? s[i][m] : null)
+											: s[i];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return d;
+	};
+	if (USEECMA) {
+		Object.defineProperties(Object, {
+			"extend" : {
+				value : extend,
+				writable : false,
+				enumerable : false,
+				configurable : false
+			},
 
-            "USEECMA" : {
-                value : USEECMA,
-                writable : false,
-                enumerable : false,
-                configurable : false
-            }
+			"USEECMA" : {
+				value : USEECMA,
+				writable : false,
+				enumerable : false,
+				configurable : false
+			}
 
-        });
-    } else {
-        Object.extend = extend;
-        Object.USEECMA = USEECMA;
-    }
+		});
+	} else {
+		Object.extend = extend;
+		Object.USEECMA = USEECMA;
+	}
 })();
 
-Object.extend(Object, function() {
-    return {
-        // TODO 增加isNull和isEmpty的区分
-        isNull : function(v) {
-            return v === null || v === undefined;
-        },
+Object
+		.extend(
+				Object,
+				function() {
+					return {
+						// TODO 增加isNull和isEmpty的区分
+						isNull : function(v) {
+							return v === null || v === undefined;
+						},
 
-        isEmpty : function(v) {
-            return v === null || v === undefined || ((Object.isArray(v) && !v.length)) || (Object.isString(v) && v.trim() === "");
-        },
+						isEmpty : function(v) {
+							return v === null || v === undefined
+									|| ((Object.isArray(v) && !v.length))
+									|| (Object.isString(v) && v.trim() === "");
+						},
 
-        isArray : function(v) {
-            return Object.prototype.toString.apply(v) === "[object Array]";
-        },
+						isArray : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Array]";
+						},
 
-        isDate : function(v) {
-            return Object.prototype.toString.apply(v) === "[object Date]";
-        },
+						isDate : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Date]";
+						},
 
-        isObject : function(v) {
-            return !!v && Object.prototype.toString.call(v) === "[object Object]";
-        },
+						isObject : function(v) {
+							return !!v
+									&& Object.prototype.toString.call(v) === "[object Object]";
+						},
 
-        isFunction : function(v) {
-            return Object.prototype.toString.apply(v) === "[object Function]";
-        },
+						isFunction : function(v) {
+							return Object.prototype.toString.apply(v) === "[object Function]";
+						},
 
-        isNumber : function(v) {
-            return typeof v === "number" && isFinite(v);
-        },
+						isNumber : function(v) {
+							return typeof v === "number" && isFinite(v);
+						},
 
-        isString : function(v) {
-            return typeof v === "string";
-        },
+						isString : function(v) {
+							return typeof v === "string";
+						},
 
-        isBoolean : function(v) {
-            return typeof v === "boolean";
-        },
+						isBoolean : function(v) {
+							return typeof v === "boolean";
+						},
 
-        isDefined : function(v) {
-            return typeof v !== "undefined";
-        },
+						isDefined : function(v) {
+							return typeof v !== "undefined";
+						},
 
-        isInstanceof : function(sub, sup) {
-            return sub instanceof sup;
-        },
-        /*
-         * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
-         * Object.isArray(d)) { for (var i = 0; i < d.length;
-         * i++) { Object.each(s, function(j, v, o) {
-         * d[i].prototype[j] = v.value; }); } } return d; },
-         */
-        each : function(obj, fn, scope) {
-            return Object.enumerate(obj, fn, scope, false);
-        },
-        enumerate : function(obj, fn, scope, pt) {
-            if (Object.isEmpty(obj) || Object.isNumber(obj) || Object.isString(obj) || Object.isBoolean(obj)) {
-                return;
-            }
-            if (Object.isArray(obj)) {
-                for (var i = 0, len = obj.length; i < len; i++) {
+						isInstanceof : function(sub, sup) {
+							return sub instanceof sup;
+						},
+						/*
+						 * extend2 : function(d, s) { if (!Object.isEmpty(d) &&
+						 * Object.isArray(d)) { for (var i = 0; i < d.length;
+						 * i++) { Object.each(s, function(j, v, o) {
+						 * d[i].prototype[j] = v.value; }); } } return d; },
+						 */
+						each : function(obj, fn, scope) {
+							return Object.enumerate(obj, fn, scope, false);
+						},
+						enumerate : function(obj, fn, scope, pt) {
+							if (Object.isEmpty(obj) || Object.isNumber(obj)
+									|| Object.isString(obj)
+									|| Object.isBoolean(obj)) {
+								return;
+							}
+							if (Object.isArray(obj)) {
+								for (var i = 0, len = obj.length; i < len; i++) {
 
-                    if (fn.call(scope || obj[i], i, obj[i], obj) === false) {
-                        return i;
-                    }
-                }
-            } else {
-                for (var p in obj) {
-                    if (pt || obj.hasOwnProperty(p)) {
-                        if (fn.call(scope || obj[p], p, obj[p], obj) === false) {
-                            return p;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-    };
-}(), null, null, {
-    writable : false,
-    enumerable : false,
-    configurable : false
-});
+									if (fn
+											.call(scope || obj[i], i, obj[i],
+													obj) === false) {
+										return i;
+									}
+								}
+							} else {
+								for ( var p in obj) {
+									if (pt || obj.hasOwnProperty(p)) {
+										if (fn.call(scope || obj[p], p, obj[p],
+												obj) === false) {
+											return p;
+										}
+									}
+								}
+							}
+							return true;
+						}
+					};
+				}(), null, null, {
+					writable : false,
+					enumerable : false,
+					configurable : false
+				});
 
 (function() {
 
-    var fetch = function(name, callback, scope) {
-        if (Object.isEmpty(name)) {
-            return null;
-        }
-        var emp = name.split("."), length = emp.length, temp = window;
-        for (var j = 0; j < length - 1; j++) {
-            temp[emp[j]] || (temp[emp[j]] = {});
-            temp = temp[emp[j]];
-        }
-        return callback.call(scope, emp[j], temp);
-    };
-
-    var format = (function() {
-        var regx1 = /(\s+$|^\s+)/g, regx2 = /\s*([,(=])\s*/g, regx3 = /\s*[)]\s*/g, regx4 = /\s{2,}/g;
-        return function(str) {
-            return str.replace(regx1, "").replace(regx2, "$1").replace(regx3, ") ").replace(regx4, " ");
-        };
-    })();
-
-    var attribute = function(name, value, declaringClass, modifiers, annotations) {
-        this._name = name;
-        this._value = value;
-        this._declaringClass = declaringClass;
-        this._modifiers = modifiers;
-        this._annotations = annotations;
-
-    };
-    attribute.prototype = {
-        getName : function() {
-            return this._name;
-        },
-        setName : function(name) {
-            this._name = name;
-        },
-        getValue : function() {
-            return this._value;
-        },
-        setValue : function(value) {
-            this._value = value;
-        },
-        getDeclaringClass : function() {
-            return this._declaringClass;
-        },
-        setDeclaringClass : function(declaringClass) {
-            this._declaringClass = declaringClass;
-        },
-        getModifiers : function() {
-            return this._modifiers;
-        },
-        setModifiers : function(modifiers) {
-            this._modifiers = modifiers;
-        },
-        getAnnotations : function() {
-            return this._annotations;
-        },
-        setAnnotations : function(annotation) {
-            this._annotations = annotation;
-        }
-    };
-    var convert = function(m) {
-
-        m = format(m);
-
-        var index1 = m.indexOf("class ");
-        var index2 = m.indexOf("interface ");
-
-        var modify = null, type = null, n = null, extend = null, implement = null;
-        if (index1 === -1 && index2 === -1) {
-            // method,field
-            var index = m.lastIndexOf(" ");
-            modify = (index === -1 ? "" : m.substring(0, index + 1));
-            n = m.substring(index + 1);
-        } else {
-            var index = null;
-            if (index1 != -1) {
-                index = index1;
-                type = "class";
-            } else {
-                index = index2;
-                type = "interface";
-            }
-            modify = m.substring(0, index);
-            // FIXME var defs = m.substring(index + 1).split(" ")
-            var defs = m.substring(index).split(" "), len = defs.length;
-            n = defs[1];
-            if (len >= 4) {
-                if (defs[2] === "extends") {
-                    extend = defs[3];
-                } else {
-                    extend = "Object";
-                    implement = defs[3].split(",");
-                }
-                if (len >= 6) {
-                    implement = defs[5].split(",");
-                }
-            }
-        }
-
-        var regx = /@\S*/g;
-        var isAbstract = modify.indexOf("abstract ") != -1, isInterface = modify.indexOf("interface ") != -1, isFinal = modify.indexOf("final ") != -1, isStatic = modify.indexOf("static ") != -1, isProtected = modify.indexOf("protected ") != -1, isPrivate = modify.indexOf("private ") != -1, isDefault = modify.indexOf("default ") != -1, isPublic = (modify.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isNonWritable = modify.indexOf("non-writable ") != -1, isNonEnumerable = modify.indexOf("non-enumerable ") != -1, isNonConfigurable = modify.indexOf("non-configurable ") != -1, isWritable = !isNonWritable && modify.indexOf("writable ") != -1, isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1;
-
-        /*
-         * abstract 1024, interface 512, final 16, static 8, protected 4,
-         * private 2 ,public 1,default 0
-         */
-        var modifiers = 0;
-
-        if (isNonWritable) {
-            modifiers += 65536;
-        }
-
-        if (isWritable) {
-            modifiers += 32768;
-        }
-
-        if (isNonEnumerable) {
-            modifiers += 16384;
-        }
-        if (isEnumerable) {
-            modifiers += 8192;
-        }
-
-        if (isNonConfigurable) {
-            modifiers += 4096;
-        }
-
-        if (isConfigurable) {
-            modifiers += 2048;
-        }
-
-        if (isAbstract) {
-            modifiers += 1024;
-        }
-        if (isInterface) {
-            modifiers += 512;
-        }
-        if (isFinal) {
-            modifiers += 16;
-        }
-        if (isStatic) {
-            modifiers += 8;
-        }
-        if (isProtected) {
-            modifiers += 4;
-        }
-        if (isPrivate) {
-            modifiers += 2;
-        }
-        if (isPublic) {
-            modifiers += 1;
-        }
-
-        return {
-            annotations : m.match(regx) || [],
-            modifiers : modifiers,
-            type : type,
-            name : n,
-            extend : extend,
-            implement : implement
-        };
-    };
-    var proxy = function(m, b, t, a) {
-        var f = m.getValue(), isStatic = (m.getModifiers() & 8) != 0;
-        return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f : function() {
-            // 判断权限private,default,protected,public
-            // 判断是否可以被重写final
-            (!Object.isEmpty(b) && Object.isFunction(b)) && b.apply(this, arguments);
-
-            var result = null;
-            try {
-                result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply( isStatic ? this.getClass().getClassConstructor() : this, arguments) : f;
-            } catch (e) {
-                if (Object.isEmpty(t)) {
-                    throw e;
-                } else {
-                    if (Object.isFunction(t))
-                        t.apply(this, arguments);
-                }
-
-            }
-            (!Object.isEmpty(a) && Object.isFunction(a)) && a.apply(this, arguments);
-            return result;
-        };
-    };
-    var doAnnotations = function(self, m, methods) {
-        if (Object.isFunction(m.getValue())) {
-            // 方法上的注解
-        } else {
-            // 属性上的注解
-            if (m.getName() && m.getName().length > 1 && m.getName().length != "_") {
-                var name = m.getName().indexOf("_") === 0 ? m.getName().substring(1) : m.getName();
-                name = name.charAt(0).toUpperCase() + name.substring(1);
-
-                var modifier = (((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
-
-                if (m.getAnnotations().indexOf("@Getter") != -1) {
-                    var getName = "get" + name;
-                    if (!methods[getName]) {
-                        self.addMethod(new attribute(getName, function() {
-                            return this[m.getName()];
-                        }, self, modifier, []));
-                    }
-                }
-                if (m.getAnnotations().indexOf("@Setter") != -1) {
-                    var setName = "set" + name;
-                    if (!methods[setName]) {
-                        self.addMethod(new attribute(setName, function(value) {
-                            this[m.getName()] = value;
-                        }, self, modifier, []));
-                    }
-                }
-            }
-        }
-    };
-
-    var empty = function() {
-    };
-
-    var CodeHeap = function() {
-        this.heap = [];
-    };
-    CodeHeap.prototype = {
-        find : function(elem) {
-            for (var i = 0, len = this.heap.length; i < len; i++) {
-                if (this.heap[i].key === elem) {
-                    return this.heap[i].value;
-                }
-            }
-            return null;
-        },
-        get : function($class, key) {
-
-            var code = this.find($class);
-            if (code) {
-                return code[key];
-            }
-            throw new Error("illegal code heap states.");
-        },
-        set : function($class, key, value) {
-            var code = this.find($class);
-            if (code) {
-                if (Object.isArray(key)) {
-                    Object.each(key, function(i, v, o) {
-                        code[v] = value;
-                    });
-                } else {
-                    code[key] = value;
-                }
-            }
-        },
-        create : function($class, name, fullName, alias, packages, type, modifiers, annotations, fields, methods, superClass, superInterfaces, classloader, instanceClass, classConstructor) {
-
-            if (this.find($class)) {
-                throw new Error("class or interface <" + fullName + "> have already loaded!");
-            }
-            this.heap.push({
-                key : $class,
-                value : {
-                    name : name,
-                    fullName : fullName,
-                    alias : alias,
-
-                    packages : packages,
-                    type : type,
-                    modifiers : modifiers,
-                    annotations : annotations,
-
-                    // 自身method和fields,不包含从父类继承来的
-                    fields : fields || {},
-                    methods : methods || {},
-
-                    superClass : superClass,
-                    superInterfaces : superInterfaces || [],
-
-                    classloader : classloader,
-                    instanceClass : instanceClass ||
-                    function() {
-                    },
-                    instance : classConstructor,
-                    classConstructor : classConstructor
-
-                }
-            });
-
-        }
-    };
-
-    var heap = new CodeHeap();
-
-    var $class = function(classDef, classloader) {
-        // TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
-        // implements
-        // zzz,ttt
-        var modify = convert(classDef["name"]), alias = classDef["alias"], fullName = modify.name, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
-
-        heap.create(this, null, fullName, alias, null, modify.type, modify.modifiers, modify.annotations, null, null, null, null, classloader, null, null);
-
-        switch (fullName) {
-
-            case 'Object':
-                isRoot = true;
-                classConstructor = Object;
-                break;
-            case 'Function':
-                classConstructor = Function;
-                break;
-            case 'Array':
-                classConstructor = Array;
-                break;
-            case 'String':
-                classConstructor = String;
-                break;
-            case 'Boolean':
-                classConstructor = Boolean;
-                break;
-            case 'Number':
-                classConstructor = Number;
-                break;
-            case 'Date':
-                classConstructor = Date;
-                break;
-            case 'RegExp':
-                classConstructor = RegExp;
-                break;
-            case 'Error':
-                classConstructor = Error;
-                break;
-            case 'EvalError':
-                classConstructor = EvalError;
-                break;
-            case 'RangeError':
-                classConstructor = RangeError;
-                break;
-            case 'ReferenceError':
-                classConstructor = ReferenceError;
-                break;
-            case 'SyntaxError':
-                classConstructor = SyntaxError;
-                break;
-            case 'TypeError':
-                classConstructor = TypeError;
-                break;
-            case 'URIError':
-                classConstructor = URIError;
-                break;
-
-            default:
-                isKernel = false;
-
-                classConstructor = function() {
-                    // 原始构造器
-                    // 1设置class对象和hashCode值
-
-                    if (Object.USEECMA) {
-                        Object.defineProperty(this, "$class", {
-                            value : classObj,
-                            writable : false,
-                            enumerable : false,
-                            configurable : false
-                        });
-                    } else {
-                        this.$class = classObj;
-                    }
-
-                    // 2.2初始化继承父类属性
-                    var sc = classObj.getSuperClass();
-                    while (sc) {
-                        var f = sc.getFields();
-                        Object.each(f, function(i, v, o) {
-                            if (!classObj.getFields()[i]) {
-                                var value = v.getValue();
-
-                                value = value ? value.clone() : value;
-
-                                if (Object.USEECMA) {
-                                    Object.defineProperty(this, i, {
-                                        value : value,
-                                        writable : (v.getModifiers() & 65536) == 0,
-                                        enumerable : (v.getModifiers() & 16384) == 0,
-                                        configurable : (v.getModifiers() & 4096) == 0
-                                    });
-                                } else {
-                                    this[i] = value;
-                                }
-                            }
-                        }, this);
-                        // sc.getConstructor().apply(this, arguments);
-                        sc = sc.getSuperClass();
-                    }
-
-                    // 3初始化自身定义属性
-                    Object.each(classObj.getFields(), function(i, v, o) {
-                        var value = v.getValue();
-                        value = value ? value.clone() : value;
-                        if (Object.USEECMA) {
-                            Object.defineProperty(this, i, {
-                                value : value,
-                                writable : (v.getModifiers() & 65536) == 0,
-                                enumerable : (v.getModifiers() & 16384) == 0,
-                                configurable : (v.getModifiers() & 4096) == 0
-                            });
-                        } else {
-                            this[i] = value;
-                        }
-                    }, this);
-
-                    // 4用户构造器,先调用父类构造器以及constructor2方法
-                    var constructor2 = classObj.getConstructor();
-                    constructor2 && constructor2.apply(this, arguments);
-
-                    // 5执行默认初始化方法
-                    var initial = classObj.getInitial();
-                    ( initial = initial || this.initial || empty).apply(this, arguments);
-
-                    // 6防止用户构造器修改class对象
-                    if (!Object.USEECMA && this.$class != classObj) {
-                        this.$class = classObj;
-                    }
-                };
-
-                break;
-        }
-
-        heap.set(this, ["classConstructor", "instance"], classConstructor);
-
-        var name = fetch(fullName, function(name, value) {
-            value[name] = classConstructor;
-
-            if (Object.USEECMA) {
-                Object.defineProperty(value[name], "$class", {
-                    value : this,
-                    writable : false,
-                    enumerable : false,
-                    configurable : false
-                });
-            } else {
-                value[name].$class = this;
-            }
-
-            packages = value;
-            return name;
-        }, this);
-
-        heap.set(this, "name", name);
-
-        // 默认无参构造函数
-        if (!classDef[name]) {
-            classDef[name] = empty;
-        }
-
-        if (!isRoot) {
-
-            if (superInterfacesDef) {
-                var len = superInterfacesDef.length;
-
-                var superInterfaces = heap.get(this, "superInterfaces");
-                for (var i = 0; i < len; i++) {
-
-                    superInterfaces[i] = fetch(superInterfacesDef[i], function(name, value) {
-                        return value[name];
-                    }).$class;
-                }
-            }
-
-            var superClass = (fetch(superClassDef, function(name, value) {
-                return value[name];
-            }) || Object).$class;
-
-            heap.set(this, "superClass", superClass);
-
-            // TODO 判断父类是否final
-            if (!isKernel) {
-                var instanceClass = heap.get(this, "instanceClass");
-                instanceClass.prototype = ((superClass) ? heap.get(superClass, "instance") : Object).prototype;
-
-                if (Object.USEECMA) {
-                    classConstructor.prototype = Object.create(instanceClass.prototype);
-
-                    Object.defineProperty(classConstructor.prototype, "constructor", {
-                        value : classConstructor,
-                        writable : false,
-                        enumerable : false,
-                        configurable : false
-                    });
-
-                } else {
-                    classConstructor.prototype = new instanceClass;
-
-                    classConstructor.prototype.constructor = classConstructor;
-                }
-
-                if (superClass === Object.$class) {
-
-                    // TODO 拷贝js.lang.Object中的toString方法
-                    if (Object.USEECMA) {
-                        var m = Object.$class.getMethod("toString");
-                        Object.defineProperty(classConstructor.prototype, "toString", {
-                            value : m.getValue(),
-
-                            writable : (m.getModifiers() & 65536) == 0,
-                            enumerable : (m.getModifiers() & 8192) != 0,
-                            configurable : (m.getModifiers() & 4096) == 0
-                        });
-                    } else {
-
-                        classConstructor.prototype.toString = Object.$class.getMethod("toString").getValue();
-                    }
-                }
-            }
-        }
-
-        Object.each(classDef, function(i, v, o) {
-            if (i != "name") {
-                var m = convert(i);
-                m = new attribute(m.name, v, this, m.modifiers, m.annotations);
-                if (Object.isFunction(v)) {
-                    // 确保toString为原生
-                    if (isKernel && m.getName() === "toString") {
-                        this.getMethods()[m.getName()] = m;
-                        return true;
-                    }
-                    this.addMethod(m);
-                } else {
-                    this.addField(m);
-                }
-            }
-        }, this);
-
-        fetch(alias, function(name, value) {
-            value[name] = classConstructor;
-        }, this);
-
-        return this;
-    };
-    $class.prototype = {
-        getClassLoader : function() {
-
-            return heap.get(this, "classloader") || (window.js.lang.ClassLoader ? js.lang.ClassLoader.getSystemClassLoader() : null);
-        },
-
-        getClassConstructor : function() {
-            return heap.get(this, "classConstructor");
-        },
-        getConstructor : function() {
-            return heap.get(this, "constructor2");
-        },
-        getInitial : function() {
-            return heap.get(this, "initial");
-        },
-        getPackage : function() {
-            return heap.get(this, "packages");
-        },
-
-        getDeclaredField : function(name) {
-            return this.getField(name);
-        },
-        getDeclaredFields : function() {
-            return this.getFields();
-        },
-        getField : function(name) {
-            var v = heap.get(this, "fields")[name];
-            if (v) {
-                return v;
-            }
-            throw new js.lang.NoSuchFieldException();
-        },
-        getFields : function() {
-            return heap.get(this, "fields");
-        },
-        getDeclaredMethod : function(name) {
-            return this.getMethod(name);
-        },
-        getDeclaredMethods : function() {
-            return this.getMethods();
-        },
-        getMethod : function(name) {
-            var v = heap.get(this, "methods")[name];
-            if (v) {
-                return v;
-            }
-            throw new js.lang.NoSuchMethodException();
-        },
-        getMethods : function() {
-            return heap.get(this, "methods");
-        },
-        getName : function() {
-            return heap.get(this, "name");
-        },
-        getFullName : function() {
-            return heap.get(this, "fullName");
-        },
-        getSuperClass : function() {
-            return heap.get(this, "superClass");
-        },
-        getModifiers : function() {
-            return heap.get(this, "modifiers");
-        },
-        getAnnotations : function() {
-            return heap.get(this, "annotations");
-        },
-
-        // 构造器必须公有静态方法必须公有
-        addMethod : function(m) {
-            if (!Object.isEmpty(m) && Object.isFunction(m.getValue())) {
-                if (m.getAnnotations() && m.getAnnotations().length) {
-                    doAnnotations(this, m, this.getMethods());
-                }
-                var n = m.getName(), name = heap.get(this, "name");
-                if (n === name) {
-                    if (name === "Object") {
-                        heap.set(this, "constructor2", m.getValue());
-                    } else {
-                        // 将构造器代理，默认调用父类构造器
-                        heap.set(this, "constructor2", proxy(m, (this.getSuperClass() || Object.$class).getConstructor()));
-                    }
-
-                } else {
-                    m.setValue(proxy(m));
-                    m.setDeclaringClass(this);
-
-                    if (window.js && window.js.lang && window.js.lang.reflect && window.js.lang.reflect.Method && window.js.lang.reflect.Method.loaded) {
-                        m = new window.js.lang.reflect.Method(n, m.getValue(), this, m.getModifiers(), m.getAnnotations());
-                    }
-
-                    if ((m.getModifiers() & 8) != 0) {
-
-                        if (Object.USEECMA) {
-                            Object.defineProperty(this.getClassConstructor(), n, {
-                                value : m.getValue(),
-                                writable : (m.getModifiers() & 65536) == 0,
-                                enumerable : (m.getModifiers() & 8192) != 0,
-                                configurable : (m.getModifiers() & 4096) == 0
-                            });
-                        } else {
-                            this.getClassConstructor()[n] = m.getValue();
-                        }
-                    } else {
-                        if (Object.USEECMA) {
-                            Object.defineProperty(this.getClassConstructor().prototype, n, {
-                                value : m.getValue(),
-                                writable : (m.getModifiers() & 65536) == 0,
-                                enumerable : (m.getModifiers() & 8192) != 0,
-                                configurable : (m.getModifiers() & 4096) == 0
-                            });
-                        } else {
-                            this.getClassConstructor().prototype[n] = m.getValue();
-                        }
-                    }
-                    this.getMethods()[n] = m;
-
-                    if (n === "initial") {
-                        heap.set(this, "initial", m.getValue());
-                    }
-                }
-            }
-        },
-        addField : function(m) {
-            if (!Object.isEmpty(m) && !Object.isFunction(m.getValue())) {
-                if (m.getAnnotations() && m.getAnnotations().length) {
-                    doAnnotations(this, m, this.getMethods());
-                }
-                m.setDeclaringClass(this);
-                if (window.js && window.js.lang && window.js.lang.reflect && window.js.lang.reflect.Field && window.js.lang.reflect.Field.loaded) {
-                    m = new window.js.lang.reflect.Field(m.getName(), m.getValue(), this, m.getModifiers(), m.getAnnotations());
-                }
-
-                if ((m.getModifiers() & 8) != 0) {
-
-                    if (Object.USEECMA) {
-                        Object.defineProperty(this.getClassConstructor(), m.getName(), {
-                            value : m.getValue(),
-                            writable : (m.getModifiers() & 65536) == 0,
-                            enumerable : (m.getModifiers() & 16384) == 0,
-                            configurable : (m.getModifiers() & 4096) == 0
-                        });
-                    } else {
-                        this.getClassConstructor()[m.getName()] = m.getValue();
-                    }
-                }
-                this.getFields()[m.getName()] = m;
-            }
-        },
-        getInstance : function() {
-            return heap.get(this, "instance");
-        },
-        isInstance : function(obj) {
-            return Object.isNull(obj) ? false : obj.getClass() === this;
-        },
-        newInstance : function() {
-            return new (heap.get(this, "classConstructor"))();
-        },
-        clone : function() {
-            return this;
-        },
-
-        isAssignableFrom : function() {
-            // TODO
-            return false;
-        },
-
-        isInterface : function() {
-            // TODO
-            return heap.get(this, "type") === "interface";
-        },
-
-        isArray : function() {
-            // TODO
-            return false;
-        },
-        isPrimitive : function() {
-            // TODO
-            return false;
-        },
-        isAnnotation : function() {
-            // TODO
-            return false;
-        }
-    };
-
-    Class = function() {
-    };
-    Class.forName = function(cls, classloader) {
-        return new $class(cls, classloader);
-    };
+	var fetch = function(name, callback, scope) {
+		if (Object.isEmpty(name)) {
+			return null;
+		}
+		var emp = name.split("."), length = emp.length, temp = window;
+		for (var j = 0; j < length - 1; j++) {
+			temp[emp[j]] || (temp[emp[j]] = {});
+			temp = temp[emp[j]];
+		}
+		return callback.call(scope, emp[j], temp);
+	};
+
+	var format = (function() {
+		var regx1 = /(\s+$|^\s+)/g, regx2 = /\s*([,(=])\s*/g, regx3 = /\s*[)]\s*/g, regx4 = /\s{2,}/g;
+		return function(str) {
+			return str.replace(regx1, "").replace(regx2, "$1").replace(regx3,
+					") ").replace(regx4, " ");
+		};
+	})();
+
+	var attribute = function(name, value, declaringClass, modifiers,
+			annotations) {
+		this._name = name;
+		this._value = value;
+		this._declaringClass = declaringClass;
+		this._modifiers = modifiers;
+		this._annotations = annotations;
+
+	};
+	attribute.prototype = {
+		getName : function() {
+			return this._name;
+		},
+		setName : function(name) {
+			this._name = name;
+		},
+		getValue : function() {
+			return this._value;
+		},
+		setValue : function(value) {
+			this._value = value;
+		},
+		getDeclaringClass : function() {
+			return this._declaringClass;
+		},
+		setDeclaringClass : function(declaringClass) {
+			this._declaringClass = declaringClass;
+		},
+		getModifiers : function() {
+			return this._modifiers;
+		},
+		setModifiers : function(modifiers) {
+			this._modifiers = modifiers;
+		},
+		getAnnotations : function() {
+			return this._annotations;
+		},
+		setAnnotations : function(annotation) {
+			this._annotations = annotation;
+		}
+	};
+	var convert = function(m) {
+
+		m = format(m);
+
+		var index1 = m.indexOf("class ");
+		var index2 = m.indexOf("interface ");
+
+		var modify = null, type = null, n = null, extend = null, implement = null;
+		if (index1 === -1 && index2 === -1) {
+			// method,field
+			var index = m.lastIndexOf(" ");
+			modify = (index === -1 ? "" : m.substring(0, index + 1));
+			n = m.substring(index + 1);
+		} else {
+			var index = null;
+			if (index1 != -1) {
+				index = index1;
+				type = "class";
+			} else {
+				index = index2;
+				type = "interface";
+			}
+			modify = m.substring(0, index);
+			// FIXME var defs = m.substring(index + 1).split(" ")
+			var defs = m.substring(index).split(" "), len = defs.length;
+			n = defs[1];
+			if (len >= 4) {
+				if (defs[2] === "extends") {
+					extend = defs[3];
+				} else {
+					extend = "Object";
+					implement = defs[3].split(",");
+				}
+				if (len >= 6) {
+					implement = defs[5].split(",");
+				}
+			}
+		}
+
+		var regx = /@\S*/g;
+		var isAbstract = modify.indexOf("abstract ") != -1, isInterface = modify
+				.indexOf("interface ") != -1, isFinal = modify
+				.indexOf("final ") != -1, isStatic = modify.indexOf("static ") != -1, isProtected = modify
+				.indexOf("protected ") != -1, isPrivate = modify
+				.indexOf("private ") != -1, isDefault = modify
+				.indexOf("default ") != -1, isPublic = (modify
+				.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isNonWritable = modify
+				.indexOf("non-writable ") != -1, isNonEnumerable = modify
+				.indexOf("non-enumerable ") != -1, isNonConfigurable = modify
+				.indexOf("non-configurable ") != -1, isWritable = !isNonWritable
+				&& modify.indexOf("writable ") != -1, isEnumerable = !isNonEnumerable
+				&& modify.indexOf("enumerable ") != -1, isConfigurable = !isNonConfigurable
+				&& modify.indexOf("configurable ") != -1;
+
+		/*
+		 * abstract 1024, interface 512, final 16, static 8, protected 4,
+		 * private 2 ,public 1,default 0
+		 */
+		var modifiers = 0;
+
+		if (isNonWritable) {
+			modifiers += 65536;
+		}
+
+		if (isWritable) {
+			modifiers += 32768;
+		}
+
+		if (isNonEnumerable) {
+			modifiers += 16384;
+		}
+		if (isEnumerable) {
+			modifiers += 8192;
+		}
+
+		if (isNonConfigurable) {
+			modifiers += 4096;
+		}
+
+		if (isConfigurable) {
+			modifiers += 2048;
+		}
+
+		if (isAbstract) {
+			modifiers += 1024;
+		}
+		if (isInterface) {
+			modifiers += 512;
+		}
+		if (isFinal) {
+			modifiers += 16;
+		}
+		if (isStatic) {
+			modifiers += 8;
+		}
+		if (isProtected) {
+			modifiers += 4;
+		}
+		if (isPrivate) {
+			modifiers += 2;
+		}
+		if (isPublic) {
+			modifiers += 1;
+		}
+
+		return {
+			annotations : m.match(regx) || [],
+			modifiers : modifiers,
+			type : type,
+			name : n,
+			extend : extend,
+			implement : implement
+		};
+	};
+	var proxy = function(m, b, t, a) {
+		var f = m.getValue(), isStatic = (m.getModifiers() & 8) != 0;
+		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f
+				: function() {
+					// TODO 判断权限private,default,protected,public
+					// TODO 判断是否可以被重写final
+
+					var scope = isStatic ? this.getClass()
+							.getClassConstructor() : this;
+
+					// before
+					(!Object.isEmpty(b) && Object.isFunction(b))
+							&& b.apply(scope, arguments);
+
+					var result = null;
+					try {
+						result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f
+								.apply(scope, arguments)
+								: f;
+					} catch (e) {
+						if (Object.isEmpty(t)) {
+							throw e;
+						} else {
+							// throw
+							if (Object.isFunction(t))
+								t.apply(scope, arguments);
+						}
+
+					}
+
+					// after
+					(!Object.isEmpty(a) && Object.isFunction(a))
+							&& a.apply(scope, arguments);
+					return result;
+				};
+	};
+	var doAnnotations = function(self, m, methods) {
+		if (Object.isFunction(m.getValue())) {
+			// 方法上的注解
+		} else {
+			// 属性上的注解
+			if (m.getName() && m.getName().length > 1
+					&& m.getName().length != "_") {
+				var name = m.getName().indexOf("_") === 0 ? m.getName()
+						.substring(1) : m.getName();
+				name = name.charAt(0).toUpperCase() + name.substring(1);
+
+				var modifier = (((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
+
+				if (m.getAnnotations().indexOf("@Getter") != -1) {
+					var getName = "get" + name;
+					if (!methods[getName]) {
+						self.addMethod(new attribute(getName, function() {
+							return this[m.getName()];
+						}, self, modifier, []));
+					}
+				}
+				if (m.getAnnotations().indexOf("@Setter") != -1) {
+					var setName = "set" + name;
+					if (!methods[setName]) {
+						self.addMethod(new attribute(setName, function(value) {
+							this[m.getName()] = value;
+						}, self, modifier, []));
+					}
+				}
+			}
+		}
+	};
+
+	var empty = function() {
+	};
+
+	var CodeHeap = function() {
+		this.heap = [];
+	};
+	CodeHeap.prototype = {
+		find : function(elem) {
+			for (var i = 0, len = this.heap.length; i < len; i++) {
+				if (this.heap[i].key === elem) {
+					return this.heap[i].value;
+				}
+			}
+			return null;
+		},
+		get : function($class, key) {
+
+			var code = this.find($class);
+			if (code) {
+				return code[key];
+			}
+			throw new Error("illegal code heap states.");
+		},
+		set : function($class, key, value) {
+			var code = this.find($class);
+			if (code) {
+				if (Object.isArray(key)) {
+					Object.each(key, function(i, v, o) {
+						code[v] = value;
+					});
+				} else {
+					code[key] = value;
+				}
+			}
+		},
+		create : function($class, name, fullName, alias, packages, type,
+				modifiers, annotations, fields, methods, superClass,
+				superInterfaces, classloader, instanceClass, classConstructor) {
+
+			if (this.find($class)) {
+				throw new Error("class or interface <" + fullName
+						+ "> have already loaded!");
+			}
+			this.heap.push({
+				key : $class,
+				value : {
+					name : name,
+					fullName : fullName,
+					alias : alias,
+
+					packages : packages,
+					type : type,
+					modifiers : modifiers,
+					annotations : annotations,
+
+					// 自身method和fields,不包含从父类继承来的
+					fields : fields || {},
+					methods : methods || {},
+
+					superClass : superClass,
+					superInterfaces : superInterfaces || [],
+
+					classloader : classloader,
+					instanceClass : instanceClass || function() {
+					},
+					instance : classConstructor,
+					classConstructor : classConstructor
+
+				}
+			});
+
+		}
+	};
+
+	var heap = new CodeHeap();
+
+	var $class = function(classDef, classloader) {
+		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
+		// implements
+		// zzz,ttt
+		var modify = convert(classDef["name"]), alias = classDef["alias"], fullName = modify.name, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
+
+		heap.create(this, null, fullName, alias, null, modify.type,
+				modify.modifiers, modify.annotations, null, null, null, null,
+				classloader, null, null);
+
+		switch (fullName) {
+
+		case 'Object':
+			isRoot = true;
+			classConstructor = Object;
+			break;
+		case 'Function':
+			classConstructor = Function;
+			break;
+		case 'Array':
+			classConstructor = Array;
+			break;
+		case 'String':
+			classConstructor = String;
+			break;
+		case 'Boolean':
+			classConstructor = Boolean;
+			break;
+		case 'Number':
+			classConstructor = Number;
+			break;
+		case 'Date':
+			classConstructor = Date;
+			break;
+		case 'RegExp':
+			classConstructor = RegExp;
+			break;
+		case 'Error':
+			classConstructor = Error;
+			break;
+		case 'EvalError':
+			classConstructor = EvalError;
+			break;
+		case 'RangeError':
+			classConstructor = RangeError;
+			break;
+		case 'ReferenceError':
+			classConstructor = ReferenceError;
+			break;
+		case 'SyntaxError':
+			classConstructor = SyntaxError;
+			break;
+		case 'TypeError':
+			classConstructor = TypeError;
+			break;
+		case 'URIError':
+			classConstructor = URIError;
+			break;
+
+		default:
+			isKernel = false;
+
+			classConstructor = function() {
+				// 原始构造器
+				// 1设置class对象和hashCode值
+
+				if (Object.USEECMA) {
+					Object.defineProperty(this, "$class", {
+						value : classObj,
+						writable : false,
+						enumerable : false,
+						configurable : false
+					});
+				} else {
+					this.$class = classObj;
+				}
+
+				// 2.2初始化继承父类属性
+				var sc = classObj.getSuperClass();
+				while (sc) {
+					var f = sc.getFields();
+					Object
+							.each(
+									f,
+									function(i, v, o) {
+										if (!classObj.getFields()[i]) {
+											var value = v.getValue();
+
+											value = value ? value.clone()
+													: value;
+
+											if (Object.USEECMA) {
+												Object
+														.defineProperty(
+																this,
+																i,
+																{
+																	value : value,
+																	writable : (v
+																			.getModifiers() & 65536) == 0,
+																	enumerable : (v
+																			.getModifiers() & 16384) == 0,
+																	configurable : (v
+																			.getModifiers() & 4096) == 0
+																});
+											} else {
+												this[i] = value;
+											}
+										}
+									}, this);
+					// sc.getConstructor().apply(this, arguments);
+					sc = sc.getSuperClass();
+				}
+
+				// 3初始化自身定义属性
+				Object.each(classObj.getFields(), function(i, v, o) {
+					var value = v.getValue();
+					value = value ? value.clone() : value;
+					if (Object.USEECMA) {
+						Object.defineProperty(this, i, {
+							value : value,
+							writable : (v.getModifiers() & 65536) == 0,
+							enumerable : (v.getModifiers() & 16384) == 0,
+							configurable : (v.getModifiers() & 4096) == 0
+						});
+					} else {
+						this[i] = value;
+					}
+				}, this);
+
+				// 4用户构造器,先调用父类构造器以及constructor2方法
+				var constructor2 = classObj.getConstructor();
+				constructor2 && constructor2.apply(this, arguments);
+
+				// 5执行默认初始化方法
+				var initial = classObj.getInitial();
+				(initial = initial || this.initial || empty).apply(this,
+						arguments);
+
+				// 6防止用户构造器修改class对象
+				if (!Object.USEECMA && this.$class != classObj) {
+					this.$class = classObj;
+				}
+			};
+
+			break;
+		}
+
+		heap.set(this, [ "classConstructor", "instance" ], classConstructor);
+
+		var name = fetch(fullName, function(name, value) {
+			value[name] = classConstructor;
+
+			if (Object.USEECMA) {
+				Object.defineProperty(value[name], "$class", {
+					value : this,
+					writable : false,
+					enumerable : false,
+					configurable : false
+				});
+			} else {
+				value[name].$class = this;
+			}
+
+			packages = value;
+			return name;
+		}, this);
+
+		heap.set(this, "name", name);
+
+		if (!isRoot) {
+
+			if (superInterfacesDef) {
+				var len = superInterfacesDef.length;
+
+				var superInterfaces = heap.get(this, "superInterfaces");
+				for (var i = 0; i < len; i++) {
+
+					superInterfaces[i] = fetch(superInterfacesDef[i], function(
+							name, value) {
+						return value[name];
+					}).$class;
+				}
+			}
+
+			var superClass = (fetch(superClassDef, function(name, value) {
+				return value[name];
+			}) || Object).$class;
+
+			heap.set(this, "superClass", superClass);
+
+			// TODO 判断父类是否final
+			if (!isKernel) {
+				var instanceClass = heap.get(this, "instanceClass");
+				instanceClass.prototype = ((superClass) ? heap.get(superClass,
+						"instance") : Object).prototype;
+
+				if (Object.USEECMA) {
+					classConstructor.prototype = Object
+							.create(instanceClass.prototype);
+
+					Object.defineProperty(classConstructor.prototype,
+							"constructor", {
+								value : classConstructor,
+								writable : false,
+								enumerable : false,
+								configurable : false
+							});
+
+				} else {
+					classConstructor.prototype = new instanceClass;
+
+					classConstructor.prototype.constructor = classConstructor;
+				}
+
+				if (superClass === Object.$class) {
+
+					// TODO 拷贝js.lang.Object中的toString方法
+					if (Object.USEECMA) {
+						var m = Object.$class.getMethod("toString");
+						Object
+								.defineProperty(
+										classConstructor.prototype,
+										"toString",
+										{
+											value : m.getValue(),
+
+											writable : (m.getModifiers() & 65536) == 0,
+											enumerable : (m.getModifiers() & 8192) != 0,
+											configurable : (m.getModifiers() & 4096) == 0
+										});
+					} else {
+
+						classConstructor.prototype.toString = Object.$class
+								.getMethod("toString").getValue();
+					}
+				}
+			}
+		}
+
+		Object.each(classDef, function(i, v, o) {
+			if (i != "name") {
+				var m = convert(i);
+				m = new attribute(m.name, v, this, m.modifiers, m.annotations);
+
+				var n = m.getName();// , name = heap.get(this, "name");
+				if (n === name) {
+					if (name === "Object") {
+						heap.set(this, "constructor2", m.getValue());
+					} else {
+						// 将构造器代理，默认调用父类构造器
+						heap.set(this, "constructor2", proxy(m, (this
+								.getSuperClass() || Object.$class)
+								.getConstructor()));
+					}
+				} else if (Object.isFunction(v)) {
+					// 确保toString为原生
+					if (isKernel && m.getName() === "toString") {
+						this.getMethods()[m.getName()] = m;
+						return true;
+					}
+					this.addMethod(m);
+				} else {
+					this.addField(m);
+				}
+			}
+		}, this);
+
+		// 默认无参构造函数
+		if (!heap.get(this, "constructor2")) {
+			heap.set(this, "constructor2", proxy(new attribute(name, empty,
+					this, 1, []), (this.getSuperClass() || Object.$class)
+					.getConstructor()));
+		}
+
+		fetch(alias, function(name, value) {
+			value[name] = classConstructor;
+		}, this);
+
+		return this;
+	};
+	$class.prototype = {
+		getClassLoader : function() {
+
+			return heap.get(this, "classloader")
+					|| (window.js.lang.ClassLoader ? js.lang.ClassLoader
+							.getSystemClassLoader() : null);
+		},
+
+		getClassConstructor : function() {
+			return heap.get(this, "classConstructor");
+		},
+		getConstructor : function() {
+			return heap.get(this, "constructor2");
+		},
+		getInitial : function() {
+			return heap.get(this, "initial");
+		},
+		getPackage : function() {
+			return heap.get(this, "packages");
+		},
+
+		getDeclaredField : function(name) {
+			return this.getField(name);
+		},
+		getDeclaredFields : function() {
+			return this.getFields();
+		},
+		getField : function(name) {
+			var v = heap.get(this, "fields")[name];
+			if (v) {
+				return v;
+			}
+			throw new js.lang.NoSuchFieldException();
+		},
+		getFields : function() {
+			return heap.get(this, "fields");
+		},
+		getDeclaredMethod : function(name) {
+			return this.getMethod(name);
+		},
+		getDeclaredMethods : function() {
+			return this.getMethods();
+		},
+		getMethod : function(name) {
+			var v = heap.get(this, "methods")[name];
+			if (v) {
+				return v;
+			}
+			throw new js.lang.NoSuchMethodException();
+		},
+		getMethods : function() {
+			return heap.get(this, "methods");
+		},
+		getName : function() {
+			return heap.get(this, "name");
+		},
+		getFullName : function() {
+			return heap.get(this, "fullName");
+		},
+		getSuperClass : function() {
+			return heap.get(this, "superClass");
+		},
+		getModifiers : function() {
+			return heap.get(this, "modifiers");
+		},
+		getAnnotations : function() {
+			return heap.get(this, "annotations");
+		},
+
+		// 构造器必须公有静态方法必须公有
+		addMethod : function(m) {
+			if (!Object.isEmpty(m) && Object.isFunction(m.getValue())) {
+				if (m.getAnnotations() && m.getAnnotations().length) {
+					doAnnotations(this, m, this.getMethods());
+				}
+				// 不允许更改构造器
+				var n = m.getName(), name = heap.get(this, "name");
+				if (n === name) {
+					return;
+				}
+
+				m.setValue(proxy(m));
+				m.setDeclaringClass(this);
+
+				if (window.js && window.js.lang && window.js.lang.reflect
+						&& window.js.lang.reflect.Method
+						&& window.js.lang.reflect.Method.loaded) {
+					m = new window.js.lang.reflect.Method(n, m.getValue(),
+							this, m.getModifiers(), m.getAnnotations());
+				}
+
+				if ((m.getModifiers() & 8) != 0) {
+
+					if (Object.USEECMA) {
+						Object.defineProperty(this.getClassConstructor(), n, {
+							value : m.getValue(),
+							writable : (m.getModifiers() & 65536) == 0,
+							enumerable : (m.getModifiers() & 8192) != 0,
+							configurable : (m.getModifiers() & 4096) == 0
+						});
+					} else {
+						this.getClassConstructor()[n] = m.getValue();
+					}
+				} else {
+					if (Object.USEECMA) {
+						Object
+								.defineProperty(
+										this.getClassConstructor().prototype,
+										n,
+										{
+											value : m.getValue(),
+											writable : (m.getModifiers() & 65536) == 0,
+											enumerable : (m.getModifiers() & 8192) != 0,
+											configurable : (m.getModifiers() & 4096) == 0
+										});
+					} else {
+						this.getClassConstructor().prototype[n] = m.getValue();
+					}
+				}
+				this.getMethods()[n] = m;
+
+				if (n === "initial") {
+					heap.set(this, "initial", m.getValue());
+				}
+			}
+		},
+		addField : function(m) {
+			if (!Object.isEmpty(m) && !Object.isFunction(m.getValue())) {
+				if (m.getAnnotations() && m.getAnnotations().length) {
+					doAnnotations(this, m, this.getMethods());
+				}
+				m.setDeclaringClass(this);
+				if (window.js && window.js.lang && window.js.lang.reflect
+						&& window.js.lang.reflect.Field
+						&& window.js.lang.reflect.Field.loaded) {
+					m = new window.js.lang.reflect.Field(m.getName(), m
+							.getValue(), this, m.getModifiers(), m
+							.getAnnotations());
+				}
+
+				if ((m.getModifiers() & 8) != 0) {
+
+					if (Object.USEECMA) {
+						Object.defineProperty(this.getClassConstructor(), m
+								.getName(), {
+							value : m.getValue(),
+							writable : (m.getModifiers() & 65536) == 0,
+							enumerable : (m.getModifiers() & 16384) == 0,
+							configurable : (m.getModifiers() & 4096) == 0
+						});
+					} else {
+						this.getClassConstructor()[m.getName()] = m.getValue();
+					}
+				}
+				this.getFields()[m.getName()] = m;
+			}
+		},
+		getInstance : function() {
+			return heap.get(this, "instance");
+		},
+		isInstance : function(obj) {
+			return Object.isNull(obj) ? false : obj.getClass() === this;
+		},
+		newInstance : function() {
+			return new (heap.get(this, "classConstructor"))();
+		},
+		clone : function() {
+			return this;
+		},
+
+		isAssignableFrom : function() {
+			// TODO
+			return false;
+		},
+
+		isInterface : function() {
+			// TODO
+			return heap.get(this, "type") === "interface";
+		},
+
+		isArray : function() {
+			// TODO
+			return false;
+		},
+		isPrimitive : function() {
+			// TODO
+			return false;
+		},
+		isAnnotation : function() {
+			// TODO
+			return false;
+		}
+	};
+
+	Class = function() {
+	};
+	Class.forName = function(cls, classloader) {
+		return new $class(cls, classloader);
+	};
 })();
 
 // TODO
@@ -1040,42 +1133,48 @@ Object.extend(Object, function() {
 })();
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
+ *
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
+ *
  * Date: Feb 10, 2014
  */
 
 Class.forName({
-	name : "class Array",
-	alias : "js.lang.Array",
-	Array : function() {
-	},
-	clear : function() {
-		this.splice(0, this.length);
-	},
-	contains : function(elem) {
-		return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
-	},
-	indexOf : function(elem) {
-		for (var i = 0, len = this.length; i < len; i++) {
-			if (this[i] === elem) {
-				return i;
-			}
-		}
-		return -1;
-	},
-	append : function(array, start, end) {
-		if (!Object.isEmpty(array) && Object.isArray(array)) {
-			start = start || 0;
-			end = (end && end > start && end < array.length) ? end
-					: array.length;
-			var parameter = Array.prototype.slice.call(array, start, end);
-			Array.prototype.splice.call(parameter, 0, 0, this.length, 0);
-			Array.prototype.splice.apply(this, parameter);
-		}
-		return this;
-	}
+    name : "class Array",
+    alias : "js.lang.Array",
+    Array : function() {
+    },
+    clear : function() {
+        this.splice(0, this.length);
+    },
+    contains : function(elem) {
+        return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
+    },
+    indexOf : function(elem) {
+        for (var i = 0, len = this.length; i < len; i++) {
+            if (this[i] === elem) {
+                return i;
+            }
+        }
+        return -1;
+    },
+    append : function(array, start, end) {
+        if (!Object.isEmpty(array) && Object.isArray(array)) {
+            start = start || 0;
+            end = Math.min(end || array.length, array.length);
+
+            if (end > start) {
+                //end = (end && end > start && end < array.length) ? end : array.length;
+                var parameter = Array.prototype.slice.call(array, start, end);
+                Array.prototype.splice.call(parameter, 0, 0, this.length, 0);
+                Array.prototype.splice.apply(this, parameter);
+            }
+        }
+        return this;
+    },
+    getLength : function(){
+        return this.length;
+    }
 });
 /*!
  * JSRT JavaScript Library 0.2.1
@@ -1170,9 +1269,10 @@ Class.forName({
 	}(),
 	"public equals":function(s){
 		return Object.isString(s) && this == s;
-	}
-	
-	
+	},
+    getLength : function(){
+        return this.length;
+    }
 	
 });
 /*
@@ -1735,443 +1835,153 @@ Class.forName({
 
 });
 
-/*!
- * JSRT JavaScript Library 0.2.1
- * lico.atom@gmail.com
- *
- * Copyright 2008, 2014 Atom Union, Inc.
- * Released under the MIT license
- *
- * Date: 2014年6月25日
- */
-
-
-$import("js.lang.Error");
-Class.forName({
-	name : "class js.test.AssertionError extends js.lang.Error",
-	"private name" : "js.test.AssertionError",// 错误名
-	"private number" : -1
-	
-
-});/*
- * ! JSRT JavaScript Library 0.1.5 lico.atom@gmail.com
- *
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- *
- * Date: Feb 15, 2014
+ * 
+ * Date: Feb 12, 2014
  */
 
 Class.forName({
-    name : "class js.test.TestCase extends Object",
-    "@Setter @Getter private _testMethods" : [],
-    "@Setter @Getter private _ignoreTestMethods" : [],
-    "@Setter @Getter private _configMethods" : [],
-
-    TestCase : function() {
-    },
-    initial : function() {
-
-        var msg = ["########  TestCase { ClassName「", this.getClass().getName(), "」 }  ########"];
-
-        js.lang.System.out.group(msg.join(""));
-
-        this.reset();
-        this.injectMethods();
-        this.invokeBeforeClass();
-        this.execute();
-        this.invokeAfterClass();
-
-        js.lang.System.out.groupEnd();
-    },
-    reset : function() {
-        var methods = this.getTestMethods();
-        if (methods) {
-            methods.clear();
-        }
-
-        var ignoreMethods = this.getIgnoreTestMethods();
-        if (ignoreMethods) {
-            ignoreMethods.clear();
-        }
-
-        var configMethods = this.getConfigMethods();
-        if (configMethods) {
-            configMethods.clear();
-        }
-    },
-    invokeBeforeClass : function() {
-
-        var beforeClass = this.getConfigMethods()[0];
-
-        if (beforeClass) {
-            beforeClass.getValue().call(this.getClass().getClassConstructor());
-        }
-
-    },
-    invokeAfterClass : function() {
-
-        var afterClass = this.getConfigMethods()[0];
-
-        if (afterClass) {
-            afterClass.getValue().call(this.getClass().getClassConstructor());
-        }
-    },
-    injectMethods : function() {
-        var methods = this.$class.getMethods();
-        Object.each(methods, function(i, v, o) {
-            if (v.getAnnotations().contains("@BeforeClass") && (v.getModifiers() & 8) != 0) {
-                this.getConfigMethods()[0] = v;
-
-            } else if (v.getAnnotations().contains("@AfterClass") && (v.getModifiers() & 8) != 0) {
-                this.getConfigMethods()[3] = v;
-            } else if (v.getAnnotations().contains("@After")) {
-                this.getConfigMethods()[2] = v;
-
-            } else if (v.getAnnotations().contains("@Before")) {
-                this.getConfigMethods()[1] = v;
-            } else {
-
-                if (v.getAnnotations().contains("@Ignore")) {
-                    this.getIgnoreTestMethods().push(v);
-                } else if (v.getAnnotations().contains("@Test")) {
-                    this.getTestMethods().push(v);
-                }
-            }
-
-            /*if (i.indexOf("test") === 0) {
-             this.getTestMethods().push(i);
-             }*/
-        }, this);
-    },
-
-    execute : function() {
-        var j = 0, len = this.getTestMethods().length;
-
-        for (; j < len; j++) {
-
-            var m = this.getTestMethods()[j];
-
-            var method = m.getValue();
-
-            var msg = ["        --------  Method「", m.getName(), "」  "];
-
-
-            js.lang.System.out.println(msg.join(""));
-
-            try {
-                var before = this.getConfigMethods()[1];
-                if (before) {
-                    before.getValue().call(this);
-                }
-
-                method.call(this);
-
-                var after = this.getConfigMethods()[2];
-                if (after) {
-                    after.getValue().call(this);
-                }
-
-                js.lang.System.out.println("        结果： √ ");
-            } catch (e) {
-                js.lang.System.out.error("        结果： ×     详细描述：  %s", ["Name< ", e.getName(), " >;  Number< ", e.getNumber(), " >;  Message< ", e.getMessage(), " >"].join(""));
-            }
-            // if (!obj[name]) {
-            // js.lang.System.out.warn("%s",
-            // "this test unit case is not be promoted !");
-            // }
-            js.lang.System.out.println("");
-        }
-
-    }
-});
-/*!
- * JSRT JavaScript Library 0.2.1
- * lico.atom@gmail.com
- *
- * Copyright 2008, 2014 Atom Union, Inc.
- * Released under the MIT license
- *
- * Date: 2014年6月25日
+	name : "class js.lang.IllegalAccessException extends js.lang.Exception",
+	"private name" : "js.lang.IllegalAccessException",// 错误名
+	"private number" : 101
+// 错误号
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
  */
 
-$import("js.test.AssertionError");
-/**
- * A set of assertion methods useful for writing tests. Only failed assertions
- * are recorded. These methods can be used directly:
- * <code>Assert.assertEquals(...)</code>, however, they read better if they
- * are referenced through static import:<br/>
+Class.forName({
+	name : "class js.lang.IllegalArgumentException extends js.lang.Exception",
+	"private name" : "js.lang.IllegalArgumentException",// 错误名
+	"private number" : 102
+// 错误号
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
- * <pre>
- * $import(&quot;js.test.Assert&quot;);
- *    ...
- *    js.test.Assert.assertEquals(...);
- * </pre>
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
  * 
- * @see AssertionError
+ * Date: Feb 12, 2014
  */
+
+Class.forName({
+	name : "class js.lang.IllegalStateException extends js.lang.Exception",
+	"private name" : "js.lang.IllegalStateException",// 错误名
+	"private number" : 103
+// 错误号
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+
+Class.forName({
+	name : "class js.lang.IndexOutOfBoundsException extends js.lang.Exception",
+	"private name" : "js.lang.IndexOutOfBoundsException",// 错误名
+	"private number" : 104
+// 错误号
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+
+Class.forName({
+	name : "class js.lang.NoSuchFieldException extends js.lang.Exception",
+	"private name" : "js.lang.NoSuchFieldException",
+	"private number" : 105
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+
+Class.forName({
+	name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
+	"private name" : "js.lang.NoSuchMethodException",
+	"private number" : 106
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+
+Class.forName({
+	name : "class js.lang.NullPointerException extends js.lang.Exception",
+	"private name" : "js.lang.NullPointerException",
+	"private number" : 107
+});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 12, 2014
+ */
+
 Class
 		.forName({
-			name : "public class js.test.Assert",
-			/**
-			 * Protect constructor since it is a static only class
-			 */
-			"protected Assert" : function() {
-			},
-			/**
-			 * Fails a test with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @see AssertionError
-			 */
-			"static public void fail" : function(message) {
-				throw new js.test.AssertionError(message);
-			},
-			/**
-			 * Asserts that a condition is true. If it isn't it throws an
-			 * {@link AssertionError} with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param condition
-			 *            condition to be checked
-			 */
-			"static public void assertTrue" : function(message, condition) {
-				if (!condition) {
-					js.test.Assert.fail(message);
-				}
-			},
+			name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
+			"private name" : "js.lang.UnsupportedOperationException",// 错误名
+			"private number" : 108
+		// 错误号
+		});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 19, 2014
+ */
 
-			/**
-			 * Asserts that a condition is false. If it isn't it throws an
-			 * {@link AssertionError} with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param condition
-			 *            condition to be checked
-			 */
-			"static public void assertFalse" : function(message, condition) {
-				js.test.Assert.assertTrue(message, !condition);
-			},
+Class.forName({
+	name : "class js.lang.ClassNotFoundException extends js.lang.Exception",
+	"private name" : "js.lang.ClassNotFoundException",// 错误名
+	"private number" : 100
+// 错误号
+});/*!
+* JSRT JavaScript Library 0.2.1
+* lico.atom@gmail.com
+*
+* Copyright 2008, 2014 Atom Union, Inc.
+* Released under the MIT license
+*
+* Date: 2014年10月13日
+*/
 
-			/**
-			 * Asserts that two objects are equal. If they are not, an
-			 * {@link AssertionError} is thrown with the given message. If
-			 * <code>expected</code> and <code>actual</code> are
-			 * <code>null</code>, they are considered equal.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param expected
-			 *            expected value
-			 * @param actual
-			 *            actual value
-			 */
-			"static public void assertEquals" : function(message, expected,
-					actual) {
-				if (Object.isNull(expected) && Object.isNull(actual)) {
-					return;
-				}
+/**
+ * Thrown to indicate that the <code>clone</code> method in class
+ * <code>Object</code> has been called to clone an object, but that
+ * the object's class does not implement the <code>Cloneable</code>
+ * interface.
+ * <p>
+ * Applications that override the <code>clone</code> method can also
+ * throw this exception to indicate that an object could not or
+ * should not be cloned.
+ *
+ * @author  unascribed
+ * @see     java.lang.Cloneable
+ * @see     java.lang.Object#clone()
+ * @since   JDK1.0
+ */
+Class.forName({
+    name : "class js.lang.CloneNotSupportedException extends js.lang.Exception",
+    "private name" : "js.lang.CloneNotSupportedException", // 错误名
+    "private number" : 109
+    // 错误号
 
-				if (!Object.isNull(expected) && expected.equals(actual)) {
-					return;
-				}
-
-				var formatted = new js.lang.StringBuffer();
-				if (message != null && !message.equals("")) {
-					formatted.append(message).append(" ");
-				}
-
-				formatted.append("expected:<");
-				formatted.append(Object.isNull(expected) ? "null" : expected
-						.toString());
-				formatted.append("> but was:<");
-				formatted.append(Object.isNull(actual) ? "null" : actual
-						.toString());
-				formatted.append(">");
-
-				// TODO float类型判断
-				js.test.Assert.fail(formatted.toString());
-			},
-
-			/**
-			 * Asserts that two objects are <b>not</b> equals. If they are, an
-			 * {@link AssertionError} is thrown with the given message. If
-			 * <code>first</code> and <code>second</code> are
-			 * <code>null</code>, they are considered equal.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param first
-			 *            first value to check
-			 * @param second
-			 *            the value to check against <code>first</code>
-			 */
-			"static public void assertNotEquals" : function(message, expected,
-					actual) {
-
-				if (!Object.isNull(expected)) {
-
-					if (!expected.equals(actual)) {
-						return;
-					}
-				} else {
-					if (!Object.isNull(expected)) {
-						return;
-					}
-				}
-
-				// TODO float类型判断
-
-				var formatted = new js.lang.StringBuffer();
-				formatted.append("Values should be different. ");
-				if (message != null) {
-					formatted.append(message).append(". ");
-				}
-
-				formatted.append("Actual: ").append(actual);
-				js.test.Assert.fail(formatted.toString());
-			},
-
-			/**
-			 * Asserts that an object isn't null. If it is an
-			 * {@link AssertionError} is thrown with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param object
-			 *            Object to check or <code>null</code>
-			 */
-			"static public void assertNotNull" : function(message, object) {
-				js.test.Assert.assertTrue(message, !Object.isNull(object));
-			},
-
-			/**
-			 * Asserts that an object is null. If it is not, an
-			 * {@link AssertionError} is thrown with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param object
-			 *            Object to check or <code>null</code>
-			 */
-			"static public void assertNull" : function(message, object) {
-				if (Object.isNull(object)) {
-					return;
-				}
-
-				var formatted = new js.lang.StringBuffer();
-
-				if (message != null) {
-					formatted.append(message).append(" ");
-				}
-
-				formatted.append("expected null, but was:<").append(actual)
-						.append(">");
-
-				js.test.Assert.fail(formatted.toString());
-			},
-
-			/**
-			 * Asserts that two objects refer to the same object. If they are
-			 * not, an {@link AssertionError} is thrown with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param expected
-			 *            the expected object
-			 * @param actual
-			 *            the object to compare to <code>expected</code>
-			 */
-			"static public void assertSame" : function(message, expected,
-					actual) {
-				if (expected === actual) {
-					return;
-				}
-				var formatted = new js.lang.StringBuffer();
-				if (message != null) {
-					formatted.append(message).append(" ");
-				}
-
-				formatted.append("expected same:<").append(expected).append(
-						"> was not:<").append(actual).append(">");
-
-				js.test.Assert.fail(formatted.toString());
-			},
-
-			/**
-			 * Asserts that two objects do not refer to the same object. If they
-			 * do refer to the same object, an {@link AssertionError} is thrown
-			 * with the given message.
-			 * 
-			 * @param message
-			 *            the identifying message for the {@link AssertionError} (<code>null</code>
-			 *            okay)
-			 * @param unexpected
-			 *            the object you don't expect
-			 * @param actual
-			 *            the object to compare to <code>unexpected</code>
-			 */
-			"static public void assertNotSame" : function(message, unexpected,
-					actual) {
-				if (unexpected !== actual) {
-					return;
-				}
-
-				var formatted = new js.lang.StringBuffer();
-				if (message != null) {
-					formatted.append(message).append(" ");
-				}
-				formatted.append("expected not same");
-				js.test.Assert.fail(formatted.toString());
-			},
-
-			/**
-			 * Asserts that <code>actual</code> satisfies the condition
-			 * specified by <code>matcher</code>. If not, an
-			 * {@link AssertionError} is thrown with information about the
-			 * matcher and failing value. Example:
-			 * 
-			 * <pre>
-			 * assertThat(0, is(1)); // fails:
-			 * // failure message:
-			 * // expected: is &lt;1&gt;
-			 * // got value: &lt;0&gt;
-			 * assertThat(0, is(not(1))) // passes
-			 * </pre>
-			 * 
-			 * <code>org.hamcrest.Matcher</code> does not currently document
-			 * the meaning of its type parameter <code>T</code>. This method
-			 * assumes that a matcher typed as <code>Matcher&lt;T&gt;</code>
-			 * can be meaningfully applied only to values that could be assigned
-			 * to a variable of type <code>T</code>.
-			 * 
-			 * @param <T>
-			 *            the static type accepted by the matcher (this can flag
-			 *            obvious compile-time problems such as
-			 *            {@code assertThat(1, is("a"))}
-			 * @param actual
-			 *            the computed value being compared
-			 * @param matcher
-			 *            an expression, built of {@link Matcher}s, specifying
-			 *            allowed values
-			 * @see org.hamcrest.CoreMatchers
-			 * @see org.hamcrest.MatcherAssert
-			 */
-			"public static <T> void assertThat" : function(actual, matcher) {
-				// TODO 正则表达式
-			}
-		});
-/*
+}); /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
@@ -2353,121 +2163,6 @@ Class
 			"private number" : 100
 		// 错误号
 		});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.IllegalAccessException extends js.lang.Exception",
-	"private name" : "js.lang.IllegalAccessException",// 错误名
-	"private number" : 101
-// 错误号
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.IllegalArgumentException extends js.lang.Exception",
-	"private name" : "js.lang.IllegalArgumentException",// 错误名
-	"private number" : 102
-// 错误号
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.IllegalStateException extends js.lang.Exception",
-	"private name" : "js.lang.IllegalStateException",// 错误名
-	"private number" : 103
-// 错误号
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.IndexOutOfBoundsException extends js.lang.Exception",
-	"private name" : "js.lang.IndexOutOfBoundsException",// 错误名
-	"private number" : 104
-// 错误号
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.NoSuchFieldException extends js.lang.Exception",
-	"private name" : "js.lang.NoSuchFieldException",
-	"private number" : 105
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.NoSuchMethodException extends js.lang.Exception",
-	"private name" : "js.lang.NoSuchMethodException",
-	"private number" : 106
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class.forName({
-	name : "class js.lang.NullPointerException extends js.lang.Exception",
-	"private name" : "js.lang.NullPointerException",
-	"private number" : 107
-});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 12, 2014
- */
-
-Class
-		.forName({
-			name : "class js.lang.UnsupportedOperationException extends js.lang.Exception",
-			"private name" : "js.lang.UnsupportedOperationException",// 错误名
-			"private number" : 108
-		// 错误号
-		});/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 19, 2014
- */
-
-Class.forName({
-	name : "class js.lang.ClassNotFoundException extends js.lang.Exception",
-	"private name" : "js.lang.ClassNotFoundException",// 错误名
-	"private number" : 100
-// 错误号
-});/*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
@@ -2823,242 +2518,142 @@ Class.forName({
 	length : function() {
 		return this._strings.length;
 	},
+    getLength : function(){
+        return this.length();
+    },
 	toString : function(sp) {
 		return this._strings.join(sp || "");
 	}
 });
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
+ *
  * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
+ *
  * Date: Feb 13, 2014
  */
 
 $import("js.io.Console");
 
-Class
-		.forName({
-			name : "class js.lang.System extends Object",
-			"static err" : null,// 错误流
-			"static out" : new js.io.Console(window.console),// 输出流
-			"private static _env" : (function() {
-				var userAgent = navigator.userAgent, ua = userAgent
-						.toLowerCase(), check = function(r) {
-					return r.test(ua);
-				}, DOC = document, docMode = DOC.documentMode, isStrict = DOC.compatMode === "CSS1Compat", isOpera = check(/opera/), isChrome = check(/\bchrome\b/), isWebKit = check(/webkit/), isSafari = !isChrome
-						&& check(/safari/), isSafari2 = isSafari
-						&& check(/applewebkit\/4/), // unique to Safari 2
-				isSafari3 = isSafari && check(/version\/3/), isSafari4 = isSafari
-						&& check(/version\/4/), isIE = !isOpera
-						&& check(/msie/), isIE7 = isIE
-						&& (check(/msie 7/) || docMode === 7), isIE8 = isIE
-						&& (check(/msie 8/) && docMode !== 7), isIE6 = isIE
-						&& !isIE7 && !isIE8, isGecko = !isWebKit
-						&& check(/gecko/), isGecko2 = isGecko
-						&& check(/rv:1\.8/), isGecko3 = isGecko
-						&& check(/rv:1\.9/), isBorderBox = isIE && !isStrict, isWindows = check(/windows|win32/), isMac = check(/macintosh|mac os x/), isAir = check(/adobeair/), isLinux = check(/linux/), isSecure = /^https/i
-						.test(window.location.protocol), isIE9 = false;
-
-				return {
-					userAgent : userAgent,
-					strict : isStrict,
-					opera : isOpera,
-					chrome : isChrome,
-					webkit : isWebKit,
-					safari : isSafari,
-					safari2 : isSafari2,
-					safari3 : isSafari3,
-					safari4 : isSafari4,
-					ie : isIE,
-					ie6 : isIE6,
-					ie7 : isIE7,
-					ie8 : isIE8,
-					ie9 : isIE9,
-					gecko : isGecko,
-					isGecko2 : isGecko2,
-					isGecko3 : isGecko3,
-					isBorderBox : isBorderBox,
-					isWindows : isWindows,
-					isMac : isMac,
-					isAir : isAir,
-					isLinux : isLinux,
-					isSecure : isSecure
-				};
-			})(),
-			/**
-			 * 获得指定的环境变量值
-			 */
-			"static getenv" : function(env) {
-				return (env) ? this._env[env] : this._env;
-			},
-			
-			"public static currentTimeMillis":function(){
-			    return new Date().getTime();
-			}
-
-		});
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 14, 2014
- */
-
 Class.forName({
-	name : "class js.net.http.Http extends Object",
-	"public static REQUEST" : {
-		TYPE : [ "GET", "HEAD", "PUT", "DELETE", "POST", "OPTIONS" ]
-	},
-	Http : function() {
-	}
+    name : "class js.lang.System extends Object",
+    "static err" : null, // 错误流
+    "static out" : new js.io.Console(window.console), // 输出流
+    "private static _env" : (function() {
+        var userAgent = navigator.userAgent, ua = userAgent.toLowerCase(), check = function(r) {
+            return r.test(ua);
+        }, DOC = document, docMode = DOC.documentMode, isStrict = DOC.compatMode === "CSS1Compat", isOpera = check(/opera/), isChrome = check(/\bchrome\b/), isWebKit = check(/webkit/), isSafari = !isChrome && check(/safari/), isSafari2 = isSafari && check(/applewebkit\/4/), // unique to Safari 2
+        isSafari3 = isSafari && check(/version\/3/), isSafari4 = isSafari && check(/version\/4/), isIE = !isOpera && check(/msie/), isIE7 = isIE && (check(/msie 7/) || docMode === 7), isIE8 = isIE && (check(/msie 8/) && docMode !== 7), isIE6 = isIE && !isIE7 && !isIE8, isGecko = !isWebKit && check(/gecko/), isGecko2 = isGecko && check(/rv:1\.8/), isGecko3 = isGecko && check(/rv:1\.9/), isBorderBox = isIE && !isStrict, isWindows = check(/windows|win32/), isMac = check(/macintosh|mac os x/), isAir = check(/adobeair/), isLinux = check(/linux/), isSecure = /^https/i.test(window.location.protocol), isIE9 = false;
+
+        return {
+            userAgent : userAgent,
+            strict : isStrict,
+            opera : isOpera,
+            chrome : isChrome,
+            webkit : isWebKit,
+            safari : isSafari,
+            safari2 : isSafari2,
+            safari3 : isSafari3,
+            safari4 : isSafari4,
+            ie : isIE,
+            ie6 : isIE6,
+            ie7 : isIE7,
+            ie8 : isIE8,
+            ie9 : isIE9,
+            gecko : isGecko,
+            isGecko2 : isGecko2,
+            isGecko3 : isGecko3,
+            isBorderBox : isBorderBox,
+            isWindows : isWindows,
+            isMac : isMac,
+            isAir : isAir,
+            isLinux : isLinux,
+            isSecure : isSecure
+        };
+    })(),
+    /**
+     * 获得指定的环境变量值
+     */
+    "static getenv" : function(env) {
+        return (env) ? this._env[env] : this._env;
+    },
+
+    "public static currentTimeMillis" : function() {
+        return new Date().getTime();
+    },
+
+    "public static native arraycopy" : function(src, srcPos, dest, destPos, length) {
+        var parameter = Array.prototype.slice.call(src, srcPos, srcPos + length);
+        Array.prototype.splice.call(parameter, 0, 0, destPos, 0);
+        Array.prototype.splice.apply(dest, parameter);
+    }
 });
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 14, 2014
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年10月13日
  */
 
+$import("js.lang.System");
 Class.forName({
-	name : "class js.net.http.Rest extends Object",
-	Rest : function() {
-	},
-	build : (function() {
-		var regx1 = /\/{2,}/g, regx2 = /\/$/g;
-		return function() {
-			if (arguments.length > 0) {
-				if (!Object.isEmpty(arguments[0])
-						&& Object.isString(arguments[0])) {
-					var _method = arguments[0].toUpperCase();
-					if (com.js.net.http.HTTP.REQUEST.TYPE.contains(_method)) {
-						var temp = new StringBuffer();
-						var url = temp.append("").applys(
-								Array.prototype.slice.call(arguments, 1))
-								.toString("/");
-						temp.clear();
-						temp.append(
-								url.trim().replace(regx1, "/").replace(regx2,
-										"")).append("?_method=")
-								.append(_method);
-						return temp.toString();
-					}
-				}
-			}
-			return null;
-		};
-	})()
+    name : "public class js.util.Arrays",
+
+    // Suppresses default constructor, ensuring non-instantiability.
+    "private Arrays" : function() {
+    },
+
+    "public static copyOf" : function(original, newLength) {
+        var copy = [];
+        js.lang.System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));
+        return copy;
+    },
+
+    "public static copyOfRange" : function(original, from, to) {
+        var newLength = to - from;
+        if (newLength < 0)
+            throw new js.lang.IllegalArgumentException(from + " > " + to);
+
+        var copy = [];
+        js.lang.System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
+        return copy;
+    },
+
+    /**
+     * Returns <tt>true</tt> if the two specified arrays of booleans are
+     * <i>equal</i> to one another.  Two arrays are considered equal if both
+     * arrays contain the same number of elements, and all corresponding pairs
+     * of elements in the two arrays are equal.  In other words, two arrays
+     * are equal if they contain the same elements in the same order.  Also,
+     * two array references are considered equal if both are <tt>null</tt>.<p>
+     *
+     * @param a one array to be tested for equality
+     * @param a2 the other array to be tested for equality
+     * @return <tt>true</tt> if the two arrays are equal
+     */
+    "public static boolean equals" : function(a, a2) {
+        if (a == a2)
+            return true;
+        if (a == null || a2 == null)
+            return false;
+
+        var length = a.length;
+        if (a2.length != length)
+            return false;
+
+        for (var i = 0; i < length; i++) {
+            var o1 = a[i];
+            var o2 = a2[i];
+            if (!(o1 == null ? o2 == null : o1.equals(o2)))
+                return false;
+        }
+
+        return true;
+    }
 });
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 16, 2014
- */
-
-Class.forName({
-	name : "abstract class js.text.Format extends Object",
-	Format : function() {
-	},
-
-	/** 格式化一个对象以生成一个字符串。 */
-	'abstract format' : function(obj) {
-	},
-
-	/** 从给定字符串的开始处分析文本以生成一个对象。 */
-	'abstract parse' : function(source) {
-	}
-});
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 16, 2014
- */
-
-$import("js.text.Format");
-
-Class.forName({
-	name : "abstract class js.text.DateFormat extends js.text.Format",
-	DateFormat : function() {
-	},
-
-	/** 格式化一个对象以生成一个字符串。 */
-	'abstract format' : function(obj) {
-	},
-	/** 从给定字符串的开始分析文本，以生成一个日期。 */
-	'abstract parse' : function(source) {
-	}
-
-});
-/*
- * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
- * 
- * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
- * 
- * Date: Feb 16, 2014
- */
-
-$import("js.text.DateFormat");
-
-/**
- * 字母 日期或时间元素 表示 示例
- * 
- * G Era 标志符 Text AD y 年 Year 1996; 96
- * 
- * M 年中的月份 Month July; Jul;07
- * 
- * w 年中的周数 Number 27
- * 
- * W 月份中的周数 Number 2
- * 
- * D 年中的天数 Number 189
- * 
- * d 月份中的天数 Number 10
- * 
- * F 月份中的星期 Number 2
- * 
- * E 星期中的天数 Text Tuesday; Tue
- * 
- * a Am/pm 标记 Text PM
- * 
- * H 一天中的小时数（0-23） Number 0
- * 
- * k 一天中的小时数（1-24） Number 24
- * 
- * K am/pm 中的小时数（0-11） Number 0
- * 
- * h am/pm 中的小时数（1-12） Number 12
- * 
- * m 小时中的分钟数 Number 30
- * 
- * s 分钟中的秒数 Number 55
- * 
- * S 毫秒数 Number 978
- * 
- * z 时区 General time zone Pacific Standard Time; PST; GMT-08:00
- * 
- * Z 时区
- */
-Class
-		.forName({
-			name : "abstract class js.text.SimpleDateFormat extends js.text.DateFormat",
-			'private _pattern' : null,
-			SimpleDateFormat : function(pattern) {
-				this._pattern = pattern;
-			},
-
-			/** 格式化一个对象以生成一个字符串。 */
-			'format' : function(obj) {
-			},
-			/** 从给定字符串的开始分析文本，以生成一个日期。 */
-			'parse' : function(source) {
-			}
-		});
 /*
  * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
  * 
@@ -4993,15 +4588,13 @@ Class
 					truncMonth.setMilliseconds(milliseconds);
 
 					if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
-						day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 1)
-								* 7 - (truncMonth.getDay());
-
-						if (this.isSet(Calendar.DAY_OF_WEEK)) {
-							day += this.internalGet(Calendar.DAY_OF_WEEK);
-						}
-
-						if (day <= 0) {
-							day = 1;
+						day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 2)
+								* 7 + (7 - truncMonth.getDay()) + 1;
+						if (day < 0) {
+							truncMonth.setTime(truncMonth.getTime() + (day - 1)
+									* GregorianCalendar.ONE_DAY);
+							month = truncMonth.getMonth();
+							day = truncMonth.getDate();
 						}
 					} else if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
 						var fistDay = truncMonth.getDay() + 1, dayOfWeek = this
@@ -5026,7 +4619,6 @@ Class
 							month = truncMonth.getMonth();
 							day = truncMonth.getDate();
 						}
-
 					} else if (this.isSet(Calendar.DAY_OF_MONTH)) {
 						// Month-based calculations
 						// We are on the first day of the month. Just add the
@@ -5247,5 +4839,1822 @@ Class
 
 				}
 
+			}
+		});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 16, 2014
+ */
+
+Class.forName({
+	name : "abstract class js.text.Format extends Object",
+	Format : function() {
+	},
+
+	/** 格式化一个对象以生成一个字符串。 */
+	'abstract format' : function(obj) {
+	},
+
+	/** 从给定字符串的开始处分析文本以生成一个对象。 */
+	'abstract parse' : function(source) {
+	}
+});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 16, 2014
+ */
+
+$import("js.text.Format");
+
+Class.forName({
+	name : "abstract class js.text.DateFormat extends js.text.Format",
+
+	'@Gatter @Setter protected calendar' : null,
+
+	/**
+	 * Useful constant for ERA field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int ERA_FIELD" : 0,
+
+	/**
+	 * Useful constant for YEAR field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int YEAR_FIELD" : 1,
+
+	/**
+	 * Useful constant for MONTH field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int MONTH_FIELD" : 2,
+
+	/**
+	 * Useful constant for DATE field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int DATE_FIELD" : 3,
+
+	/**
+	 * Useful constant for one-based HOUR_OF_DAY field alignment. Used in
+	 * FieldPosition of date/time formatting. HOUR_OF_DAY1_FIELD is used for the
+	 * one-based 24-hour clock. For example, 23:59 + 01:00 results in 24:59.
+	 */
+	"public final static int HOUR_OF_DAY1_FIELD" : 4,
+
+	/**
+	 * Useful constant for zero-based HOUR_OF_DAY field alignment. Used in
+	 * FieldPosition of date/time formatting. HOUR_OF_DAY0_FIELD is used for the
+	 * zero-based 24-hour clock. For example, 23:59 + 01:00 results in 00:59.
+	 */
+	"public final static int HOUR_OF_DAY0_FIELD" : 5,
+
+	/**
+	 * Useful constant for MINUTE field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int MINUTE_FIELD" : 6,
+
+	/**
+	 * Useful constant for SECOND field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int SECOND_FIELD" : 7,
+
+	/**
+	 * Useful constant for MILLISECOND field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int MILLISECOND_FIELD" : 8,
+
+	/**
+	 * Useful constant for DAY_OF_WEEK field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int DAY_OF_WEEK_FIELD" : 9,
+
+	/**
+	 * Useful constant for DAY_OF_YEAR field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int DAY_OF_YEAR_FIELD" : 10,
+
+	/**
+	 * Useful constant for DAY_OF_WEEK_IN_MONTH field alignment. Used in
+	 * FieldPosition of date/time formatting.
+	 */
+	"public final static int DAY_OF_WEEK_IN_MONTH_FIELD" : 11,
+
+	/**
+	 * Useful constant for WEEK_OF_YEAR field alignment. Used in FieldPosition
+	 * of date/time formatting.
+	 */
+	"public final static int WEEK_OF_YEAR_FIELD" : 12,
+
+	/**
+	 * Useful constant for WEEK_OF_MONTH field alignment. Used in FieldPosition
+	 * of date/time formatting.
+	 */
+	"public final static int WEEK_OF_MONTH_FIELD" : 13,
+
+	/**
+	 * Useful constant for AM_PM field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int AM_PM_FIELD" : 14,
+
+	/**
+	 * Useful constant for one-based HOUR field alignment. Used in FieldPosition
+	 * of date/time formatting. HOUR1_FIELD is used for the one-based 12-hour
+	 * clock. For example, 11:30 PM + 1 hour results in 12:30 AM.
+	 */
+	"public final static int HOUR1_FIELD" : 15,
+
+	/**
+	 * Useful constant for zero-based HOUR field alignment. Used in
+	 * FieldPosition of date/time formatting. HOUR0_FIELD is used for the
+	 * zero-based 12-hour clock. For example, 11:30 PM + 1 hour results in 00:30
+	 * AM.
+	 */
+	"public final static int HOUR0_FIELD" : 16,
+
+	/**
+	 * Useful constant for TIMEZONE field alignment. Used in FieldPosition of
+	 * date/time formatting.
+	 */
+	"public final static int TIMEZONE_FIELD" : 17,
+
+	DateFormat : function() {
+	},
+
+	/** 格式化一个对象以生成一个字符串。 */
+	'final format' : function(obj) {
+
+		if (Object.isDate(obj))
+			return this.formatDate(obj).toString();
+		else if (Object.isNumber(obj))
+			return this.formatDate(new Date(obj)).toString();
+		else
+			throw new js.lang.IllegalArgumentException(
+					"Cannot format given Object as a Date");
+	},
+
+	/** 格式化一个对象以生成一个字符串。 */
+	'abstract formatDate' : function(date) {
+	},
+
+	/** 从给定字符串的开始分析文本，以生成一个日期。 */
+	'abstract parse' : function(source) {
+	}
+
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年10月13日
+ */
+
+$import("js.util.Arrays");
+
+Class
+		.forName({
+			name : "class js.text.DateFormatSymbols extends Object",
+
+			/**
+			 * Construct a DateFormatSymbols object by loading format data from
+			 * resources for the default locale. This constructor can only
+			 * construct instances for the locales supported by the Java runtime
+			 * environment, not for those supported by installed
+			 * {@link java.text.spi.DateFormatSymbolsProvider DateFormatSymbolsProvider}
+			 * implementations. For full locale coverage, use the
+			 * {@link #getInstance(Locale) getInstance} method.
+			 * 
+			 * @see #getInstance()
+			 * @exception java.util.MissingResourceException
+			 *                if the resources for the default locale cannot be
+			 *                found or cannot be loaded.
+			 */
+			"public DateFormatSymbols" : function() {
+				this.initializeData();
+			},
+
+			/**
+			 * Era strings. For example: "AD" and "BC". An array of 2 strings,
+			 * indexed by <code>Calendar.BC</code> and
+			 * <code>Calendar.AD</code>.
+			 * 
+			 * @serial
+			 */
+			"eras" : null,
+
+			/**
+			 * Month strings. For example: "January", "February", etc. An array
+			 * of 13 strings (some calendars have 13 months), indexed by
+			 * <code>Calendar.JANUARY</code>, <code>Calendar.FEBRUARY</code>,
+			 * etc.
+			 * 
+			 * @serial
+			 */
+			"months" : null,
+
+			/**
+			 * Short month strings. For example: "Jan", "Feb", etc. An array of
+			 * 13 strings (some calendars have 13 months), indexed by
+			 * <code>Calendar.JANUARY</code>, <code>Calendar.FEBRUARY</code>,
+			 * etc.
+			 * 
+			 * @serial
+			 */
+			"shortMonths" : null,
+
+			/**
+			 * Weekday strings. For example: "Sunday", "Monday", etc. An array
+			 * of 8 strings, indexed by <code>Calendar.SUNDAY</code>,
+			 * <code>Calendar.MONDAY</code>, etc. The element
+			 * <code>weekdays[0]</code> is ignored.
+			 * 
+			 * @serial
+			 */
+			"weekdays" : null,
+
+			/**
+			 * Short weekday strings. For example: "Sun", "Mon", etc. An array
+			 * of 8 strings, indexed by <code>Calendar.SUNDAY</code>,
+			 * <code>Calendar.MONDAY</code>, etc. The element
+			 * <code>shortWeekdays[0]</code> is ignored.
+			 * 
+			 * @serial
+			 */
+			"shortWeekdays" : null,
+
+			/**
+			 * AM and PM strings. For example: "AM" and "PM". An array of 2
+			 * strings, indexed by <code>Calendar.AM</code> and
+			 * <code>Calendar.PM</code>.
+			 * 
+			 * @serial
+			 */
+			"ampms" : null,
+
+			/**
+			 * Unlocalized date-time pattern characters. For example: 'y', 'd',
+			 * etc. All locales use the same these unlocalized pattern
+			 * characters.
+			 */
+			"static final patternChars" : "GyMdkHmsSEDFwWahKzZYuX",
+			"static final oppositePatternChars" : "AbBcCefgiIjJlLnNoOpPqQrRtTUvVx",
+
+			"static final PATTERN_ERA" : 0, // G
+			"static final PATTERN_YEAR" : 1, // y
+			"static final PATTERN_MONTH" : 2, // M
+			"static final PATTERN_DAY_OF_MONTH" : 3, // d
+			"static final PATTERN_HOUR_OF_DAY1" : 4, // k
+			"static final PATTERN_HOUR_OF_DAY0" : 5, // H
+			"static final PATTERN_MINUTE" : 6, // m
+			"static final PATTERN_SECOND" : 7, // s
+			"static final PATTERN_MILLISECOND" : 8, // S
+			"static final PATTERN_DAY_OF_WEEK" : 9, // E
+			"static final PATTERN_DAY_OF_YEAR" : 10, // D
+			"static final PATTERN_DAY_OF_WEEK_IN_MONTH" : 11, // F
+			"static final PATTERN_WEEK_OF_YEAR" : 12, // w
+			"static final PATTERN_WEEK_OF_MONTH" : 13, // W
+			"static final PATTERN_AM_PM" : 14, // a
+			"static final PATTERN_HOUR1" : 15, // h
+			"static final PATTERN_HOUR0" : 16, // K
+			"static final PATTERN_ZONE_NAME" : 17, // z
+			"static final PATTERN_ZONE_VALUE" : 18, // Z
+			"static final PATTERN_WEEK_YEAR" : 19, // Y
+			"static final PATTERN_ISO_DAY_OF_WEEK" : 20, // u
+			"static final PATTERN_ISO_ZONE" : 21, // X
+
+			/**
+			 * Localized date-time pattern characters. For example, a locale may
+			 * wish to use 'u' rather than 'y' to represent years in its date
+			 * format pattern strings. This string must be exactly 18 characters
+			 * long, with the index of the characters described by
+			 * <code>DateFormat.ERA_FIELD</code>,
+			 * <code>DateFormat.YEAR_FIELD</code>, etc. Thus, if the string
+			 * were "Xz...", then localized patterns would use 'X' for era and
+			 * 'z' for year.
+			 * 
+			 * @serial
+			 */
+			"localPatternChars" : null,
+
+			/**
+			 * Gets the <code>DateFormatSymbols</code> instance for the
+			 * default locale. This method provides access to
+			 * <code>DateFormatSymbols</code> instances for locales supported
+			 * by the Java runtime itself as well as for those supported by
+			 * installed
+			 * {@link java.text.spi.DateFormatSymbolsProvider DateFormatSymbolsProvider}
+			 * implementations.
+			 * 
+			 * @return a <code>DateFormatSymbols</code> instance.
+			 */
+			"public static final getInstance" : function() {
+				return new js.text.DateFormatSymbols();
+			},
+
+			/**
+			 * Gets era strings. For example: "AD" and "BC".
+			 * 
+			 * @return the era strings.
+			 */
+			"public getEras" : function() {
+				return js.util.Arrays.copyOf(this.eras, this.eras.length);
+			},
+
+			/**
+			 * Sets era strings. For example: "AD" and "BC".
+			 * 
+			 * @param newEras
+			 *            the new era strings.
+			 */
+			"public void setEras" : function(newEras) {
+				this.eras = js.util.Arrays.copyOf(newEras, newEras.length);
+			},
+
+			/**
+			 * Gets month strings. For example: "January", "February", etc.
+			 * 
+			 * @return the month strings.
+			 */
+			"public getMonths" : function() {
+				return js.util.Arrays.copyOf(this.months, this.months.length);
+			},
+
+			/**
+			 * Sets month strings. For example: "January", "February", etc.
+			 * 
+			 * @param newMonths
+			 *            the new month strings.
+			 */
+			"public void setMonths" : function(newMonths) {
+				this.months = js.util.Arrays
+						.copyOf(newMonths, newMonths.length);
+			},
+
+			/**
+			 * Gets short month strings. For example: "Jan", "Feb", etc.
+			 * 
+			 * @return the short month strings.
+			 */
+			"public getShortMonths" : function() {
+				return js.util.Arrays.copyOf(this.shortMonths,
+						this.shortMonths.length);
+			},
+
+			/**
+			 * Sets short month strings. For example: "Jan", "Feb", etc.
+			 * 
+			 * @param newShortMonths
+			 *            the new short month strings.
+			 */
+			"public void setShortMonths" : function(newShortMonths) {
+				this.shortMonths = js.util.Arrays.copyOf(newShortMonths,
+						newShortMonths.length);
+			},
+
+			/**
+			 * Gets weekday strings. For example: "Sunday", "Monday", etc.
+			 * 
+			 * @return the weekday strings. Use <code>Calendar.SUNDAY</code>,
+			 *         <code>Calendar.MONDAY</code>, etc. to index the result
+			 *         array.
+			 */
+			"public getWeekdays" : function() {
+				return js.util.Arrays.copyOf(this.weekdays,
+						this.weekdays.length);
+			},
+
+			/**
+			 * Sets weekday strings. For example: "Sunday", "Monday", etc.
+			 * 
+			 * @param newWeekdays
+			 *            the new weekday strings. The array should be indexed
+			 *            by <code>Calendar.SUNDAY</code>,
+			 *            <code>Calendar.MONDAY</code>, etc.
+			 */
+			"public void setWeekdays" : function(newWeekdays) {
+				this.weekdays = js.util.Arrays.copyOf(newWeekdays,
+						newWeekdays.length);
+			},
+
+			/**
+			 * Gets short weekday strings. For example: "Sun", "Mon", etc.
+			 * 
+			 * @return the short weekday strings. Use
+			 *         <code>Calendar.SUNDAY</code>,
+			 *         <code>Calendar.MONDAY</code>, etc. to index the result
+			 *         array.
+			 */
+			"public getShortWeekdays" : function() {
+				return js.util.Arrays.copyOf(this.shortWeekdays,
+						this.shortWeekdays.length);
+			},
+
+			/**
+			 * Sets short weekday strings. For example: "Sun", "Mon", etc.
+			 * 
+			 * @param newShortWeekdays
+			 *            the new short weekday strings. The array should be
+			 *            indexed by <code>Calendar.SUNDAY</code>,
+			 *            <code>Calendar.MONDAY</code>, etc.
+			 */
+			"public void setShortWeekdays" : function(newShortWeekdays) {
+				this.shortWeekdays = js.util.Arrays.copyOf(newShortWeekdays,
+						newShortWeekdays.length);
+			},
+
+			/**
+			 * Gets ampm strings. For example: "AM" and "PM".
+			 * 
+			 * @return the ampm strings.
+			 */
+			"public getAmPmStrings" : function() {
+				return js.util.Arrays.copyOf(this.ampms, this.ampms.length);
+			},
+
+			/**
+			 * Sets ampm strings. For example: "AM" and "PM".
+			 * 
+			 * @param newAmpms
+			 *            the new ampm strings.
+			 */
+			"public void setAmPmStrings" : function(newAmpms) {
+				this.ampms = js.util.Arrays.copyOf(newAmpms, newAmpms.length);
+			},
+
+			/**
+			 * Gets localized date-time pattern characters. For example: 'u',
+			 * 't', etc.
+			 * 
+			 * @return the localized date-time pattern characters.
+			 */
+			"public String getLocalPatternChars" : function() {
+				return this.localPatternChars;
+			},
+
+			/**
+			 * Sets localized date-time pattern characters. For example: 'u',
+			 * 't', etc.
+			 * 
+			 * @param newLocalPatternChars
+			 *            the new localized date-time pattern characters.
+			 */
+			"public void setLocalPatternChars" : function(newLocalPatternChars) {
+				// Call toString() to throw an NPE in case the argument is null
+				this.localPatternChars = newLocalPatternChars.toString();
+			},
+
+			/**
+			 * Overrides Cloneable
+			 */
+			"public Object clone" : function() {
+				try {
+					var other = this.getClass().newInstance();
+					this.copyMembers(this, other);
+					return other;
+				} catch (e) {
+					throw new js.lang.CloneNotSupportedException();
+				}
+			},
+
+			/**
+			 * Override equals
+			 */
+			"public boolean equals" : function(obj) {
+				if (this == obj)
+					return true;
+				if (obj == null || this.getClass() != obj.getClass())
+					return false;
+				var that = obj;
+				return (js.util.Arrays.equals(this.eras, that.eras)
+						&& js.util.Arrays.equals(this.months, that.months)
+						&& js.util.Arrays.equals(this.shortMonths,
+								that.shortMonths)
+						&& js.util.Arrays.equals(this.weekdays, that.weekdays)
+						&& js.util.Arrays.equals(this.shortWeekdays,
+								that.shortWeekdays)
+						&& js.util.Arrays.equals(this.ampms, that.ampms)
+						&& Arrays.deepEquals(this.getZoneStringsWrapper(), that
+								.getZoneStringsWrapper()) && ((this.localPatternChars != null && this.localPatternChars
+						.equals(that.localPatternChars)) || (this.localPatternChars == null && that.localPatternChars == null)));
+			},
+
+			// =======================privates===============================
+
+			/**
+			 * Useful constant for defining time zone offsets.
+			 */
+			"static final int millisPerHour" : 60 * 60 * 1000,
+
+			"private transient int lastZoneIndex" : 0,
+
+			"private void initializeData" : function() {
+				this.eras = [ "公元前", "公元" ];
+				this.months = [ "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月",
+						"九月", "十月", "十一月", "十二月", "" ];
+				this.shortMonths = [ "一月", "二月", "三月", "四月", "五月", "六月", "七月",
+						"八月", "九月", "十月", "十一月", "十二月", "" ];
+				this.ampms = [ "上午", "下午" ];
+				this.localPatternChars = "GanjkHmsSEDFwWxhKzZ";
+
+				// Day of week names are stored in a 1-based array.
+				this.weekdays = [ "", "星期日", "星期一", "星期二", "星期三", "星期四", "星期五",
+						"星期六" ];
+				this.shortWeekdays = [ "", "星期日", "星期一", "星期二", "星期三", "星期四",
+						"星期五", "星期六" ];
+			},
+
+			/**
+			 * Clones all the data members from the source DateFormatSymbols to
+			 * the target DateFormatSymbols. This is only for subclasses.
+			 * 
+			 * @param src
+			 *            the source DateFormatSymbols.
+			 * @param dst
+			 *            the target DateFormatSymbols.
+			 */
+			"private final copyMembers" : function(src, dst) {
+				dst.eras = js.util.Arrays.copyOf(src.eras, src.eras.length);
+				dst.months = js.util.Arrays.copyOf(src.months,
+						src.months.length);
+				dst.shortMonths = js.util.Arrays.copyOf(src.shortMonths,
+						src.shortMonths.length);
+				dst.weekdays = js.util.Arrays.copyOf(src.weekdays,
+						src.weekdays.length);
+				dst.shortWeekdays = js.util.Arrays.copyOf(src.shortWeekdays,
+						src.shortWeekdays.length);
+				dst.ampms = js.util.Arrays.copyOf(src.ampms, src.ampms.length);
+
+				dst.localPatternChars = src.localPatternChars;
+			}
+
+		});/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年10月16日
+ */
+
+Class
+		.forName({
+			name : "public class js.text.FieldPosition",
+
+			/**
+			 * Input: Desired field to determine start and end offsets for. The
+			 * meaning depends on the subclass of Format.
+			 */
+			"int field" : 0,
+
+			/**
+			 * Output: End offset of field in text. If the field does not occur
+			 * in the text, 0 is returned.
+			 */
+			"int endIndex" : 0,
+
+			/**
+			 * Output: Start offset of field in text. If the field does not
+			 * occur in the text, 0 is returned.
+			 */
+			"int beginIndex" : 0,
+
+			/**
+			 * Creates a FieldPosition object for the given field. Fields are
+			 * identified by constants, whose names typically end with _FIELD,
+			 * in the various subclasses of Format.
+			 * 
+			 * @see java.text.NumberFormat#INTEGER_FIELD
+			 * @see java.text.NumberFormat#FRACTION_FIELD
+			 * @see java.text.DateFormat#YEAR_FIELD
+			 * @see java.text.DateFormat#MONTH_FIELD
+			 */
+			"public FieldPosition" : function(field, beginIndex, endIndex) {
+				this.field = field;
+				this.beginIndex = beginIndex;
+				this.endIndex = endIndex;
+			},
+
+			/**
+			 * Retrieves the field identifier.
+			 */
+			"public int getField" : function() {
+				return this.field;
+			},
+
+			/**
+			 * Retrieves the index of the first character in the requested
+			 * field.
+			 */
+			"public int getBeginIndex" : function() {
+				return this.beginIndex;
+			},
+
+			/**
+			 * Retrieves the index of the character following the last character
+			 * in the requested field.
+			 */
+			"public int getEndIndex" : function() {
+				return this.endIndex;
+			},
+
+			/**
+			 * Sets the begin index. For use by subclasses of Format.
+			 * 
+			 * @since 1.2
+			 */
+			"public void setBeginIndex" : function(bi) {
+				this.beginIndex = bi;
+			},
+
+			/**
+			 * Sets the end index. For use by subclasses of Format.
+			 * 
+			 * @since 1.2
+			 */
+			"public void setEndIndex" : function(ei) {
+				this.endIndex = ei;
+			},
+
+			/**
+			 * Overrides equals
+			 */
+			"public boolean equals" : function(obj) {
+				if (obj == null)
+					return false;
+				if (!(obj instanceof js.text.FieldPosition))
+					return false;
+				var other = obj;
+
+				return (this.beginIndex == other.beginIndex
+						&& this.endIndex == other.endIndex && this.field == other.field);
+			},
+
+			/**
+			 * Return a string representation of this FieldPosition.
+			 * 
+			 * @return a string representation of this object
+			 */
+			"public String toString" : function() {
+				return this.getClass().getName() + "[field=" + this.field
+						+ ",beginIndex=" + this.beginIndex + ",endIndex="
+						+ this.endIndex + ']';
+			}
+
+		});/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 16, 2014
+ */
+
+$import("js.text.DateFormat");
+$import("js.text.DateFormatSymbols");
+$import("js.text.FieldPosition");
+$import("js.util.GregorianCalendar");
+
+/**
+ * 字母 日期或时间元素 表示 示例
+ * 
+ * G Era 标志符 Text AD y 年 Year 1996; 96
+ * 
+ * M 年中的月份 Month July; Jul;07
+ * 
+ * w 年中的周数 Number 27
+ * 
+ * W 月份中的周数 Number 2
+ * 
+ * D 年中的天数 Number 189
+ * 
+ * d 月份中的天数 Number 10
+ * 
+ * F 月份中的星期 Number 2
+ * 
+ * E 星期中的天数 Text Tuesday; Tue
+ * 
+ * a Am/pm 标记 Text PM
+ * 
+ * H 一天中的小时数（0-23） Number 0
+ * 
+ * k 一天中的小时数（1-24） Number 24
+ * 
+ * K am/pm 中的小时数（0-11） Number 0
+ * 
+ * h am/pm 中的小时数（1-12） Number 12
+ * 
+ * m 小时中的分钟数 Number 30
+ * 
+ * s 分钟中的秒数 Number 55
+ * 
+ * S 毫秒数 Number 978
+ * 
+ * z 时区 General time zone Pacific Standard Time; PST; GMT-08:00
+ * 
+ * Z 时区
+ */
+Class
+		.forName({
+			name : 'abstract class js.text.SimpleDateFormat extends js.text.DateFormat',
+
+			'private pattern' : null,
+			'private compiledPattern' : null,
+			'private formatData' : null,
+			'private useDateFormatSymbols' : false,
+
+			// Maps from DecimalFormatSymbols index to Field constant
+			'private static final PATTERN_INDEX_TO_CALENDAR_FIELD' : [
+					js.util.Calendar.ERA, js.util.Calendar.YEAR,
+					js.util.Calendar.MONTH, js.util.Calendar.DATE,
+					js.util.Calendar.HOUR_OF_DAY, js.util.Calendar.HOUR_OF_DAY,
+					js.util.Calendar.MINUTE, js.util.Calendar.SECOND,
+					js.util.Calendar.MILLISECOND, js.util.Calendar.DAY_OF_WEEK,
+					js.util.Calendar.DAY_OF_YEAR,
+					js.util.Calendar.DAY_OF_WEEK_IN_MONTH,
+					js.util.Calendar.WEEK_OF_YEAR,
+					js.util.Calendar.WEEK_OF_MONTH, js.util.Calendar.AM_PM,
+					js.util.Calendar.HOUR, js.util.Calendar.HOUR,
+					js.util.Calendar.ZONE_OFFSET, js.util.Calendar.ZONE_OFFSET,
+					// Pseudo Calendar fields
+					js.util.Calendar.WEEK_YEAR,
+					js.util.Calendar.ISO_DAY_OF_WEEK,
+					js.util.Calendar.ZONE_OFFSET ],
+
+			// Map index into pattern character string to DateFormat field
+			// number
+			'private static final PATTERN_INDEX_TO_DATE_FORMAT_FIELD' : [
+					js.text.DateFormat.ERA_FIELD,
+					js.text.DateFormat.YEAR_FIELD,
+					js.text.DateFormat.MONTH_FIELD,
+					js.text.DateFormat.DATE_FIELD,
+					js.text.DateFormat.HOUR_OF_DAY1_FIELD,
+					js.text.DateFormat.HOUR_OF_DAY0_FIELD,
+					js.text.DateFormat.MINUTE_FIELD,
+					js.text.DateFormat.SECOND_FIELD,
+					js.text.DateFormat.MILLISECOND_FIELD,
+					js.text.DateFormat.DAY_OF_WEEK_FIELD,
+					js.text.DateFormat.DAY_OF_YEAR_FIELD,
+					js.text.DateFormat.DAY_OF_WEEK_IN_MONTH_FIELD,
+					js.text.DateFormat.WEEK_OF_YEAR_FIELD,
+					js.text.DateFormat.WEEK_OF_MONTH_FIELD,
+					js.text.DateFormat.AM_PM_FIELD,
+					js.text.DateFormat.HOUR1_FIELD,
+					js.text.DateFormat.HOUR0_FIELD,
+					js.text.DateFormat.TIMEZONE_FIELD,
+					js.text.DateFormat.TIMEZONE_FIELD,
+					js.text.DateFormat.YEAR_FIELD,
+					js.text.DateFormat.DAY_OF_WEEK_FIELD,
+					js.text.DateFormat.TIMEZONE_FIELD ],
+
+			SimpleDateFormat : function(pattern, formatSymbols) {
+				if (pattern == null) {
+					throw new js.lang.NullPointerException();
+				}
+				this.pattern = pattern;
+				if (!formatSymbols) {
+					this.formatData = js.text.DateFormatSymbols.getInstance();
+				} else {
+					this.formatData = formatSymbols.clone();
+					this.useDateFormatSymbols = true;
+				}
+				this.initializeCalendar();
+				this.initialize();
+			},
+
+			/* Initialize compiledPattern and numberFormat fields */
+			'private initialize' : function() {
+				// Verify and compile the given pattern.
+				this.compiledPattern = this.compile(this.pattern);
+			},
+
+			'private initializeCalendar' : function() {
+				if (this.calendar == null) {
+					// The format object must be constructed using the symbols
+					// for this zone.
+					// However, the calendar should use the current default
+					// TimeZone.
+					// If this is not contained in the locale zone strings, then
+					// the zone
+					// will be formatted using generic GMT+/-H:MM nomenclature.
+					this.calendar = js.util.Calendar.getInstance();
+				}
+			},
+
+			/**
+			 * Returns the compiled form of the given pattern. The syntax of the
+			 * compiled pattern is: <blockquote> CompiledPattern: EntryList
+			 * EntryList: Entry EntryList Entry Entry: TagField TagField data
+			 * TagField: Tag Length TaggedData Tag: pattern_char_index
+			 * TAG_QUOTE_CHARS Length: short_length long_length TaggedData:
+			 * TAG_QUOTE_ASCII_CHAR ascii_char
+			 * 
+			 * </blockquote>
+			 * 
+			 * where `short_length' is an 8-bit unsigned integer between 0 and
+			 * 254. `long_length' is a sequence of an 8-bit integer 255 and a
+			 * 32-bit signed integer value which is split into upper and lower
+			 * 16-bit fields in two char's. `pattern_char_index' is an 8-bit
+			 * integer between 0 and 18. `ascii_char' is an 7-bit ASCII
+			 * character value. `data' depends on its Tag value.
+			 * <p>
+			 * If Length is short_length, Tag and short_length are packed in a
+			 * single char, as illustrated below. <blockquote> char[0] = (Tag <<
+			 * 8) | short_length; </blockquote>
+			 * 
+			 * If Length is long_length, Tag and 255 are packed in the first
+			 * char and a 32-bit integer, as illustrated below. <blockquote>
+			 * char[0] = (Tag << 8) | 255; char[1] = (char) (long_length >>>
+			 * 16); char[2] = (char) (long_length & 0xffff); </blockquote>
+			 * <p>
+			 * If Tag is a pattern_char_index, its Length is the number of
+			 * pattern characters. For example, if the given pattern is "yyyy",
+			 * Tag is 1 and Length is 4, followed by no data.
+			 * <p>
+			 * If Tag is TAG_QUOTE_CHARS, its Length is the number of char's
+			 * following the TagField. For example, if the given pattern is
+			 * "'o''clock'", Length is 7 followed by a char sequence of
+			 * <code>o&nbs;'&nbs;c&nbs;l&nbs;o&nbs;c&nbs;k</code>.
+			 * <p>
+			 * TAG_QUOTE_ASCII_CHAR is a special tag and has an ASCII character
+			 * in place of Length. For example, if the given pattern is "'o'",
+			 * the TaggedData entry is
+			 * <code>((TAG_QUOTE_ASCII_CHAR&nbs;<<&nbs;8)&nbs;|&nbs;'o')</code>.
+			 * 
+			 * @exception NullPointerException
+			 *                if the given pattern is null
+			 * @exception IllegalArgumentException
+			 *                if the given pattern is invalid
+			 */
+			'private compile' : function(pattern) {
+				// TODO
+				var length = pattern.getLength();
+				var inQuote = false;
+				var compiledPattern = [];
+
+				var symbols = js.text.DateFormatSymbols.patternChars, opposites = js.text.DateFormatSymbols.oppositePatternChars;
+				// var patternFormatMap =
+				// js.text.SimpleDateFormat.PATTERN_INDEX_TO_DATE_FORMAT_FIELD;
+
+				var result = new js.lang.StringBuffer(), symbol = -1, preC = null, preSymbol = -1;
+
+				var push = function(compiledPattern, preSymbol, result) {
+
+					if (result.length() > 0) {
+
+						if (preSymbol != null && preSymbol > -1) {
+							compiledPattern.push(new js.text.FieldPosition(
+									preSymbol, 0, result.length()));
+						} else {
+							compiledPattern.push(result.toString());
+
+						}
+						result.clear();
+
+					}
+				};
+
+				for (var i = 0; i < length; ++i) {
+					var c = pattern.charAt(i);
+					if (inQuote) {
+						// 引号结束
+						if (c == '\'') {
+							inQuote = false;
+
+							if (preC == c) {
+								result.append(c);
+							}
+
+							compiledPattern.push(result.toString());
+							preC = c;
+							continue;
+						}
+					} else {
+						// 引号开始
+						if (c == '\'') {
+							inQuote = true;
+
+							push(compiledPattern, preSymbol, result);
+
+							preC = c;
+							preSymbol = null;
+
+							continue;
+						} else if ((symbol = symbols.indexOf(c)) != -1) {
+
+							if (preC != c) {
+								push(compiledPattern, preSymbol, result);
+							}
+
+							preSymbol = symbol;
+
+						} else {
+
+							if (opposites.indexOf(c) != -1) {
+
+								throw new js.lang.IllegalArgumentException(
+										"Illegal pattern " + " character '" + c
+												+ "'");
+							} else {
+
+								if (preSymbol != null && preSymbol > -1) {
+									compiledPattern
+											.push(new js.text.FieldPosition(
+													preSymbol, 0, result
+															.length()));
+									result.clear();
+								}
+
+								preSymbol = null;
+							}
+						}
+					}
+
+					preC = c;
+					result.append(c);
+				}
+
+				if (result.length() > 0) {
+					push(compiledPattern, preSymbol, result);
+
+				}
+
+				if (inQuote) {
+					throw new js.lang.IllegalArgumentException(
+							"Unterminated quote");
+				}
+
+				return compiledPattern;
+			},
+			/** 格式化一个对象以生成一个字符串。 */
+			'private formatDate' : function(date) {
+				var Calendar = js.util.Calendar;
+				// TODO
+				// Convert input date to time field list
+				this.calendar.setTime(date);
+
+				var useDateFormatSymbols = this.isUseDateFormatSymbols();
+				var result = new js.lang.StringBuffer();
+
+				var patternCalendarMap = js.text.SimpleDateFormat.PATTERN_INDEX_TO_CALENDAR_FIELD;
+
+				for (var i = 0; i < this.compiledPattern.length; i++) {
+					var tag = this.compiledPattern[i];
+
+					if (Object.isInstanceof(tag, js.text.FieldPosition)) {
+						var field = tag.getField();
+						var value = this.calendar
+								.get(patternCalendarMap[field]);
+						var current = null, count = tag.getEndIndex()
+								- tag.getBeginIndex();
+						switch (field) {
+
+						case js.text.DateFormatSymbols.PATTERN_ERA: // 'G'
+							if (useDateFormatSymbols) {
+								var eras = this.formatData.getEras();
+								if (value < eras.length)
+									current = eras[value];
+							}
+							if (current == null)
+								current = "";
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_YEAR: // 'y'
+							if (count != 2)
+								current = value;
+							else
+								// count == 2
+								current = value % 100;
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_MONTH: // 'M'
+							if (useDateFormatSymbols) {
+								var months;
+								if (count >= 4) {
+									months = this.formatData.getMonths();
+									current = months[value];
+								} else if (count == 3) {
+									months = this.formatData.getShortMonths();
+									current = months[value];
+								}
+							} else {
+								if (count < 3) {
+									current == null;
+								}
+							}
+							if (current == null) {
+								value += 1;
+								current = count >= 2 && value < 10 ? '0'
+										+ value : value;
+							}
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_DAY_OF_WEEK: // 'E'
+							if (useDateFormatSymbols) {
+								var weekdays;
+								if (count >= 4) {
+									weekdays = this.formatData.getWeekdays();
+									current = weekdays[value];
+								} else { // count < 4, use abbreviated form
+									// if exists
+									weekdays = this.formatData
+											.getShortWeekdays();
+									current = weekdays[value];
+								}
+							}
+
+							if (current == null) {
+								current = value;
+							}
+
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_AM_PM: // 'a'
+							if (useDateFormatSymbols) {
+								var ampm = this.formatData.getAmPmStrings();
+								current = ampm[value];
+							} else {
+								current = value ? "PM" : "AM";
+							}
+							break;
+						case js.text.DateFormatSymbols.PATTERN_HOUR_OF_DAY1: // 'k'
+							// 1-based.
+							// eg,
+							// 23:59
+							// +
+							// 1 hour =>> 24:59
+
+							if (value < 1)
+								current = 24;
+							else
+								current = count >= 2 && value < 10 ? '0'
+										+ value : value;
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_HOUR1: // 'h'
+							// 1-based.
+							// eg,
+							// 11PM
+							// + 1
+							// hour
+							// =>> 12 AM
+							if (value < 1)
+								current = 12;
+							else
+								current = count >= 2 && value < 10 ? '0'
+										+ value : value;
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_MINUTE: //
+							// 'm'
+
+						case js.text.DateFormatSymbols.PATTERN_SECOND: //
+							// 's'
+
+						case js.text.DateFormatSymbols.PATTERN_HOUR_OF_DAY0:
+							// 'H' 0-based. eg, 23:59 + 1 hour =>> 00:59
+						case js.text.DateFormatSymbols.PATTERN_DAY_OF_MONTH: // 'd'
+
+						case js.text.DateFormatSymbols.PATTERN_WEEK_OF_YEAR:
+							// // 'w'
+
+							current = count >= 2 && value < 10 ? '0' + value
+									: value;
+
+							break;
+
+						case js.text.DateFormatSymbols.PATTERN_MILLISECOND: //
+							// 'S'
+
+						case js.text.DateFormatSymbols.PATTERN_DAY_OF_YEAR: //
+							// 'D'
+
+							if (count >= 3) {
+								if (value < 10) {
+									current = '00' + value;
+								} else if (value < 100) {
+									current = '0' + value;
+								} else {
+									current = value;
+								}
+
+							} else if (count >= 2) {
+								current = value < 10 ? '0' + value : value;
+
+							} else {
+								current = value;
+							}
+
+							break;
+						/*
+						 * case PATTERN_ZONE_NAME: // 'z'
+						 * 
+						 * break;
+						 * 
+						 * case PATTERN_ZONE_VALUE: // 'Z' ("-/+hhmm" form)
+						 * 
+						 * break;
+						 * 
+						 * case PATTERN_ISO_ZONE: // 'X'
+						 * 
+						 * break;
+						 */
+						default:
+
+							// case
+							// js.text.DateFormatSymbols.PATTERN_DAY_OF_WEEK_IN_MONTH:
+							// // 'F'
+
+							// case
+							// js.text.DateFormatSymbols.PATTERN_WEEK_OF_MONTH:
+							// // 'W'
+
+							// case js.text.DateFormatSymbols.PATTERN_HOUR0: //
+							// 'K' eg, 11PM + 1 hour =>>
+							// 0 AM
+
+							// case
+							// js.text.DateFormatSymbols.PATTERN_ISO_DAY_OF_WEEK:
+							// // 'u' pseudo
+							// field, Monday = 1, ..., Sunday = 7
+
+							current = value;
+							break;
+						} // switch (patternCharIndex)
+						result.append(current);
+					} else {
+						result.append(tag);
+					}
+				}
+				return result;
+
+			},
+			/** 从给定字符串的开始分析文本，以生成一个日期。 */
+			'parse' : function(source) {
+			},
+
+			"private boolean isUseDateFormatSymbols" : function() {
+				if (this.useDateFormatSymbols) {
+					return true;
+				}
+				return Object.isInstanceof(this.calendar,
+						js.util.GregorianCalendar);
+			},
+			/**
+			 * Translates a pattern, mapping each character in the from string
+			 * to the corresponding character in the to string.
+			 * 
+			 * @exception IllegalArgumentException
+			 *                if the given pattern is invalid
+			 */
+			"private String translatePattern" : function(pattern, from, to) {
+				var result = new js.lang.StringBuffer();
+				var inQuote = false;
+				for (var i = 0; i < pattern.length(); ++i) {
+					var c = pattern.charAt(i);
+					if (inQuote) {
+						if (c == '\'')
+							inQuote = false;
+					} else {
+						if (c == '\'')
+							inQuote = true;
+						else if ((c >= 'a' && c <= 'z')
+								|| (c >= 'A' && c <= 'Z')) {
+							var ci = from.indexOf(c);
+							if (ci >= 0) {
+								// patternChars is longer than localPatternChars
+								// due
+								// to serialization compatibility. The pattern
+								// letters
+								// unsupported by localPatternChars pass
+								// through.
+								if (ci < to.length()) {
+									c = to.charAt(ci);
+								}
+							} else {
+								throw new js.lang.IllegalArgumentException(
+										"Illegal pattern " + " character '" + c
+												+ "'");
+							}
+						}
+					}
+					result.append(c);
+				}
+				if (inQuote)
+					throw new js.lang.IllegalArgumentException(
+							"Unfinished quote in pattern");
+				return result.toString();
+			},
+
+			/**
+			 * Returns a pattern string describing this date format.
+			 * 
+			 * @return a pattern string describing this date format.
+			 */
+			"public String toPattern" : function() {
+				return this.pattern;
+			},
+
+			/**
+			 * Returns a localized pattern string describing this date format.
+			 * 
+			 * @return a localized pattern string describing this date format.
+			 */
+			"public String toLocalizedPattern" : function() {
+				return this.translatePattern(this.pattern,
+						js.text.DateFormatSymbols.patternChars, this.formatData
+								.getLocalPatternChars());
+			},
+
+			/**
+			 * Applies the given pattern string to this date format.
+			 * 
+			 * @param pattern
+			 *            the new date and time pattern for this date format
+			 * @exception NullPointerException
+			 *                if the given pattern is null
+			 * @exception IllegalArgumentException
+			 *                if the given pattern is invalid
+			 */
+			"public void applyPattern" : function(pattern) {
+				this.compiledPattern = this.compile(pattern);
+				this.pattern = pattern;
+			},
+
+			/**
+			 * Applies the given localized pattern string to this date format.
+			 * 
+			 * @param pattern
+			 *            a String to be mapped to the new date and time format
+			 *            pattern for this format
+			 * @exception NullPointerException
+			 *                if the given pattern is null
+			 * @exception IllegalArgumentException
+			 *                if the given pattern is invalid
+			 */
+			"public void applyLocalizedPattern" : function(pattern) {
+				var p = this.translatePattern(pattern, this.formatData
+						.getLocalPatternChars(),
+						js.text.DateFormatSymbols.patternChars);
+				this.compiledPattern = this.compile(p);
+				this.pattern = p;
+			},
+
+			/**
+			 * Gets a copy of the date and time format symbols of this date
+			 * format.
+			 * 
+			 * @return the date and time format symbols of this date format
+			 * @see #setDateFormatSymbols
+			 */
+			"public DateFormatSymbols getDateFormatSymbols" : function() {
+				return this.formatData.clone();
+			},
+
+			/**
+			 * Sets the date and time format symbols of this date format.
+			 * 
+			 * @param newFormatSymbols
+			 *            the new date and time format symbols
+			 * @exception NullPointerException
+			 *                if the given newFormatSymbols is null
+			 * @see #getDateFormatSymbols
+			 */
+			"public void setDateFormatSymbols" : function(newFormatSymbols) {
+				this.formatData = newFormatSymbols.clone();
+				this.useDateFormatSymbols = true;
+			},
+
+			/**
+			 * Creates a copy of this <code>SimpleDateFormat</code>. This
+			 * also clones the format's date format symbols.
+			 * 
+			 * @return a clone of this <code>SimpleDateFormat</code>
+			 */
+			"public Object clone" : function() {
+				var other = this.getClass().newInstance();
+				other.formatData = this.formatData.clone();
+				return other;
+			},
+
+			/**
+			 * Compares the given object with this <code>SimpleDateFormat</code>
+			 * for equality.
+			 * 
+			 * @return true if the given object is equal to this
+			 *         <code>SimpleDateFormat</code>
+			 */
+			"public boolean equals" : function(obj) {
+				if (!obj) {
+					return false;
+				}
+				var that = obj;
+				if (!Object.isInstanceof(that, js.text.SimpleDateForma)) {
+					return false;
+				}
+				return (this.pattern.equals(that.pattern) && this.formatData
+						.equals(that.formatData));
+			}
+		});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 14, 2014
+ */
+
+Class.forName({
+	name : "class js.net.http.Http extends Object",
+	"public static REQUEST" : {
+		TYPE : [ "GET", "HEAD", "PUT", "DELETE", "POST", "OPTIONS" ]
+	},
+	Http : function() {
+	}
+});
+/*
+ * ! JSRT JavaScript Library 0.1.1 lico.atom@gmail.com
+ * 
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ * 
+ * Date: Feb 14, 2014
+ */
+
+Class.forName({
+	name : "class js.net.http.Rest extends Object",
+	Rest : function() {
+	},
+	build : (function() {
+		var regx1 = /\/{2,}/g, regx2 = /\/$/g;
+		return function() {
+			if (arguments.length > 0) {
+				if (!Object.isEmpty(arguments[0])
+						&& Object.isString(arguments[0])) {
+					var _method = arguments[0].toUpperCase();
+					if (com.js.net.http.HTTP.REQUEST.TYPE.contains(_method)) {
+						var temp = new StringBuffer();
+						var url = temp.append("").applys(
+								Array.prototype.slice.call(arguments, 1))
+								.toString("/");
+						temp.clear();
+						temp.append(
+								url.trim().replace(regx1, "/").replace(regx2,
+										"")).append("?_method=")
+								.append(_method);
+						return temp.toString();
+					}
+				}
+			}
+			return null;
+		};
+	})()
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+
+$import("js.lang.Error");
+Class.forName({
+	name : "class js.test.AssertionError extends js.lang.Error",
+	"private name" : "js.test.AssertionError",// 错误名
+	"private number" : -1
+	
+
+});/*
+ * ! JSRT JavaScript Library 0.1.5 lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc. Released under the MIT license
+ *
+ * Date: Feb 15, 2014
+ */
+
+Class.forName({
+    name : "class js.test.TestCase extends Object",
+    "@Setter @Getter private _testMethods" : [],
+    "@Setter @Getter private _ignoreTestMethods" : [],
+    "@Setter @Getter private _configMethods" : [],
+
+    TestCase : function() {
+    },
+    initial : function() {
+
+        var msg = ["########  TestCase { ClassName「", this.getClass().getName(), "」 }  ########"];
+
+        js.lang.System.out.group(msg.join(""));
+
+        this.reset();
+        this.injectMethods();
+        this.invokeBeforeClass();
+        this.execute();
+        this.invokeAfterClass();
+
+        js.lang.System.out.groupEnd();
+    },
+    reset : function() {
+        var methods = this.getTestMethods();
+        if (methods) {
+            methods.clear();
+        }
+
+        var ignoreMethods = this.getIgnoreTestMethods();
+        if (ignoreMethods) {
+            ignoreMethods.clear();
+        }
+
+        var configMethods = this.getConfigMethods();
+        if (configMethods) {
+            configMethods.clear();
+        }
+    },
+    invokeBeforeClass : function() {
+
+        var beforeClass = this.getConfigMethods()[0];
+
+        if (beforeClass) {
+            beforeClass.getValue().call(this.getClass().getClassConstructor());
+        }
+
+    },
+    invokeAfterClass : function() {
+
+        var afterClass = this.getConfigMethods()[0];
+
+        if (afterClass) {
+            afterClass.getValue().call(this.getClass().getClassConstructor());
+        }
+    },
+    injectMethods : function() {
+        var methods = this.$class.getMethods();
+        Object.each(methods, function(i, v, o) {
+            if (v.getAnnotations().contains("@BeforeClass") && (v.getModifiers() & 8) != 0) {
+                this.getConfigMethods()[0] = v;
+
+            } else if (v.getAnnotations().contains("@AfterClass") && (v.getModifiers() & 8) != 0) {
+                this.getConfigMethods()[3] = v;
+            } else if (v.getAnnotations().contains("@After")) {
+                this.getConfigMethods()[2] = v;
+
+            } else if (v.getAnnotations().contains("@Before")) {
+                this.getConfigMethods()[1] = v;
+            } else {
+
+                if (v.getAnnotations().contains("@Ignore")) {
+                    this.getIgnoreTestMethods().push(v);
+                } else if (v.getAnnotations().contains("@Test")) {
+                    this.getTestMethods().push(v);
+                }
+            }
+
+            /*if (i.indexOf("test") === 0) {
+             this.getTestMethods().push(i);
+             }*/
+        }, this);
+    },
+
+    execute : function() {
+        var j = 0, len = this.getTestMethods().length;
+
+        for (; j < len; j++) {
+
+            var m = this.getTestMethods()[j];
+
+            var method = m.getValue();
+
+            var msg = ["        --------  Method「", m.getName(), "」  "];
+
+
+            js.lang.System.out.println(msg.join(""));
+
+            try {
+                var before = this.getConfigMethods()[1];
+                if (before) {
+                    before.getValue().call(this);
+                }
+
+                method.call(this);
+
+                var after = this.getConfigMethods()[2];
+                if (after) {
+                    after.getValue().call(this);
+                }
+
+                js.lang.System.out.println("        结果： √ ");
+            } catch (e) {
+                js.lang.System.out.error("        结果： ×     详细描述：  %s", ["Name< ", e.getName(), " >;  Number< ", e.getNumber(), " >;  Message< ", e.getMessage(), " >"].join(""));
+            }
+            // if (!obj[name]) {
+            // js.lang.System.out.warn("%s",
+            // "this test unit case is not be promoted !");
+            // }
+            js.lang.System.out.println("");
+        }
+
+    }
+});
+/*!
+ * JSRT JavaScript Library 0.2.1
+ * lico.atom@gmail.com
+ *
+ * Copyright 2008, 2014 Atom Union, Inc.
+ * Released under the MIT license
+ *
+ * Date: 2014年6月25日
+ */
+
+$import("js.test.AssertionError");
+/**
+ * A set of assertion methods useful for writing tests. Only failed assertions
+ * are recorded. These methods can be used directly:
+ * <code>Assert.assertEquals(...)</code>, however, they read better if they
+ * are referenced through static import:<br/>
+ * 
+ * <pre>
+ * $import(&quot;js.test.Assert&quot;);
+ *    ...
+ *    js.test.Assert.assertEquals(...);
+ * </pre>
+ * 
+ * @see AssertionError
+ */
+Class
+		.forName({
+			name : "public class js.test.Assert",
+			/**
+			 * Protect constructor since it is a static only class
+			 */
+			"protected Assert" : function() {
+			},
+			/**
+			 * Fails a test with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @see AssertionError
+			 */
+			"static public void fail" : function(message) {
+				throw new js.test.AssertionError(message);
+			},
+			/**
+			 * Asserts that a condition is true. If it isn't it throws an
+			 * {@link AssertionError} with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param condition
+			 *            condition to be checked
+			 */
+			"static public void assertTrue" : function(message, condition) {
+				if (!condition) {
+					js.test.Assert.fail(message);
+				}
+			},
+
+			/**
+			 * Asserts that a condition is false. If it isn't it throws an
+			 * {@link AssertionError} with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param condition
+			 *            condition to be checked
+			 */
+			"static public void assertFalse" : function(message, condition) {
+				js.test.Assert.assertTrue(message, !condition);
+			},
+
+			/**
+			 * Asserts that two objects are equal. If they are not, an
+			 * {@link AssertionError} is thrown with the given message. If
+			 * <code>expected</code> and <code>actual</code> are
+			 * <code>null</code>, they are considered equal.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param expected
+			 *            expected value
+			 * @param actual
+			 *            actual value
+			 */
+			"static public void assertEquals" : function(message, expected,
+					actual) {
+				if (Object.isNull(expected) && Object.isNull(actual)) {
+					return;
+				}
+
+				if (!Object.isNull(expected) && expected.equals(actual)) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+				if (message != null && !message.equals("")) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected:<");
+				formatted.append(Object.isNull(expected) ? "null" : expected
+						.toString());
+				formatted.append("> but was:<");
+				formatted.append(Object.isNull(actual) ? "null" : actual
+						.toString());
+				formatted.append(">");
+
+				// TODO float类型判断
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects are <b>not</b> equals. If they are, an
+			 * {@link AssertionError} is thrown with the given message. If
+			 * <code>first</code> and <code>second</code> are
+			 * <code>null</code>, they are considered equal.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param first
+			 *            first value to check
+			 * @param second
+			 *            the value to check against <code>first</code>
+			 */
+			"static public void assertNotEquals" : function(message, expected,
+					actual) {
+
+				if (!Object.isNull(expected)) {
+
+					if (!expected.equals(actual)) {
+						return;
+					}
+				} else {
+					if (!Object.isNull(expected)) {
+						return;
+					}
+				}
+
+				// TODO float类型判断
+
+				var formatted = new js.lang.StringBuffer();
+				formatted.append("Values should be different. ");
+				if (message != null) {
+					formatted.append(message).append(". ");
+				}
+
+				formatted.append("Actual: ").append(actual);
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that an object isn't null. If it is an
+			 * {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param object
+			 *            Object to check or <code>null</code>
+			 */
+			"static public void assertNotNull" : function(message, object) {
+				js.test.Assert.assertTrue(message, !Object.isNull(object));
+			},
+
+			/**
+			 * Asserts that an object is null. If it is not, an
+			 * {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param object
+			 *            Object to check or <code>null</code>
+			 */
+			"static public void assertNull" : function(message, object) {
+				if (Object.isNull(object)) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected null, but was:<").append(actual)
+						.append(">");
+
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects refer to the same object. If they are
+			 * not, an {@link AssertionError} is thrown with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param expected
+			 *            the expected object
+			 * @param actual
+			 *            the object to compare to <code>expected</code>
+			 */
+			"static public void assertSame" : function(message, expected,
+					actual) {
+				if (expected === actual) {
+					return;
+				}
+				var formatted = new js.lang.StringBuffer();
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+
+				formatted.append("expected same:<").append(expected).append(
+						"> was not:<").append(actual).append(">");
+
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that two objects do not refer to the same object. If they
+			 * do refer to the same object, an {@link AssertionError} is thrown
+			 * with the given message.
+			 * 
+			 * @param message
+			 *            the identifying message for the {@link AssertionError} (<code>null</code>
+			 *            okay)
+			 * @param unexpected
+			 *            the object you don't expect
+			 * @param actual
+			 *            the object to compare to <code>unexpected</code>
+			 */
+			"static public void assertNotSame" : function(message, unexpected,
+					actual) {
+				if (unexpected !== actual) {
+					return;
+				}
+
+				var formatted = new js.lang.StringBuffer();
+				if (message != null) {
+					formatted.append(message).append(" ");
+				}
+				formatted.append("expected not same");
+				js.test.Assert.fail(formatted.toString());
+			},
+
+			/**
+			 * Asserts that <code>actual</code> satisfies the condition
+			 * specified by <code>matcher</code>. If not, an
+			 * {@link AssertionError} is thrown with information about the
+			 * matcher and failing value. Example:
+			 * 
+			 * <pre>
+			 * assertThat(0, is(1)); // fails:
+			 * // failure message:
+			 * // expected: is &lt;1&gt;
+			 * // got value: &lt;0&gt;
+			 * assertThat(0, is(not(1))) // passes
+			 * </pre>
+			 * 
+			 * <code>org.hamcrest.Matcher</code> does not currently document
+			 * the meaning of its type parameter <code>T</code>. This method
+			 * assumes that a matcher typed as <code>Matcher&lt;T&gt;</code>
+			 * can be meaningfully applied only to values that could be assigned
+			 * to a variable of type <code>T</code>.
+			 * 
+			 * @param <T>
+			 *            the static type accepted by the matcher (this can flag
+			 *            obvious compile-time problems such as
+			 *            {@code assertThat(1, is("a"))}
+			 * @param actual
+			 *            the computed value being compared
+			 * @param matcher
+			 *            an expression, built of {@link Matcher}s, specifying
+			 *            allowed values
+			 * @see org.hamcrest.CoreMatchers
+			 * @see org.hamcrest.MatcherAssert
+			 */
+			"public static <T> void assertThat" : function(actual, matcher) {
+				// TODO 正则表达式
 			}
 		});

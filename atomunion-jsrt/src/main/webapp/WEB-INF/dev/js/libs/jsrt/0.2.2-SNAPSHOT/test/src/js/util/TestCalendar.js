@@ -106,6 +106,7 @@ Class.forName({
 
     "@Test testSet" : function() {
 
+        //12小时制
         this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
         this.getCalendar().set(js.util.Calendar.MONTH, 3);
@@ -130,45 +131,7 @@ Class.forName({
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.SECOND) == 10);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MILLISECOND) == 10);
 
-        this.getCalendar().clear();
-        this.getCalendar().set(js.util.Calendar.YEAR, 1987);
-        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 100);
-        this.getCalendar().set(js.util.Calendar.HOUR_OF_DAY, 22);
-        this.getCalendar().set(js.util.Calendar.MINUTE, 10);
-        this.getCalendar().set(js.util.Calendar.SECOND, 10);
-        this.getCalendar().set(js.util.Calendar.MILLISECOND, 10);
-
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.YEAR) == 1987);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 3);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 15);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 2);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 10);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 100);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 6);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.AM_PM) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR) == 10);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR_OF_DAY) == 22);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MINUTE) == 10);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.SECOND) == 10);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MILLISECOND) == 10);
-
-
-        this.getCalendar().clear();
-        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 1);
-        
-        this.getCalendar().clear();
-        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 31);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 31);
-        
-        this.getCalendar().clear();
-        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 32);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 1);
-        
+        //24小时制
         this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
         this.getCalendar().set(js.util.Calendar.DAY_OF_WEEK, 5);
@@ -190,20 +153,46 @@ Class.forName({
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MINUTE) == 10);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.SECOND) == 10);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MILLISECOND) == 10);
-        
-        /*this.getCalendar().clear();
+
+        //DAY_OF_YEAR  一年中的第几天
+        this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
-        this.getCalendar().set(js.util.Calendar.MONTH, 3);
-        this.getCalendar().set(js.util.Calendar.WEEK_OF_MONTH, 1);
+        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 100);
+        this.getCalendar().set(js.util.Calendar.HOUR_OF_DAY, 22);
+        this.getCalendar().set(js.util.Calendar.MINUTE, 10);
+        this.getCalendar().set(js.util.Calendar.SECOND, 10);
+        this.getCalendar().set(js.util.Calendar.MILLISECOND, 10);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.YEAR) == 1987);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 3);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 14);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 5);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 29);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 88);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 1);
-        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 5);
-        */
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 15);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 100);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 6);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.AM_PM) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.HOUR_OF_DAY) == 22);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MINUTE) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.SECOND) == 10);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MILLISECOND) == 10);
+
+        this.getCalendar().clear();
+        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 1);
+
+        this.getCalendar().clear();
+        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 31);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 0);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 31);
+
+        this.getCalendar().clear();
+        this.getCalendar().set(js.util.Calendar.DAY_OF_YEAR, 32);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 1);
+
+        //DAY_OF_WEEK : 月中的第一个周几
         this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
         this.getCalendar().set(js.util.Calendar.MONTH, 3);
@@ -216,7 +205,22 @@ Class.forName({
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 92);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 5);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 1);
-        
+
+        //WEEK_OF_MONTH : 按照日历中的第几周的周天 下标从1开始
+        this.getCalendar().clear();
+        this.getCalendar().set(js.util.Calendar.YEAR, 1987);
+        this.getCalendar().set(js.util.Calendar.MONTH, 3);
+        this.getCalendar().set(js.util.Calendar.WEEK_OF_MONTH, 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.YEAR) == 1987);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.MONTH) == 2);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_YEAR) == 14);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.WEEK_OF_MONTH) == 5);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_MONTH) == 29);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 88);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 1);
+        js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 5);
+
+        // DAY_OF_WEEK_IN_MONTH : 按照日历中的第几周的周天 下标从0开始
         this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
         this.getCalendar().set(js.util.Calendar.MONTH, 3);
@@ -229,8 +233,7 @@ Class.forName({
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_YEAR) == 95);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK) == 1);
         js.test.Assert.assertTrue("类js.util.Calendar中的set方法测试不通过", this.getCalendar().get(js.util.Calendar.DAY_OF_WEEK_IN_MONTH) == 1);
-        
-        
+
         this.getCalendar().clear();
         this.getCalendar().set(js.util.Calendar.YEAR, 1987);
         this.getCalendar().set(js.util.Calendar.MONTH, 3);

@@ -19,8 +19,9 @@ Class.forName({
 	}(),
 	"public equals":function(s){
 		return Object.isString(s) && this == s;
-	}
-	
-	
+	},
+    getLength : function(){
+        return this.length;
+    }
 	
 });

@@ -62,17 +62,6 @@
 				
 				<file name="js/lang/Exception.js" />
 				
-				<file name="js/test/AssertionError.js" />
-
-				<file name="js/test/TestCase.js" />
-				<file name="js/test/Assert.js" />
-
-				<file name="js/lang/reflect/Constructor.js" />
-				<file name="js/lang/reflect/Field.js" />
-				<file name="js/lang/reflect/Method.js" />
-				<file name="js/lang/reflect/Modifier.js" />
-				<file name="js/lang/reflect/InvocationTargetException.js" />
-
 				<file name="js/lang/IllegalAccessException.js" />
 				<file name="js/lang/IllegalArgumentException.js" />
 				<file name="js/lang/IllegalStateException.js" />
@@ -82,6 +71,13 @@
 				<file name="js/lang/NullPointerException.js" />
 				<file name="js/lang/UnsupportedOperationException.js" />
 				<file name="js/lang/ClassNotFoundException.js" />
+				<file name="js/lang/CloneNotSupportedException.js" />
+
+				<file name="js/lang/reflect/Constructor.js" />
+				<file name="js/lang/reflect/Field.js" />
+				<file name="js/lang/reflect/Method.js" />
+				<file name="js/lang/reflect/Modifier.js" />
+				<file name="js/lang/reflect/InvocationTargetException.js" />
 
 				<file name="js/io/Writer.js" />
 				<file name="js/io/PrintWriter.js" />
@@ -89,13 +85,8 @@
 
 				<file name="js/lang/StringBuffer.js" />
 				<file name="js/lang/System.js" />
-
-				<file name="js/net/Http.js" />
-				<file name="js/net/Rest.js" />
-
-				<file name="js/text/Format.js" />
-				<file name="js/text/DateFormat.js" />
-				<file name="js/text/SimpleDateFormat.js" />
+				
+				<file name="js/util/Arrays.js" />
 
 				<file name="js/util/Iterator.js" />
 				<file name="js/util/LinkIterator.js" />
@@ -127,6 +118,18 @@
 				<file name="js/util/Calendar.js" />
 				<file name="js/util/GregorianCalendar.js" />
 
+				<file name="js/text/Format.js" />
+				<file name="js/text/DateFormat.js" />
+				<file name="js/text/DateFormatSymbols.js" />
+				<file name="js/text/FieldPosition.js" />
+				<file name="js/text/SimpleDateFormat.js" />
+				
+				<file name="js/net/Http.js" />
+				<file name="js/net/Rest.js" />
+				
+				<file name="js/test/AssertionError.js" />
+				<file name="js/test/TestCase.js" />
+				<file name="js/test/Assert.js" />
 			</filelist>
 		</concat>
 	</target>
@@ -145,10 +148,12 @@
 			<filelist dir="${test.src.dir}/">
 				<file name="js/model/Animal.js" />
 				<file name="js/model/Dog.js" />
+				
 				<file name="js/lang/TestObject.js" />
 				<file name="js/lang/reflect/TestClass.js" />
 				<file name="js/lang/reflect/TestField.js" />
 				<file name="js/lang/reflect/TestMethod.js" />
+				
 				<file name="js/util/TestList.js" />
 				<file name="js/util/TestArrayList.js" />
 				<file name="js/util/TestHashSet.js" />
@@ -158,6 +163,8 @@
 				<file name="js/util/TestDate.js" />
 				<file name="js/util/TestCalendar.js" />
 				<file name="js/util/TestGregorianCalendar.js" />
+				
+				<file name="js/text/TestDateFormat.js" />
 					
 			</filelist>
 		</concat>

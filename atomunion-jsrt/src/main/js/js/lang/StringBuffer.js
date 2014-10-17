@@ -37,6 +37,9 @@ Class.forName({
 	length : function() {
 		return this._strings.length;
 	},
+    getLength : function(){
+        return this.length();
+    },
 	toString : function(sp) {
 		return this._strings.join(sp || "");
 	}

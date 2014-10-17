@@ -209,15 +209,13 @@ Class
 					truncMonth.setMilliseconds(milliseconds);
 
 					if (this.isFieldSet(Calendar.WEEK_OF_MONTH)) {
-						day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 1)
-								* 7 - (truncMonth.getDay());
-
-						if (this.isSet(Calendar.DAY_OF_WEEK)) {
-							day += this.internalGet(Calendar.DAY_OF_WEEK);
-						}
-
-						if (day <= 0) {
-							day = 1;
+						day = (this.internalGet(Calendar.WEEK_OF_MONTH) - 2)
+								* 7 + (7 - truncMonth.getDay()) + 1;
+						if (day < 0) {
+							truncMonth.setTime(truncMonth.getTime() + (day - 1)
+									* GregorianCalendar.ONE_DAY);
+							month = truncMonth.getMonth();
+							day = truncMonth.getDate();
 						}
 					} else if (this.isFieldSet(Calendar.DAY_OF_WEEK)) {
 						var fistDay = truncMonth.getDay() + 1, dayOfWeek = this
@@ -242,7 +240,6 @@ Class
 							month = truncMonth.getMonth();
 							day = truncMonth.getDate();
 						}
-
 					} else if (this.isSet(Calendar.DAY_OF_MONTH)) {
 						// Month-based calculations
 						// We are on the first day of the month. Just add the
