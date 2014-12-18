@@ -400,17 +400,20 @@ Object
 					// TODO 判断权限private,default,protected,public
 					// TODO 判断是否可以被重写final
 
-					var scope = isStatic ? this.getClass()
-							.getClassConstructor() : this;
+					var thisClass = this.getClass(),
+						$this = scope = isStatic ? thisClass.getClassConstructor() : this,
+						superClassConstructor = thisClass.getSuperClass().getClassConstructor(),
+						$super = isStatic ? superClassConstructor : superClassConstructor.prototype;
 
+					var args = Array.prototype.slice.call(arguments,0).concat([$super, $this])
+							
 					// before
-					(!Object.isEmpty(b) && Object.isFunction(b))
-							&& b.apply(scope, arguments);
+					(!Object.isEmpty(b) && Object.isFunction(b)) && b.apply(scope, args);
 
 					var result = null;
 					try {
 						result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f
-								.apply(scope, arguments)
+								.apply(scope, args)
 								: f;
 					} catch (e) {
 						if (Object.isEmpty(t)) {
@@ -418,14 +421,15 @@ Object
 						} else {
 							// throw
 							if (Object.isFunction(t))
-								t.apply(scope, arguments);
+								t.apply(scope, args);
 						}
 
 					}
 
 					// after
 					(!Object.isEmpty(a) && Object.isFunction(a))
-							&& a.apply(scope, arguments);
+							&& a.apply(scope, args);
+					
 					return result;
 				};
 	};
@@ -542,7 +546,7 @@ Object
 		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
 		// implements
 		// zzz,ttt
-		var modify = convert(classDef["name"]), alias = classDef["alias"], fullName = modify.name, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
+		var modify = convert(classDef["name"]), fullName = modify.name, alias = classDef["alias"] || fullName, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
 
 		heap.create(this, null, fullName, alias, null, modify.type,
 				modify.modifiers, modify.annotations, null, null, null, null,
@@ -602,7 +606,7 @@ Object
 
 			classConstructor = function() {
 				// 原始构造器
-				// 1设置class对象和hashCode值
+				// 1.设置class对象和hashCode值
 
 				if (Object.USEECMA) {
 					Object.defineProperty(this, "$class", {
@@ -616,6 +620,7 @@ Object
 				}
 
 				// 2.2初始化继承父类属性
+				// TODO protected以上的属性
 				var sc = classObj.getSuperClass();
 				while (sc) {
 					var f = sc.getFields();
@@ -652,7 +657,7 @@ Object
 					sc = sc.getSuperClass();
 				}
 
-				// 3初始化自身定义属性
+				// 3.初始化自身定义属性
 				Object.each(classObj.getFields(), function(i, v, o) {
 					var value = v.getValue();
 					value = value ? value.clone() : value;
@@ -668,16 +673,16 @@ Object
 					}
 				}, this);
 
-				// 4用户构造器,先调用父类构造器以及constructor2方法
+				// 4.用户构造器,先调用父类构造器以及constructor2方法
 				var constructor2 = classObj.getConstructor();
 				constructor2 && constructor2.apply(this, arguments);
 
-				// 5执行默认初始化方法
+				// 5.执行默认初始化方法
 				var initial = classObj.getInitial();
 				(initial = initial || this.initial || empty).apply(this,
 						arguments);
 
-				// 6防止用户构造器修改class对象
+				// 6.防止用户构造器修改class对象
 				if (!Object.USEECMA && this.$class != classObj) {
 					this.$class = classObj;
 				}

@@ -208,6 +208,7 @@
 
 		<delete dir="${web.version.dir}">
 		</delete>
+		
 		<mkdir dir="${web.version.dir}" />
 
 		<copy todir="${web.version.dir}">
@@ -216,6 +217,7 @@
 		<copy todir="${web.version.dir}/src">
 			<fileset dir="${src.dir}/" />
 		</copy>
+		
 		<copy todir="${web.version.dir}/test">
 			<fileset dir="${test.compile.dir}" />
 		</copy>
@@ -226,12 +228,12 @@
 
 		<delete dir="${web.master.dir}">
 		</delete>
+		
 		<mkdir dir="${web.master.dir}" />
 
 		<copy todir="${web.master.dir}">
 			<fileset dir="${compile.dir}" />
 		</copy>
-
 		<move file="${web.master.dir}/${js.name}" tofile="${web.master.dir}/${js.prefix}.master.js">
 		</move>
 		<move file="${web.master.dir}/${js.name.debug}" tofile="${web.master.dir}/${js.prefix.debug}.master.js">
@@ -239,6 +241,7 @@
 		<copy todir="${web.master.dir}/src">
 			<fileset dir="${src.dir}/" />
 		</copy>
+		
 		<copy todir="${web.master.dir}/test">
 			<fileset dir="${test.compile.dir}" />
 		</copy>
