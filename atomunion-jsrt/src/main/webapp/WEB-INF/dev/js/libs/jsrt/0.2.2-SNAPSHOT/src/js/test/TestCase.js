@@ -83,8 +83,8 @@ Class.forName({
                 }
             }
 
-            /*if (i.indexOf("test") === 0) {
-             this.getTestMethods().push(i);
+            /*if (v.getName().indexOf("test") === 0) {
+             this.getTestMethods().push(v.getName());
              }*/
         }, this);
     },

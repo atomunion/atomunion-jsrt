@@ -9,7 +9,7 @@ Class
 			name : "class test.lang.reflect.TestMethod extends js.test.TestCase",
 			
 			"@Setter @Getter private method" : testReflectObject
-					.getClass().getMethods()["say"],
+					.getClass().getMethod("say"),
 			
 			TestMethod : function() {
 			},

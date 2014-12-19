@@ -9,19 +9,11 @@
 (function() {
 	var USEECMA = true;
 
-	var extend = function(d, s, k, m, pros) {
-
-		pros = pros || {};
-		var writable = !!pros.writable, enumerable = !!pros.enumerable, configurable = !!pros.configurable;
-		if (d === null || s === null || d === undefined || s === undefined
-				|| typeof d === "number" || typeof s === "number"
-				|| typeof d === "string" || typeof s === "string"
-				|| typeof d === "boolean" || typeof s === "boolean") {
-			return d;
-		}
-		if (Object.prototype.toString.call(s) === "[object Object]") {
-			if (Object.prototype.toString.apply(d) !== "[object Array]"
-					|| d === Array.prototype) {
+	var extend = (function(){
+		var copy = function(d, s, k, m, pros){
+			pros = pros || {};
+			var writable = !!pros.writable, enumerable = !!pros.enumerable, configurable = !!pros.configurable;
+			if (Object.prototype.toString.apply(d) !== "[object Array]") {
 				for ( var i in s) {
 					if (s.hasOwnProperty(i)) {
 						if (k) {
@@ -55,7 +47,7 @@
 					}
 				}
 			} else {
-				for (var j = 0; j < d.length; j++) {
+				for (var j = 0, len = d.length; j < len; j++) {
 					for ( var i in s) {
 						if (s.hasOwnProperty(i)) {
 							if (!d[j]) {
@@ -95,9 +87,26 @@
 					}
 				}
 			}
-		}
-		return d;
-	};
+		};
+		return function(d, s, k, m, pros) {
+
+			
+			if (d === null || s === null || d === undefined || s === undefined
+					|| typeof d === "number" || typeof s === "number"
+					|| typeof d === "string" || typeof s === "string"
+					|| typeof d === "boolean" || typeof s === "boolean") {
+				return d;
+			}
+			if (Object.prototype.toString.apply(s) !== "[object Array]") {
+				copy(d, s, k, m, pros);
+			}else{
+				for (var j = 0, len = s.length; j < len; j++) {
+					copy(d, s[j], k, m, pros);
+				}
+			}
+			return d;
+		};
+	})();
 	if (USEECMA) {
 		Object.defineProperties(Object, {
 			"extend" : {
@@ -349,10 +358,10 @@ Object
 				.indexOf("non-enumerable ") != -1, isNonConfigurable = modify
 				.indexOf("non-configurable ") != -1, isNonProxy = modify
 				.indexOf("non-proxy ") != -1, 
-				isWritable = modify.indexOf("writable ") != -1, 
-				isEnumerable = modify.indexOf("enumerable ") != -1, 
-				isConfigurable = modify.indexOf("configurable ") != -1, 
-				isProxy = modify.indexOf("proxy ") != -1;
+				isWritable = !isNonWritable && modify.indexOf("writable ") != -1, 
+				isEnumerable = !isNonEnumerable && modify.indexOf("enumerable ") != -1, 
+				isConfigurable = !isNonConfigurable && modify.indexOf("configurable ") != -1, 
+				isProxy = !isNonProxy && modify.indexOf("proxy ") != -1;
 
 		/*
 		 * abstract 1024, interface 512, final 16, static 8, protected 4,
@@ -369,7 +378,7 @@ Object
 		 * 提供三种模式
 		 * 1.系统默认
 		 * 		属性默认为writable,enumerable,non-configurable,non-proxy	
-		 * 		方法默认为writable,non-enumerable,non-configurable,proxy, 如果final方法则为non-writable,non-enumerable,non-configurable,proxy
+		 * 		方法默认为writable,non-enumerable,non-configurable,non-proxy, 如果final方法则为non-writable,non-enumerable,non-configurable,non-proxy
 		 * 		构造器默认为non-writable,non-enumerable,non-configurable,proxy
 		 * 2.手动设置writable，enumerable，configurable，proxy 
 		 * 3.手动设置non-writable，non-enumerable，non-configurable，non-proxy
@@ -404,7 +413,7 @@ Object
 				modifiers += Modifier.proxyBit;
 				break;
 			case FEATURE.METHOD:
-				if (!isNonProxy) {
+				if (isProxy) {
 					modifiers += Modifier.proxyBit;
 				}
 				
@@ -512,40 +521,36 @@ Object
 	
 	var proxy = function(m, b, t, a) {
 		var f = m.getValue(), modifiers = m.getModifiers(), isStatic = Modifier.isStatic(modifiers), isProxy = Modifier.isProxy(modifiers);
-
+		
 		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a) && !isProxy) ? f : function() {
 					// TODO 判断权限private,default,protected,public
 					// TODO 判断是否可以被重写final
-					var thisClass = this.getClass(),
-						$this = scope = isStatic ? thisClass.getClassConstructor() : this,
-						superClass = thisClass.getSuperClass();
 					
-						$super = superClass ? (isStatic ? superClass.getClassConstructor() : superClass.getClassConstructor().prototype) : null;
-
-					var args = Array.prototype.slice.call(arguments,0).concat([$super, $this]);
+					var thisClass = this.getClass(), superClass = thisClass.getSuperClass();
+					var $this = isStatic ? thisClass.getClassConstructor() : this;
+					$this.$super = superClass ? (isStatic ? superClass.getClassConstructor() : superClass.getClassConstructor().prototype) : null;
+					
+					//var args = Array.prototype.slice.call(arguments,0).concat([$super,$this]);
 					
 					// before
-					(!Object.isEmpty(b) && Object.isFunction(b)) && b.apply(scope, args);
+					(!Object.isEmpty(b) && Object.isFunction(b)) && b.apply($this, arguments);
 
 					var result = null;
 					try {
-						result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f
-								.apply(scope, args)
-								: f;
+						result = (!Object.isEmpty(f) && Object.isFunction(f)) ? f.apply($this, arguments) : f;
 					} catch (e) {
 						if (Object.isEmpty(t)) {
 							throw e;
 						} else {
 							// throw
 							if (Object.isFunction(t))
-								t.apply(scope, args);
+								t.apply($this, arguments);
 						}
-
 					}
 
 					// after
 					(!Object.isEmpty(a) && Object.isFunction(a))
-							&& a.apply(scope, args);
+							&& a.apply($this, arguments);
 					
 					return result;
 				};
@@ -6475,8 +6480,8 @@ Class.forName({
                 }
             }
 
-            /*if (i.indexOf("test") === 0) {
-             this.getTestMethods().push(i);
+            /*if (v.getName().indexOf("test") === 0) {
+             this.getTestMethods().push(v.getName());
              }*/
         }, this);
     },

@@ -15,7 +15,7 @@
 		<project.jdkcompile.version>1.7</project.jdkcompile.version>
 		<project.artifactId>atomunion-jsrt</project.artifactId>
 		<project.version>0.2.2-SNAPSHOT</project.version>
-		<project.atomunion.parent.version>1.0.1-SNAPSHOT</project.atomunion.parent.version>
+		<project.atomunion.parent.version>0.0.1-SNAPSHOT</project.atomunion.parent.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

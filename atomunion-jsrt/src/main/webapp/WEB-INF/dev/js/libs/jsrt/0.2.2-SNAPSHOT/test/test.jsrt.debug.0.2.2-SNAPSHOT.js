@@ -488,7 +488,7 @@ var testReflectObject = new js.model.Dog("dog", "汪汪");
 Class.forName({
 	name : "class test.lang.reflect.TestField extends js.test.TestCase",
 	"@Setter @Getter private field" : testReflectObject.getClass()
-			.getFields()["color"],
+			.getField("color"),
 	TestField : function() {
 	},
 	"@Test testGetDeclaringClass" : function() {
@@ -527,7 +527,7 @@ Class
 			name : "class test.lang.reflect.TestMethod extends js.test.TestCase",
 			
 			"@Setter @Getter private method" : testReflectObject
-					.getClass().getMethods()["say"],
+					.getClass().getMethod("say"),
 			
 			TestMethod : function() {
 			},
