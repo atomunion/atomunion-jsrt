@@ -56,7 +56,7 @@ Class
 
 			'private pattern' : null,
 			'private compiledPattern' : null,
-			'private formatData' : null,
+			'private dateFormatSymbols' : null,
 			'private useDateFormatSymbols' : false,
 
 			// Maps from DecimalFormatSymbols index to Field constant
@@ -109,9 +109,9 @@ Class
 				}
 				this.pattern = pattern;
 				if (!formatSymbols) {
-					this.formatData = js.text.DateFormatSymbols.getInstance();
+					this.dateFormatSymbols = js.text.DateFormatSymbols.getInstance();
 				} else {
-					this.formatData = formatSymbols.clone();
+					this.dateFormatSymbols = formatSymbols.clone();
 					this.useDateFormatSymbols = true;
 				}
 				this.initializeCalendar();
@@ -307,7 +307,7 @@ Class
 
 						case js.text.DateFormatSymbols.PATTERN_ERA: // 'G'
 							if (useDateFormatSymbols) {
-								var eras = this.formatData.getEras();
+								var eras = this.dateFormatSymbols.getEras();
 								if (value < eras.length)
 									current = eras[value];
 							}
@@ -327,10 +327,10 @@ Class
 							if (useDateFormatSymbols) {
 								var months;
 								if (count >= 4) {
-									months = this.formatData.getMonths();
+									months = this.dateFormatSymbols.getMonths();
 									current = months[value];
 								} else if (count == 3) {
-									months = this.formatData.getShortMonths();
+									months = this.dateFormatSymbols.getShortMonths();
 									current = months[value];
 								}
 							} else {
@@ -349,11 +349,11 @@ Class
 							if (useDateFormatSymbols) {
 								var weekdays;
 								if (count >= 4) {
-									weekdays = this.formatData.getWeekdays();
+									weekdays = this.dateFormatSymbols.getWeekdays();
 									current = weekdays[value];
 								} else { // count < 4, use abbreviated form
 									// if exists
-									weekdays = this.formatData
+									weekdays = this.dateFormatSymbols
 											.getShortWeekdays();
 									current = weekdays[value];
 								}
@@ -367,7 +367,7 @@ Class
 
 						case js.text.DateFormatSymbols.PATTERN_AM_PM: // 'a'
 							if (useDateFormatSymbols) {
-								var ampm = this.formatData.getAmPmStrings();
+								var ampm = this.dateFormatSymbols.getAmPmStrings();
 								current = ampm[value];
 							} else {
 								current = value ? "PM" : "AM";
@@ -558,7 +558,7 @@ Class
 			 */
 			"public String toLocalizedPattern" : function() {
 				return this.translatePattern(this.pattern,
-						js.text.DateFormatSymbols.patternChars, this.formatData
+						js.text.DateFormatSymbols.patternChars, this.dateFormatSymbols
 								.getLocalPatternChars());
 			},
 
@@ -589,7 +589,7 @@ Class
 			 *                if the given pattern is invalid
 			 */
 			"public void applyLocalizedPattern" : function(pattern) {
-				var p = this.translatePattern(pattern, this.formatData
+				var p = this.translatePattern(pattern, this.dateFormatSymbols
 						.getLocalPatternChars(),
 						js.text.DateFormatSymbols.patternChars);
 				this.compiledPattern = this.compile(p);
@@ -604,7 +604,7 @@ Class
 			 * @see #setDateFormatSymbols
 			 */
 			"public DateFormatSymbols getDateFormatSymbols" : function() {
-				return this.formatData.clone();
+				return this.dateFormatSymbols.clone();
 			},
 
 			/**
@@ -617,7 +617,7 @@ Class
 			 * @see #getDateFormatSymbols
 			 */
 			"public void setDateFormatSymbols" : function(newFormatSymbols) {
-				this.formatData = newFormatSymbols.clone();
+				this.dateFormatSymbols = newFormatSymbols.clone();
 				this.useDateFormatSymbols = true;
 			},
 
@@ -629,7 +629,7 @@ Class
 			 */
 			"public Object clone" : function() {
 				var other = this.getClass().newInstance();
-				other.formatData = this.formatData.clone();
+				other.dateFormatSymbols = this.dateFormatSymbols.clone();
 				return other;
 			},
 
@@ -648,7 +648,7 @@ Class
 				if (!Object.isInstanceof(that, js.text.SimpleDateForma)) {
 					return false;
 				}
-				return (this.pattern.equals(that.pattern) && this.formatData
-						.equals(that.formatData));
+				return (this.pattern.equals(that.pattern) && this.dateFormatSymbols
+						.equals(that.dateFormatSymbols));
 			}
 		});

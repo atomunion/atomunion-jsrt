@@ -17,8 +17,8 @@ Class.forName({
     contains : function(elem) {
         return (Array.prototype.indexOf.call(this, elem) != -1) ? true : false;
     },
-    indexOf : function(elem) {
-        for (var i = 0, len = this.length; i < len; i++) {
+    indexOf : function(elem, start, end) {
+        for (var i = start || 0, len = Math.min(end || this.length, this.length); i < len; i++) {
             if (this[i] === elem) {
                 return i;
             }

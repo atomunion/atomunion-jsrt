@@ -12,7 +12,7 @@
     };
     var $class = Class.forName({
         name : "class Object",
-        "non-enumerable non-writable non-configurable alias" : "js.lang.Object",
+        alias: "js.lang.Object",
         Object : function() {
             var _hashCode = (currentTimeMillis() + Math.random()).toString(16);
             if (Object.USEECMA) {
@@ -26,26 +26,31 @@
                 this._hashCode = _hashCode;
             }
         },
-        "non-writable non-configurable getClass" : function() {
+        
+        "non-writable non-enumerable non-configurable non-proxy getClass" : function() {
             return this.$class || Object.$class;
         },
-        /** 指示某个其他对象是否与此对象“相等”。 */
-        "non-configurable equals" : function(obj) {
-            return obj === this;
-        },
-        "non-configurable getVersion" : (function() {
+        
+        "non-writable non-enumerable non-configurable non-proxy getVersion" : (function() {
             /** 主版本号 . 子版本号 [ 修正版本号 [. 编译版本号 ]] */
             var version = "0.1.1.0001";
             return function() {
                 return this.version || version;
             };
         })(),
-        "non-configurable hashCode" : function() {
+        
+        /** 指示某个其他对象是否与此对象“相等”。 */
+        "equals" : function(obj) {
+            return obj === this;
+        },
+        
+        "hashCode" : function() {
             if(!this._hashCode){
                 this._hashCode = (currentTimeMillis() + Math.random()).toString(16);
             }
             return this._hashCode;
         },
+        
         "toString" : function() {
             // TODO String,Number,Boolean,Array等的toString()方法
             return this.getClass().getFullName() + "<" + this.hashCode() + ">";
@@ -77,6 +82,7 @@
             }
             return b;
         },
+        
         "toJson" : (function() {
             var NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON && typeof JSON.stringify === "function" && JSON.stringify(0) === "0" && typeof JSON.stringify(function() {
             }) === "undefined";
@@ -90,6 +96,7 @@
                 return this;
             };
         })(),
+        
         "toQueryString" : function() {
             // TODO
             return this;

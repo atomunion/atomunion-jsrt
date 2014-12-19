@@ -237,17 +237,25 @@ Object
 					") ").replace(regx4, " ");
 		};
 	})();
-
-	var attribute = function(name, value, declaringClass, modifiers,
+	
+	
+	var FEATURE = {
+			"CLASS" : "class",
+			"INTERFACE" : "interface",
+			"CONSTRUCTOR" : "constructor",
+			"FIELD": "field",
+			"METHOD": "method",
+			"UNKNOWN": "unknown"
+	}; 
+	var Attribute = function(name, value, declaringClass, modifiers,
 			annotations) {
 		this._name = name;
 		this._value = value;
 		this._declaringClass = declaringClass;
 		this._modifiers = modifiers;
 		this._annotations = annotations;
-
 	};
-	attribute.prototype = {
+	Attribute.prototype = {
 		getName : function() {
 			return this._name;
 		},
@@ -279,27 +287,38 @@ Object
 			this._annotations = annotation;
 		}
 	};
-	var convert = function(m) {
+	var convert = function(m, props) {
 
 		m = format(m);
 
-		var index1 = m.indexOf("class ");
-		var index2 = m.indexOf("interface ");
-
-		var modify = null, type = null, n = null, extend = null, implement = null;
-		if (index1 === -1 && index2 === -1) {
-			// method,field
+		var modify = null, feature = null, n = null, extend = null, implement = null;
+		
+		if (props) {
+			// method,field,constructor
 			var index = m.lastIndexOf(" ");
 			modify = (index === -1 ? "" : m.substring(0, index + 1));
 			n = m.substring(index + 1);
+			
+			if(n == props.belongsTo){
+				feature = FEATURE.CONSTRUCTOR;
+			}else if (Object.isFunction(props.value)){
+				feature = FEATURE.METHOD;
+			}else{
+				feature = FEATURE.FIELD;
+			}
+			
 		} else {
+			
+			var index1 = m.indexOf("class ");
+			var index2 = m.indexOf("interface ");
+			
 			var index = null;
 			if (index1 != -1) {
 				index = index1;
-				type = "class";
+				feature = FEATURE.CLASS;
 			} else {
 				index = index2;
-				type = "interface";
+				feature = FEATURE.INTERFACE;
 			}
 			modify = m.substring(0, index);
 			// FIXME var defs = m.substring(index + 1).split(" ")
@@ -317,7 +336,7 @@ Object
 				}
 			}
 		}
-
+		
 		var regx = /@\S*/g;
 		var isAbstract = modify.indexOf("abstract ") != -1, isInterface = modify
 				.indexOf("interface ") != -1, isFinal = modify
@@ -328,85 +347,183 @@ Object
 				.indexOf("public ") != -1 || (!isPrivate && !isDefault && !isProtected)), isNonWritable = modify
 				.indexOf("non-writable ") != -1, isNonEnumerable = modify
 				.indexOf("non-enumerable ") != -1, isNonConfigurable = modify
-				.indexOf("non-configurable ") != -1, isWritable = !isNonWritable
-				&& modify.indexOf("writable ") != -1, isEnumerable = !isNonEnumerable
-				&& modify.indexOf("enumerable ") != -1, isConfigurable = !isNonConfigurable
-				&& modify.indexOf("configurable ") != -1;
+				.indexOf("non-configurable ") != -1, isNonProxy = modify
+				.indexOf("non-proxy ") != -1, 
+				isWritable = modify.indexOf("writable ") != -1, 
+				isEnumerable = modify.indexOf("enumerable ") != -1, 
+				isConfigurable = modify.indexOf("configurable ") != -1, 
+				isProxy = modify.indexOf("proxy ") != -1;
 
 		/*
 		 * abstract 1024, interface 512, final 16, static 8, protected 4,
 		 * private 2 ,public 1,default 0
 		 */
+		
+		/*
+		 * 默认public
+		 * 
+		 * non前缀的优先级更高
+		 * 
+		 * 构造器不允许手动设置
+		 * 
+		 * 提供三种模式
+		 * 1.系统默认
+		 * 		属性默认为writable,enumerable,non-configurable,non-proxy	
+		 * 		方法默认为writable,non-enumerable,non-configurable,proxy, 如果final方法则为non-writable,non-enumerable,non-configurable,proxy
+		 * 		构造器默认为non-writable,non-enumerable,non-configurable,proxy
+		 * 2.手动设置writable，enumerable，configurable，proxy 
+		 * 3.手动设置non-writable，non-enumerable，non-configurable，non-proxy
+		*/
 		var modifiers = 0;
 
-		if (isNonWritable) {
-			modifiers += 65536;
-		}
-
-		if (isWritable) {
-			modifiers += 32768;
-		}
-
-		if (isNonEnumerable) {
-			modifiers += 16384;
-		}
-		if (isEnumerable) {
-			modifiers += 8192;
-		}
-
-		if (isNonConfigurable) {
-			modifiers += 4096;
-		}
-
-		if (isConfigurable) {
-			modifiers += 2048;
-		}
-
 		if (isAbstract) {
-			modifiers += 1024;
+			modifiers += Modifier.abstractBit;
 		}
 		if (isInterface) {
-			modifiers += 512;
+			modifiers += Modifier.interfaceBit;
 		}
 		if (isFinal) {
-			modifiers += 16;
+			modifiers += Modifier.finalBit;
 		}
 		if (isStatic) {
-			modifiers += 8;
+			modifiers += Modifier.staticBit;
 		}
 		if (isProtected) {
-			modifiers += 4;
+			modifiers += Modifier.protectedBit;
 		}
 		if (isPrivate) {
-			modifiers += 2;
+			modifiers += Modifier.privateBit;
 		}
 		if (isPublic) {
-			modifiers += 1;
+			modifiers += Modifier.publicBit;
+		}
+		
+		switch(feature){
+			case FEATURE.CONSTRUCTOR:
+				modifiers += Modifier.publicBit;
+				modifiers += Modifier.proxyBit;
+				break;
+			case FEATURE.METHOD:
+				if (!isNonProxy) {
+					modifiers += Modifier.proxyBit;
+				}
+				
+				if(!isFinal && !isNonWritable) {
+					modifiers += Modifier.writableBit;
+				}
+				
+				if(!isFinal && !isNonEnumerable && isEnumerable) {
+					modifiers += Modifier.enumerableBit;
+				}
+
+				if(!isFinal && !isNonConfigurable && isConfigurable) {
+					modifiers += Modifier.configurableBit;
+				}
+				break;
+			case FEATURE.FIELD:
+				
+				if(!isFinal && !isNonWritable) {
+					modifiers += Modifier.writableBit;
+				}
+				
+				if(!isFinal && !isNonEnumerable) {
+					modifiers += Modifier.enumerableBit;
+				}
+
+				if(!isFinal && !isNonConfigurable && isConfigurable) {
+					modifiers += Modifier.configurableBit;
+				}
+				
+			default:
+				break;
 		}
 
 		return {
 			annotations : m.match(regx) || [],
 			modifiers : modifiers,
-			type : type,
+			feature : feature || FEATURE.UNKNOWN,
 			name : n,
-			extend : extend,
+			extend : extend || 'Object',
 			implement : implement
 		};
 	};
+	
+	var Modifier = function() {};
+	
+	Object
+	.extend(
+			Modifier,
+			function() {
+				return {   
+					abstractBit: 1024,
+					interfaceBit: 512,
+					
+					writableBit: 256,
+					enumerableBit : 128,
+					configurableBit : 64,
+					proxyBit:  32,
+					
+					finalBit: 16,
+					staticBit: 8,
+					protectedBit: 4,
+					privateBit: 2,
+					publicBit: 1,
+					
+					isProxy : function(modifiers){
+						return (modifiers & Modifier.proxyBit) != 0;
+					},
+					isWritable : function(modifiers){
+						return (modifiers & Modifier.writableBit) != 0;
+					},
+					isEnumerable : function(modifiers){
+						return (modifiers & Modifier.enumerableBit) != 0;
+					},
+					isConfigurable : function(modifiers){
+						return (modifiers & Modifier.configurableBit) != 0;
+					},
+					isAbstract: function(modifiers){
+						return (modifiers & Modifier.abstractBit) != 0;
+					},
+					isInterface: function(modifiers) {
+						return (modifiers & Modifier.interfaceBit) != 0;
+					},
+					isFinal: function(modifiers) {
+						return (modifiers & Modifier.finalBit) != 0;
+					},
+					isStatic: function(modifiers) {
+						return (modifiers & Modifier.staticBit) != 0;
+					},
+					isProtected: function(modifiers){
+						return (modifiers & Modifier.protectedBit) != 0;
+					},
+					isPrivate: function(modifiers) {
+						return (modifiers & Modifier.privateBit) != 0;
+					},
+					isPublic: function(modifiers) {
+						return (modifiers & Modifier.publicBit) != 0;
+					}
+				};
+			}(), null, null, {
+				writable : false,
+				enumerable : false,
+				configurable : false
+			});
+	
+	
 	var proxy = function(m, b, t, a) {
-		var f = m.getValue(), isStatic = (m.getModifiers() & 8) != 0;
-		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a)) ? f
-				: function() {
+		var f = m.getValue(), modifiers = m.getModifiers(), isStatic = Modifier.isStatic(modifiers), isProxy = Modifier.isProxy(modifiers);
+
+		return (Object.isEmpty(b) && Object.isEmpty(t) && Object.isEmpty(a) && !isProxy) ? f : function() {
 					// TODO 判断权限private,default,protected,public
 					// TODO 判断是否可以被重写final
-
 					var thisClass = this.getClass(),
 						$this = scope = isStatic ? thisClass.getClassConstructor() : this,
-						superClassConstructor = thisClass.getSuperClass().getClassConstructor(),
-						$super = isStatic ? superClassConstructor : superClassConstructor.prototype;
+						superClass = thisClass.getSuperClass();
+					
+						$super = superClass ? (isStatic ? superClass.getClassConstructor() : superClass.getClassConstructor().prototype) : null;
 
-					var args = Array.prototype.slice.call(arguments,0).concat([$super, $this])
-							
+					var args = Array.prototype.slice.call(arguments,0).concat([$super, $this]);
+					
 					// before
 					(!Object.isEmpty(b) && Object.isFunction(b)) && b.apply(scope, args);
 
@@ -433,7 +550,7 @@ Object
 					return result;
 				};
 	};
-	var doAnnotations = function(self, m, methods) {
+	var doAnnotations = function(self, m) {
 		if (Object.isFunction(m.getValue())) {
 			// 方法上的注解
 		} else {
@@ -444,20 +561,21 @@ Object
 						.substring(1) : m.getName();
 				name = name.charAt(0).toUpperCase() + name.substring(1);
 
-				var modifier = (((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
+				var modifier = m.getModifiers();
+				//(((m.getModifiers() & 8) != 0) ? 8 : 0) + 1;
 
 				if (m.getAnnotations().indexOf("@Getter") != -1) {
 					var getName = "get" + name;
-					if (!methods[getName]) {
-						self.addMethod(new attribute(getName, function() {
+					if (!self.hasMethod(getName)) {
+						self.addMethod(new Attribute(getName, function() {
 							return this[m.getName()];
 						}, self, modifier, []));
 					}
 				}
 				if (m.getAnnotations().indexOf("@Setter") != -1) {
 					var setName = "set" + name;
-					if (!methods[setName]) {
-						self.addMethod(new attribute(setName, function(value) {
+					if (!self.hasMethod(setName)) {
+						self.addMethod(new Attribute(setName, function(value) {
 							this[m.getName()] = value;
 						}, self, modifier, []));
 					}
@@ -476,16 +594,26 @@ Object
 		find : function(elem) {
 			for (var i = 0, len = this.heap.length; i < len; i++) {
 				if (this.heap[i].key === elem) {
-					return this.heap[i].value;
+					return this.heap[i].value || null;
 				}
 			}
-			return null;
+			return undefined;
 		},
-		get : function($class, key) {
-
+		get : function($class, key, subKey) {
 			var code = this.find($class);
-			if (code) {
-				return code[key];
+			if (Object.isDefined(code)) {
+				var values = code[key];
+				if(subKey){
+					if(values){
+						for (var i = 0, len = values.length; i < len; i++) {
+							if (values[i].getName() === subKey) {
+								return values[i] || null;
+							}
+						}
+					}
+					return undefined;
+				}
+				return values;
 			}
 			throw new Error("illegal code heap states.");
 		},
@@ -501,7 +629,7 @@ Object
 				}
 			}
 		},
-		create : function($class, name, fullName, alias, packages, type,
+		create : function($class, name, fullName, alias, packages, feature,
 				modifiers, annotations, fields, methods, superClass,
 				superInterfaces, classloader, instanceClass, classConstructor) {
 
@@ -517,13 +645,14 @@ Object
 					alias : alias,
 
 					packages : packages,
-					type : type,
+					feature : feature,
 					modifiers : modifiers,
 					annotations : annotations,
 
 					// 自身method和fields,不包含从父类继承来的
-					fields : fields || {},
-					methods : methods || {},
+					// FIXME 从{}更改成[]，以防止内部元素与Object原生属性及方法的重名问题
+					fields : fields || [],
+					methods : methods || [],
 
 					superClass : superClass,
 					superInterfaces : superInterfaces || [],
@@ -546,9 +675,9 @@ Object
 		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
 		// implements
 		// zzz,ttt
-		var modify = convert(classDef["name"]), fullName = modify.name, alias = classDef["alias"] || fullName, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
+		var modify = convert(classDef["name"]), fullName = modify.name, alias = classDef["alias"], isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
 
-		heap.create(this, null, fullName, alias, null, modify.type,
+		heap.create(this, null, fullName, alias, null, modify.feature,
 				modify.modifiers, modify.annotations, null, null, null, null,
 				classloader, null, null);
 
@@ -627,9 +756,10 @@ Object
 					Object
 							.each(
 									f,
-									function(i, v, o) {
-										if (!classObj.getFields()[i]) {
-											var value = v.getValue();
+									function(j, v, o) {
+										var i = v.getName();
+										if (!classObj.hasField(i)) {
+											var value = v.getValue(),modifiers = v.getModifiers();
 
 											value = value ? value.clone()
 													: value;
@@ -641,12 +771,9 @@ Object
 																i,
 																{
 																	value : value,
-																	writable : (v
-																			.getModifiers() & 65536) == 0,
-																	enumerable : (v
-																			.getModifiers() & 16384) == 0,
-																	configurable : (v
-																			.getModifiers() & 4096) == 0
+																			writable : Modifier.isWritable(modifiers),
+																			enumerable : Modifier.isEnumerable(modifiers),
+																			configurable : Modifier.isConfigurable(modifiers)
 																});
 											} else {
 												this[i] = value;
@@ -658,15 +785,16 @@ Object
 				}
 
 				// 3.初始化自身定义属性
-				Object.each(classObj.getFields(), function(i, v, o) {
-					var value = v.getValue();
+				Object.each(classObj.getFields(), function(j, v, o) {
+					var i = v.getName();
+					var value = v.getValue(),modifiers = v.getModifiers();
 					value = value ? value.clone() : value;
 					if (Object.USEECMA) {
 						Object.defineProperty(this, i, {
 							value : value,
-							writable : (v.getModifiers() & 65536) == 0,
-							enumerable : (v.getModifiers() & 16384) == 0,
-							configurable : (v.getModifiers() & 4096) == 0
+							writable : Modifier.isWritable(modifiers),
+							enumerable : Modifier.isEnumerable(modifiers),
+							configurable : Modifier.isConfigurable(modifiers)
 						});
 					} else {
 						this[i] = value;
@@ -730,7 +858,7 @@ Object
 
 			var superClass = (fetch(superClassDef, function(name, value) {
 				return value[name];
-			}) || Object).$class;
+			})).$class;
 
 			heap.set(this, "superClass", superClass);
 
@@ -760,19 +888,18 @@ Object
 
 				if (superClass === Object.$class) {
 
-					// TODO 拷贝js.lang.Object中的toString方法
+					// TODO 拷贝js.lang.Object.$class中的toString方法
 					if (Object.USEECMA) {
-						var m = Object.$class.getMethod("toString");
+						var m = Object.$class.getMethod("toString"),modifiers = m.getModifiers();
 						Object
 								.defineProperty(
 										classConstructor.prototype,
 										"toString",
 										{
 											value : m.getValue(),
-
-											writable : (m.getModifiers() & 65536) == 0,
-											enumerable : (m.getModifiers() & 8192) != 0,
-											configurable : (m.getModifiers() & 4096) == 0
+											writable : Modifier.isWritable(modifiers),
+											enumerable : Modifier.isEnumerable(modifiers),
+											configurable : Modifier.isConfigurable(modifiers)
 										});
 					} else {
 
@@ -784,38 +911,42 @@ Object
 		}
 
 		Object.each(classDef, function(i, v, o) {
-			if (i != "name") {
-				var m = convert(i);
-				m = new attribute(m.name, v, this, m.modifiers, m.annotations);
-
-				var n = m.getName();// , name = heap.get(this, "name");
-				if (n === name) {
-					if (name === "Object") {
-						heap.set(this, "constructor2", m.getValue());
-					} else {
-						// 将构造器代理，默认调用父类构造器
-						heap.set(this, "constructor2", proxy(m, (this
-								.getSuperClass() || Object.$class)
-								.getConstructor()));
-					}
-				} else if (Object.isFunction(v)) {
-					// 确保toString为原生
-					if (isKernel && m.getName() === "toString") {
-						this.getMethods()[m.getName()] = m;
-						return true;
-					}
-					this.addMethod(m);
-				} else {
-					this.addField(m);
+			if (i != "name" && i != "alias") {
+				var m = convert(i, {belongsTo:name, value:v}),feature = m.feature;
+				m = new Attribute(m.name, v, this, m.modifiers, m.annotations);
+				
+				switch(feature){
+					case FEATURE.CONSTRUCTOR: 
+						if (name === "Object") {
+							heap.set(this, "constructor2", m.getValue());
+						} else {
+							// 将构造器代理，默认调用父类构造器
+							heap.set(this, "constructor2", proxy(m, this
+									.getSuperClass().getConstructor()));
+						}
+						break;
+						
+					case FEATURE.METHOD:
+						// 确保toString为原生
+						if (isKernel && m.getName() === "toString") {
+							this.getMethods().push(m);
+							return true;
+						}
+						this.addMethod(m);
+						break;
+						
+					case FEATURE.FIELD:
+					default: 
+						this.addField(m);
+						break;
 				}
 			}
 		}, this);
 
 		// 默认无参构造函数
 		if (!heap.get(this, "constructor2")) {
-			heap.set(this, "constructor2", proxy(new attribute(name, empty,
-					this, 1, []), (this.getSuperClass() || Object.$class)
-					.getConstructor()));
+			heap.set(this, "constructor2", proxy(new Attribute(name, empty,
+					this, 1, []), this.getSuperClass().getConstructor()));
 		}
 
 		fetch(alias, function(name, value) {
@@ -851,9 +982,12 @@ Object
 		getDeclaredFields : function() {
 			return this.getFields();
 		},
+		hasField : function(name) {
+			return Object.isDefined(heap.get(this, "fields", name));
+		},
 		getField : function(name) {
-			var v = heap.get(this, "fields")[name];
-			if (v) {
+			var v = heap.get(this, "fields", name);
+			if (Object.isDefined(v)) {
 				return v;
 			}
 			throw new js.lang.NoSuchFieldException();
@@ -867,9 +1001,12 @@ Object
 		getDeclaredMethods : function() {
 			return this.getMethods();
 		},
+		hasMethod : function(name) {
+			return Object.isDefined(heap.get(this, "methods", name));
+		},
 		getMethod : function(name) {
-			var v = heap.get(this, "methods")[name];
-			if (v) {
+			var v = heap.get(this, "methods", name);
+			if (Object.isDefined(v)) {
 				return v;
 			}
 			throw new js.lang.NoSuchMethodException();
@@ -897,7 +1034,7 @@ Object
 		addMethod : function(m) {
 			if (!Object.isEmpty(m) && Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m, this.getMethods());
+					doAnnotations(this, m);
 				}
 				// 不允许更改构造器
 				var n = m.getName(), name = heap.get(this, "name");
@@ -914,15 +1051,15 @@ Object
 					m = new window.js.lang.reflect.Method(n, m.getValue(),
 							this, m.getModifiers(), m.getAnnotations());
 				}
-
-				if ((m.getModifiers() & 8) != 0) {
+				var modifiers = m.getModifiers(), isStatic = Modifier.isStatic(modifiers);
+				if (isStatic) {
 
 					if (Object.USEECMA) {
 						Object.defineProperty(this.getClassConstructor(), n, {
 							value : m.getValue(),
-							writable : (m.getModifiers() & 65536) == 0,
-							enumerable : (m.getModifiers() & 8192) != 0,
-							configurable : (m.getModifiers() & 4096) == 0
+							writable : Modifier.isWritable(modifiers),
+							enumerable : Modifier.isEnumerable(modifiers),
+							configurable : Modifier.isConfigurable(modifiers)
 						});
 					} else {
 						this.getClassConstructor()[n] = m.getValue();
@@ -935,15 +1072,16 @@ Object
 										n,
 										{
 											value : m.getValue(),
-											writable : (m.getModifiers() & 65536) == 0,
-											enumerable : (m.getModifiers() & 8192) != 0,
-											configurable : (m.getModifiers() & 4096) == 0
+											
+											writable : Modifier.isWritable(modifiers),
+											enumerable : Modifier.isEnumerable(modifiers),
+											configurable : Modifier.isConfigurable(modifiers)
 										});
 					} else {
 						this.getClassConstructor().prototype[n] = m.getValue();
 					}
 				}
-				this.getMethods()[n] = m;
+				this.getMethods().push(m);
 
 				if (n === "initial") {
 					heap.set(this, "initial", m.getValue());
@@ -953,7 +1091,7 @@ Object
 		addField : function(m) {
 			if (!Object.isEmpty(m) && !Object.isFunction(m.getValue())) {
 				if (m.getAnnotations() && m.getAnnotations().length) {
-					doAnnotations(this, m, this.getMethods());
+					doAnnotations(this, m);
 				}
 				m.setDeclaringClass(this);
 				if (window.js && window.js.lang && window.js.lang.reflect
@@ -963,22 +1101,22 @@ Object
 							.getValue(), this, m.getModifiers(), m
 							.getAnnotations());
 				}
-
-				if ((m.getModifiers() & 8) != 0) {
-
+				var modifiers = m.getModifiers(), isStatic = Modifier.isStatic(modifiers);
+				if (isStatic) {
 					if (Object.USEECMA) {
 						Object.defineProperty(this.getClassConstructor(), m
 								.getName(), {
 							value : m.getValue(),
-							writable : (m.getModifiers() & 65536) == 0,
-							enumerable : (m.getModifiers() & 16384) == 0,
-							configurable : (m.getModifiers() & 4096) == 0
+							
+							writable : Modifier.isWritable(modifiers),
+							enumerable : Modifier.isEnumerable(modifiers),
+							configurable : Modifier.isConfigurable(modifiers)
 						});
 					} else {
 						this.getClassConstructor()[m.getName()] = m.getValue();
 					}
 				}
-				this.getFields()[m.getName()] = m;
+				this.getFields().push(m);
 			}
 		},
 		getInstance : function() {
@@ -1001,7 +1139,7 @@ Object
 
 		isInterface : function() {
 			// TODO
-			return heap.get(this, "type") === "interface";
+			return heap.get(this, "feature") === "interface";
 		},
 
 		isArray : function() {
