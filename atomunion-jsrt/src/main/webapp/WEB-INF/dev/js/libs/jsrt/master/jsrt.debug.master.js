@@ -1655,7 +1655,8 @@ Class
 
 				var synchronousScript = function(url, src) {
 					var isCrossOriginRestricted = false, xhr, status, isIE = /msie/
-							.test(navigator.userAgent.toLowerCase());
+							.test(navigator.userAgent.toLowerCase()), debugSourceURL = isIE ? "" : ("\n//@ sourceURL=" + src);
+                        
 					if (typeof XMLHttpRequest != 'undefined') {
 						xhr = new XMLHttpRequest();
 					} else {
@@ -1680,10 +1681,7 @@ Class
 						onLoad(url, false);
 					} else if ((status >= 200 && status < 300)
 							|| (status === 304)) {
-						if (!isIE) {
-							debugSourceURL = "\n//@ sourceURL=" + src;
-						}
-
+					    
 						eval(xhr.responseText + debugSourceURL);
 
 						onLoad(url, true);
