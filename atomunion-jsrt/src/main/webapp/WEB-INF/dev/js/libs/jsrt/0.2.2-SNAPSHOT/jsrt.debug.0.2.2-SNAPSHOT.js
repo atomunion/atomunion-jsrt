@@ -1744,7 +1744,7 @@ Class
 		});
 $import = function(name) {
 	// 1判断内存中是否存在 ， 2判断当前ClassLoader是否加载过。
-	js.lang.ClassLoader.getSystemClassLoader().loadClass(name);
+	return js.lang.ClassLoader.getSystemClassLoader().loadClass(name);
 };/*!
  * JSRT JavaScript Library 0.2.1
  * lico.atom@gmail.com
