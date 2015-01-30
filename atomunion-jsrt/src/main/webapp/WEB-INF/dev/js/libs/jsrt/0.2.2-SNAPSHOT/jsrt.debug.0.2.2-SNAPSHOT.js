@@ -1489,7 +1489,7 @@ Class
 				}
 
 				for (var i = 0; i < scriptUrl.length; i++) {
-					var src = url = scriptUrl[i];
+					var src = scriptUrl[i], url = src;
 
 					for (var j = 0; j < path.length; j++) {
 						if (path[j] && path[j].name && path[j].url) {
