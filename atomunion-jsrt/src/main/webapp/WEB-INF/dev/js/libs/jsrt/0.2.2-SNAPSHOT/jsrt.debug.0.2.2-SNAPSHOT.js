@@ -680,9 +680,9 @@ Object
 		// TODO 判断extend合法,判断name合法+判断类是否已经存在 class xxx extends yyy
 		// implements
 		// zzz,ttt
-		var modify = convert(classDef["name"]), fullName = modify.name, alias = classDef["alias"], isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
+		var modify = convert(classDef["name"]), fullName = modify.name, alias = classDef["alias"], packages = null, isRoot = false, isKernel = true, superClassDef = modify.extend, superInterfacesDef = modify.implement, classObj = this, classConstructor = null;
 
-		heap.create(this, null, fullName, alias, null, modify.feature,
+		heap.create(this, null, fullName, alias, packages, modify.feature,
 				modify.modifiers, modify.annotations, null, null, null, null,
 				classloader, null, null);
 
@@ -843,7 +843,8 @@ Object
 			packages = value;
 			return name;
 		}, this);
-
+		
+		heap.set(this, "packages", packages);
 		heap.set(this, "name", name);
 
 		if (!isRoot) {
@@ -1693,7 +1694,7 @@ Class
 
 				for (var i = 0; i < scriptCount; i++) {
 
-					var src = url = scriptUrl[i];
+					var src = scriptUrl[i], url = src;
 
 					// 1.判断内存中是否存在
 					var u = url.split("."), ref = window;

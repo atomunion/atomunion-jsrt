@@ -235,7 +235,7 @@ Class
 
 				for (var i = 0; i < scriptCount; i++) {
 
-					var src = url = scriptUrl[i];
+					var src = scriptUrl[i], url = src;
 
 					// 1.判断内存中是否存在
 					var u = url.split("."), ref = window;
@@ -285,5 +285,5 @@ Class
 		});
 $import = function(name) {
 	// 1判断内存中是否存在 ， 2判断当前ClassLoader是否加载过。
-	js.lang.ClassLoader.getSystemClassLoader().loadClass(name);
+	return js.lang.ClassLoader.getSystemClassLoader().loadClass(name);
 };

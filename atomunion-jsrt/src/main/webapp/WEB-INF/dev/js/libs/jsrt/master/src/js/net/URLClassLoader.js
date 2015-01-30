@@ -235,7 +235,7 @@ Class
 
 				for (var i = 0; i < scriptCount; i++) {
 
-					var src = url = scriptUrl[i];
+					var src = scriptUrl[i], url = src;
 
 					// 1.判断内存中是否存在
 					var u = url.split("."), ref = window;
