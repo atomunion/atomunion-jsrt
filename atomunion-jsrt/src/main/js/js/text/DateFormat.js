@@ -6,7 +6,7 @@
  * Date: Feb 16, 2014
  */
 
-$import("js.text.Format");
+$import("js.text.Format","BootstrapClassLoader");
 
 Class.forName({
 	name : "abstract class js.text.DateFormat extends js.text.Format",

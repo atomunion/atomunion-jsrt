@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Iterator");
+$import("js.util.Iterator","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.LinkIterator extends js.util.Iterator",

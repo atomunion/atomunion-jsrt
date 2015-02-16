@@ -6,7 +6,8 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.List");
+$import("js.util.List","BootstrapClassLoader");
+$import("js.lang.IndexOutOfBoundsException","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.ArrayList extends js.util.List",
@@ -53,7 +54,7 @@ Class.forName({
 	},
 
 	removeAt : function(index) {
-		return this._table.splice(index, 1)
+		return this._table.splice(index, 1);
 	},
 
 	"size" : function() {

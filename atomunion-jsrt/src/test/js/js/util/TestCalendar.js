@@ -8,9 +8,12 @@
  * Date: 2014年9月29日
  */
 
-$import("js.test.TestCase");
-$import("js.util.Calendar");
-$import("js.util.GregorianCalendar");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.Calendar","BootstrapClassLoader");
+$import("js.util.GregorianCalendar","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.util.TestCalendar extends js.test.TestCase",
     "@Setter @Getter private calendar" : null,

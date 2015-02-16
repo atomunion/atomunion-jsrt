@@ -8,10 +8,13 @@
  * Date: 2014年6月27日
  */
 
-$import("js.test.TestCase");
-$import("js.test.Assert");
 $import("js.model.Animal");
 $import("js.model.Dog");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
 
 var dog1 = new js.model.Dog("dog1", "汪汪1");
 var dog2 = js.model.Dog.$class.newInstance();

@@ -1,7 +1,10 @@
-$import("js.test.TestCase");
-$import("js.test.Assert");
 $import("js.model.Animal");
 $import("js.model.Dog");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
 
 var dog = new js.model.Dog("dog", "汪汪");
 

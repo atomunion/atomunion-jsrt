@@ -6,8 +6,8 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Set");
-$import("js.util.KeyIterator");
+$import("js.util.Set","BootstrapClassLoader");
+$import("js.util.KeyIterator","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.KeySet extends js.util.Set",

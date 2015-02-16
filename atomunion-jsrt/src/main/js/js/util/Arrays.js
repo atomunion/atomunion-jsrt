@@ -8,7 +8,7 @@
  * Date: 2014年10月13日
  */
 
-$import("js.lang.System");
+$import("js.lang.System","BootstrapClassLoader");
 Class.forName({
     name : "public class js.util.Arrays",
 

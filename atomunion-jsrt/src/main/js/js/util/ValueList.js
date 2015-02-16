@@ -6,8 +6,8 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.List");
-$import("js.util.ValueIterator");
+$import("js.util.List","BootstrapClassLoader");
+$import("js.util.ValueIterator","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.ValueList extends js.util.List",

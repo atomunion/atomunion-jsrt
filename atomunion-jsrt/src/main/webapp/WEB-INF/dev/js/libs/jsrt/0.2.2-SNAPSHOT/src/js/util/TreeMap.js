@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Map");
+$import("js.util.Map","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.TreeMap extends js.util.Map"

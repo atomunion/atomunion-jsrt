@@ -6,7 +6,7 @@
  * Date: Feb 14, 2014
  */
 
-$import("js.io.PrintWriter");
+$import("js.io.PrintWriter","BootstrapClassLoader");
 
 Class
 		.forName({

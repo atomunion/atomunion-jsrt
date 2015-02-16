@@ -47,9 +47,12 @@
 				<file name="js/lang/RegExp.js" />
 				<file name="js/lang/String.js" />
 
-				<file name="js/lang/ClassLoader.js" />
+				<file name="js/lang/ClassLoader.js" />				
 				<file name="js/net/URLClassLoader.js" />
 				
+				<file name="atom/misc/Launcher.js" />
+				
+				<!--
 				<file name="js/lang/Throwable.js" />
 				
 				<file name="js/lang/Error.js" />
@@ -60,6 +63,7 @@
 				<file name="js/lang/TypeError.js" />
 				<file name="js/lang/URIError.js" />
 				
+				<file name="js/lang/InternalError.js" />
 				<file name="js/lang/Exception.js" />
 				
 				<file name="js/lang/IllegalAccessException.js" />
@@ -107,6 +111,7 @@
 				<file name="js/util/Map.js" />
 				<file name="js/util/HashMap.js" />
 				<file name="js/util/TreeMap.js" />
+				<file name="js/util/Properties.js" />
 
 				<file name="js/util/ArrayList.js" />
 				<file name="js/util/Stack.js" />
@@ -124,12 +129,15 @@
 				<file name="js/text/FieldPosition.js" />
 				<file name="js/text/SimpleDateFormat.js" />
 				
+				<file name="js/net/URLConnection.js" />
+				<file name="js/net/HttpURLConnection.js" />
 				<file name="js/net/Http.js" />
 				<file name="js/net/Rest.js" />
 				
 				<file name="js/test/AssertionError.js" />
 				<file name="js/test/TestCase.js" />
 				<file name="js/test/Assert.js" />
+				-->
 			</filelist>
 		</concat>
 	</target>

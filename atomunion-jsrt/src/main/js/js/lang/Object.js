@@ -66,21 +66,28 @@
                 b = new Date();
                 b.setTime(this.getTime());
                 return b;
-            } else if (this.$class) {
-                b = this.$class.newInstance();
+            } else if(Object.isNumber(this) || Object.isString(this) || Object.isBoolean(this)){
+                //FIXME
+                return this;
+            }else if(this instanceof Array){
+                b = [];
+                var parameter = Array.prototype.slice.call(this, 0, this.length);
+                Array.prototype.splice.call(parameter, 0, 0, 0, 0);
+                Array.prototype.splice.apply(b, parameter);
+                return b;
             } else {
-                b = this instanceof Array ? [] : {};
-            }
-            for (var a in this) {
-                if (a === "_hashCode") {
-                    b[a] = currentTimeMillis().toString(16);
-                    continue;
+                b = this.$class ? this.$class.newInstance() : {};
+                for (var a in this) {
+                    if (a === "_hashCode") {
+                        b[a] = currentTimeMillis().toString(16);
+                        continue;
+                    }
+                    if (this.hasOwnProperty(a)) {
+                        b[a] = this[a] ? this[a].clone() : this[a];
+                    }
                 }
-                if (this.hasOwnProperty(a)) {
-                    b[a] = this[a] ? this[a].clone() : this[a];
-                }
-            }
-            return b;
+                return b;
+            } 
         },
         
         "toJson" : (function() {

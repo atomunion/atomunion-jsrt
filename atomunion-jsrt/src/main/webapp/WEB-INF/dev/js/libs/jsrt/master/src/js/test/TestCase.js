@@ -5,6 +5,7 @@
  *
  * Date: Feb 15, 2014
  */
+$import("js.lang.System","BootstrapClassLoader");
 
 Class.forName({
     name : "class js.test.TestCase extends Object",

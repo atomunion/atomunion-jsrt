@@ -1,6 +1,8 @@
 $import("js.model.Animal");
 $import("js.model.Dog");
-$import("js.test.TestCase");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
 
 var testReflectObject = new js.model.Dog("dog", "汪汪");
 

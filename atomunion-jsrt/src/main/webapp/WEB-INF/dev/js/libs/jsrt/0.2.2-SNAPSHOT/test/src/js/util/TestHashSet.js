@@ -1,5 +1,8 @@
-$import("js.test.TestCase");
-$import("js.util.HashSet");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.HashSet","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestHashSet extends js.test.TestCase",
 	"@Setter @Getter private set" : new js.util.HashSet(),

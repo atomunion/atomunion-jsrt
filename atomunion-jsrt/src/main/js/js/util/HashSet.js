@@ -6,8 +6,8 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Set");
-$import("js.util.HashMap");
+$import("js.util.Set","BootstrapClassLoader");
+$import("js.util.HashMap","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.HashSet extends js.util.Set",

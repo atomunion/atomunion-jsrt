@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.HashIterator");
+$import("js.util.HashIterator","BootstrapClassLoader");
 
 Class
 		.forName({

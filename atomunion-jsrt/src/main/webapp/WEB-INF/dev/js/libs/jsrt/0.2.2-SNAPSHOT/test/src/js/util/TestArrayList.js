@@ -1,5 +1,7 @@
-$import("js.test.TestCase");
-$import("js.util.ArrayList");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.ArrayList","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestArrayList extends js.test.TestCase",
 	"@Setter @Getter private list" : new js.util.ArrayList(),

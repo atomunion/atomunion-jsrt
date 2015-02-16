@@ -13,14 +13,9 @@ Class.forName({
 
 	'@Setter @Getter private classes' : [],
 
-	'private static SYSTEMLOADER' : null,
-
 	"abstract loadClass" : function(scriptUrl, callback, scope, showBusy) {
 	},
 	'static getSystemClassLoader' : function(scriptUrl) {
-		if (!js.lang.ClassLoader.SYSTEMLOADER) {
-			js.lang.ClassLoader.SYSTEMLOADER = new js.net.URLClassLoader();
-		}
-		return js.lang.ClassLoader.SYSTEMLOADER;
+		return atom.misc.Launcher.getLauncher().getClassLoader();
 	}
 });

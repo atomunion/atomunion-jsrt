@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Calendar");
+$import("js.util.Calendar","BootstrapClassLoader");
 
 Class
 		.forName({

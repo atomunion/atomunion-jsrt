@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Collection");
+$import("js.util.Collection","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.Set extends js.util.Collection"

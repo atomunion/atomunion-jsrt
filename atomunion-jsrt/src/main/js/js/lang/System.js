@@ -6,12 +6,13 @@
  * Date: Feb 13, 2014
  */
 
-$import("js.io.Console");
+$import("js.io.Console","BootstrapClassLoader");
 
 Class.forName({
     name : "class js.lang.System extends Object",
     "static err" : null, // 错误流
     "static out" : new js.io.Console(window.console), // 输出流
+    "static properties": null,
     "private static _env" : (function() {
         var userAgent = navigator.userAgent, ua = userAgent.toLowerCase(), check = function(r) {
             return r.test(ua);
@@ -44,6 +45,7 @@ Class.forName({
             isSecure : isSecure
         };
     })(),
+    
     /**
      * 获得指定的环境变量值
      */
@@ -59,5 +61,21 @@ Class.forName({
         var parameter = Array.prototype.slice.call(src, srcPos, srcPos + length);
         Array.prototype.splice.call(parameter, 0, 0, destPos, 0);
         Array.prototype.splice.apply(dest, parameter);
+    },
+    
+    "public static setProperty" : function(name, value){
+        return js.lang.System.properties.setProperty(name, value);
+    },
+    
+    "public static getProperty" : function(name){
+        return js.lang.System.properties.getProperty(name);
+    },
+    
+    "public static setProperties": function(props) {
+        js.lang.System.properties = props;
+    },
+    
+    "public static Properties getProperties": function() {
+        return js.lang.System.properties;
     }
 });

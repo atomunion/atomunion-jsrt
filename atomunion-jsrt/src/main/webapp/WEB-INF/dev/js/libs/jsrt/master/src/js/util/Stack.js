@@ -6,7 +6,7 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.List");
+$import("js.util.List","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.Stack extends js.util.List",

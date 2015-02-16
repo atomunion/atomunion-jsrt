@@ -6,9 +6,9 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Map");
-$import("js.util.Entry");
-$import("js.util.EntrySet");
+$import("js.util.Map","BootstrapClassLoader");
+$import("js.util.Entry","BootstrapClassLoader");
+$import("js.util.EntrySet","BootstrapClassLoader");
 
 Class
 		.forName({

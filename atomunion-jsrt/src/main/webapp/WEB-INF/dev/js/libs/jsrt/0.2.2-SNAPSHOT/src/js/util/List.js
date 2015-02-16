@@ -6,9 +6,11 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Collection");
-$import("js.util.LinkIterator");
-$import("js.util.Iterator");
+$import("js.util.Collection","BootstrapClassLoader");
+$import("js.util.LinkIterator","BootstrapClassLoader");
+$import("js.util.Iterator","BootstrapClassLoader");
+$import("js.lang.IndexOutOfBoundsException","BootstrapClassLoader");
+$import("js.lang.UnsupportedOperationException","BootstrapClassLoader");
 
 Class.forName({
 	name : "class js.util.List extends js.util.Collection",

@@ -8,8 +8,11 @@
  * Date: 2014年9月29日
  */
 
-$import("js.test.TestCase");
-$import("js.util.Date");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.Date","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.util.TestDate extends js.test.TestCase",
     "@Setter @Getter private date" : new js.util.Date(),

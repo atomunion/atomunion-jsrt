@@ -8,8 +8,12 @@
  * Date: 2014年10月16日
  */
 
-$import("js.text.DateFormat");
-$import("js.text.SimpleDateFormat");
+$import("js.text.DateFormat","BootstrapClassLoader");
+$import("js.text.SimpleDateFormat","BootstrapClassLoader");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.text.TestDateFormat extends js.test.TestCase",
     "@Setter @Getter private format" : null,

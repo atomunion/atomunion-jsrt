@@ -5,7 +5,7 @@
  * 
  * Date: Feb 19, 2014
  */
-
+$import("js.lang.Exception","BootstrapClassLoader");
 Class.forName({
 	name : "class js.lang.ClassNotFoundException extends js.lang.Exception",
 	"private name" : "js.lang.ClassNotFoundException",// 错误名

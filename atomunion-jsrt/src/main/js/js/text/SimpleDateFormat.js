@@ -5,11 +5,11 @@
  * 
  * Date: Feb 16, 2014
  */
-
-$import("js.text.DateFormat");
-$import("js.text.DateFormatSymbols");
-$import("js.text.FieldPosition");
-$import("js.util.GregorianCalendar");
+$import("js.lang.StringBuffer","BootstrapClassLoader");
+$import("js.text.DateFormat","BootstrapClassLoader");
+$import("js.text.DateFormatSymbols","BootstrapClassLoader");
+$import("js.text.FieldPosition","BootstrapClassLoader");
+$import("js.util.GregorianCalendar","BootstrapClassLoader");
 
 /**
  * 字母 日期或时间元素 表示 示例

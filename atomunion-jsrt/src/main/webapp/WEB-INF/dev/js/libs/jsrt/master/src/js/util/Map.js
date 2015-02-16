@@ -6,10 +6,10 @@
  * Date: Feb 11, 2014
  */
 
-$import("js.util.Iterator");
-$import("js.util.KeySet");
-$import("js.util.ValueList");
-
+$import("js.util.Iterator","BootstrapClassLoader");
+$import("js.util.KeySet","BootstrapClassLoader");
+$import("js.util.ValueList","BootstrapClassLoader");
+$import("js.lang.UnsupportedOperationException","BootstrapClassLoader");
 Class
 		.forName({
 			name : "class js.util.Map extends Object",

@@ -37,10 +37,13 @@ var dogClass = Class.forName({
 		return this.word;
 	}
 });
-$import("js.test.TestCase");
-$import("js.test.Assert");
 $import("js.model.Animal");
 $import("js.model.Dog");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
 
 var dog = new js.model.Dog("dog", "汪汪");
 
@@ -397,7 +400,11 @@ Class.forName({
 new test.lang.TestObject();
 $import("js.model.Animal");
 $import("js.model.Dog");
-$import("js.test.TestCase");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+$import("js.lang.reflect.Method","BootstrapClassLoader");
+$import("js.lang.reflect.Field","BootstrapClassLoader");
 
 var testReflectObject = new js.model.Dog("dog", "汪汪");
 
@@ -481,7 +488,9 @@ Class.forName({
 new test.lang.TestClass();
 $import("js.model.Animal");
 $import("js.model.Dog");
-$import("js.test.TestCase");
+
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
 
 var testReflectObject = new js.model.Dog("dog", "汪汪");
 
@@ -518,7 +527,8 @@ Class.forName({
 new test.lang.reflect.TestField();
 $import("js.model.Animal");
 $import("js.model.Dog");
-$import("js.test.TestCase");
+
+$import("js.test.TestCase","BootstrapClassLoader");
 
 var testReflectObject = new js.model.Dog("dog", "汪汪");
 
@@ -555,8 +565,11 @@ Class
 		});
 
 new test.lang.reflect.TestMethod();
-$import("js.test.TestCase");
-$import("js.util.ArrayList");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.ArrayList","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestList extends js.test.TestCase",
 	"@Setter @Getter private list" : new js.util.ArrayList(),
@@ -604,8 +617,10 @@ Class.forName({
 	}
 });
 new test.util.TestList();
-$import("js.test.TestCase");
-$import("js.util.ArrayList");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.ArrayList","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestArrayList extends js.test.TestCase",
 	"@Setter @Getter private list" : new js.util.ArrayList(),
@@ -658,8 +673,11 @@ Class.forName({
 });
 new test.util.TestList();
 new test.util.TestArrayList();
-$import("js.test.TestCase");
-$import("js.util.HashSet");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.HashSet","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestHashSet extends js.test.TestCase",
 	"@Setter @Getter private set" : new js.util.HashSet(),
@@ -728,8 +746,11 @@ Class.forName({
 });
 
 new test.util.TestHashSet();
-$import("js.test.TestCase");
-$import("js.util.HashMap");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.HashMap","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestMap extends js.test.TestCase",
 	"@Setter @Getter private map" : new js.util.HashMap(),
@@ -796,8 +817,11 @@ Class.forName({
 	}
 });
 new test.util.TestMap();
-$import("js.test.TestCase");
-$import("js.util.HashMap");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.HashMap","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
 	name : "class test.util.TestHashMap extends js.test.TestCase",
 	"@Setter @Getter private map" : new js.util.HashMap(),
@@ -842,8 +866,11 @@ new test.util.TestHashMap();
  * Date: 2014年9月29日
  */
 
-$import("js.test.TestCase");
-$import("js.util.Date");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.Date","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.util.TestDate extends js.test.TestCase",
     "@Setter @Getter private date" : new js.util.Date(),
@@ -882,9 +909,12 @@ new test.util.TestDate();
  * Date: 2014年9月29日
  */
 
-$import("js.test.TestCase");
-$import("js.util.Calendar");
-$import("js.util.GregorianCalendar");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.Calendar","BootstrapClassLoader");
+$import("js.util.GregorianCalendar","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.util.TestCalendar extends js.test.TestCase",
     "@Setter @Getter private calendar" : null,
@@ -1195,9 +1225,12 @@ new test.util.TestCalendar();
  * Date: 2014年9月29日
  */
 
-$import("js.test.TestCase");
-$import("js.util.Calendar");
-$import("js.util.GregorianCalendar");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.util.Calendar","BootstrapClassLoader");
+$import("js.util.GregorianCalendar","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.util.TestGregorianCalendar extends js.test.TestCase",
     "@Setter @Getter private calendar" : new js.util.GregorianCalendar(),
@@ -1247,8 +1280,12 @@ new test.util.TestGregorianCalendar(); /*!
  * Date: 2014年10月16日
  */
 
-$import("js.text.DateFormat");
-$import("js.text.SimpleDateFormat");
+$import("js.text.DateFormat","BootstrapClassLoader");
+$import("js.text.SimpleDateFormat","BootstrapClassLoader");
+$import("js.test.TestCase","BootstrapClassLoader");
+$import("js.test.Assert","BootstrapClassLoader");
+$import("js.lang.System","BootstrapClassLoader");
+
 Class.forName({
     name : "class test.text.TestDateFormat extends js.test.TestCase",
     "@Setter @Getter private format" : null,

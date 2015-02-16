@@ -8,7 +8,6 @@
  * Date: 2014年6月25日
  */
 
-
 Class.forName({
 	name : "class RegExp",
 	alias:"js.lang.RegExp",

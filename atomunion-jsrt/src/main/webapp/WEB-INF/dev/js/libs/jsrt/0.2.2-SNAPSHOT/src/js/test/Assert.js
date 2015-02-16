@@ -8,7 +8,9 @@
  * Date: 2014年6月25日
  */
 
-$import("js.test.AssertionError");
+$import("js.test.AssertionError","BootstrapClassLoader");
+$import("js.lang.StringBuffer","BootstrapClassLoader");
+$import("js.test.AssertionError","BootstrapClassLoader");
 /**
  * A set of assertion methods useful for writing tests. Only failed assertions
  * are recorded. These methods can be used directly:

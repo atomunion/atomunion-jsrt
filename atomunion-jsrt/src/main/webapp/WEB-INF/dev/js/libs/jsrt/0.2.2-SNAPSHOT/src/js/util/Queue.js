@@ -6,9 +6,13 @@
  * Date: Feb 1, 2015
  */
 
-$import("js.util.Collection");
-$import("js.util.Iterator");
-$import("js.util.NoSuchElementException");
+$import("js.util.Collection","BootstrapClassLoader");
+$import("js.util.Iterator","BootstrapClassLoader");
+$import("js.util.NoSuchElementException","BootstrapClassLoader");
+$import("js.lang.IllegalStateException","BootstrapClassLoader");
+$import("js.util.NoSuchElementException","BootstrapClassLoader");
+$import("js.lang.NullPointerException","BootstrapClassLoader");
+$import("js.lang.IllegalArgumentException","BootstrapClassLoader");
 
 Class.forName({
     name : "class js.util.Queue extends js.util.Collection",

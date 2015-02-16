@@ -5,7 +5,7 @@
  * 
  * Date: Feb 12, 2014
  */
-
+$import("js.lang.Exception","BootstrapClassLoader");
 Class.forName({
 	name : "class js.lang.NoSuchFieldException extends js.lang.Exception",
 	"private name" : "js.lang.NoSuchFieldException",
